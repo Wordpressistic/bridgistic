@@ -64,6 +64,12 @@ spl_autoload_register(
 register_activation_hook( __FILE__, array( 'Bridgistic\Plugin', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'Bridgistic\Plugin', 'deactivate' ) );
 
+/*
+ * The plugin ships its own License tab (admin.php?page=bridgistic-license).
+ * Suppress the SDK's duplicate "Settings → Bridgistic License" menu entry.
+ */
+add_filter( 'wpistic_sdk_show_settings_menu', '__return_false' );
+
 add_action(
 	'plugins_loaded',
 	static function (): void {

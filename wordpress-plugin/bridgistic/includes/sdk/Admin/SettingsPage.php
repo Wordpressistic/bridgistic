@@ -54,7 +54,14 @@ class SettingsPage {
 	 * @return void
 	 */
 	public function register(): void {
-		add_action( 'admin_menu', array( $this, 'add_menu' ) );
+		/**
+		 * Allows a host product that renders its own license UI to remove the
+		 * duplicate "Settings → {Product} License" menu entry. The admin-post
+		 * handlers still register so any bookmarked URLs keep working.
+		 */
+		if ( apply_filters( 'wpistic_sdk_show_settings_menu', true, $this->slug() ) ) {
+			add_action( 'admin_menu', array( $this, 'add_menu' ) );
+		}
 		add_action( 'admin_post_' . $this->action_name( 'activate' ), array( $this, 'handle_activate' ) );
 		add_action( 'admin_post_' . $this->action_name( 'deactivate' ), array( $this, 'handle_deactivate' ) );
 		add_action( 'admin_post_' . $this->action_name( 'set_channel' ), array( $this, 'handle_set_channel' ) );
