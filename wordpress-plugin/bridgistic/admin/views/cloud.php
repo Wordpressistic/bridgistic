@@ -72,7 +72,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php
 	printf(
 		/* translators: 1: link to Keys & Scopes, 2: link to Logs. */
-		esc_html__( 'Keys minted through this connector are labeled "Cloud connector — mcp.wpistic.cloud" and behave like any other key — manage or revoke them any time in %1$s, and every request is recorded in %2$s exactly like local requests.', 'bridgistic' ),
+		esc_html__( 'Keys minted through this connector are labeled "Cloud connector" and behave like any other key — manage or revoke them any time in %1$s, and every request is recorded in %2$s exactly like local requests.', 'bridgistic' ),
 		'<a href="' . esc_url( (string) $data['keys_url'] ) . '">' . esc_html__( 'Keys & Scopes', 'bridgistic' ) . '</a>',
 		'<a href="' . esc_url( (string) $data['logs_url'] ) . '">' . esc_html__( 'Logs', 'bridgistic' ) . '</a>'
 	); // phpcs:ignore WordPress.Security.EscapeOutput

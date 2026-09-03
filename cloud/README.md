@@ -1,6 +1,6 @@
 # bridgistic-cloud
 
-`mcp.wpistic.cloud` — a hosted, multi-tenant MCP relay. Instead of running the
+`mcp.bridgistic.app` — a hosted, multi-tenant MCP relay. Instead of running the
 Bridgistic MCP server locally, a user pastes one URL into Claude (or any other
 MCP-capable client that supports remote connectors) and approves a connection
 in their own WordPress admin. No Node.js, no config files, no copy-pasted
@@ -58,9 +58,9 @@ that copies them automatically instead of committing the copy.
 
 ```
 Claude / ChatGPT / any MCP client
-        |  paste https://mcp.wpistic.cloud/mcp, OAuth popup
+        |  paste https://mcp.bridgistic.app/mcp, OAuth popup
         v
-mcp.wpistic.cloud (this Worker)
+mcp.bridgistic.app (this Worker)
         |  Durable Object per session, tenant resolved from the access token
         |  HMAC-signed HTTPS (per-tenant key, decrypted from D1 for this call)
         v
@@ -91,7 +91,7 @@ wrangler secret put TENANT_ENC_KEY
 # when prompted, paste the output of: openssl rand -base64 32
 ```
 
-Then point `mcp.wpistic.cloud` at this Worker in your Cloudflare zone
+Then point `mcp.bridgistic.app` at this Worker in your Cloudflare zone
 (`wrangler.toml`'s `routes` block assumes the zone is already `wpistic.cloud`
 on this Cloudflare account).
 

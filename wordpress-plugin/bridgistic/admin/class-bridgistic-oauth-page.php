@@ -1,7 +1,7 @@
 <?php
 /**
  * OAuth consent screen — the browser-facing half of the cloud connector
- * handshake. Reached via a deep link from mcp.wpistic.cloud, never from the
+ * handshake. Reached via a deep link from the cloud connector, never from the
  * Bridgistic menu (hidden page, see Controller::menu()).
  *
  * @package Bridgistic

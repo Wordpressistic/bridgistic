@@ -1,4 +1,4 @@
-# Cloud connector status (`mcp.wpistic.cloud`)
+# Cloud connector status (`mcp.bridgistic.app`)
 
 **Status: deployed, public beta. Linked from the plugin UI (WP Admin → Bridgistic Cloud) as of
 this page's last update. No independent security review yet — see the checklist below.**
@@ -62,7 +62,7 @@ This page is the source of truth for where the hosted, multi-tenant MCP relay ac
 ## What still needs a human to confirm (not checkable from this environment)
 
 Two things could not be verified programmatically — this sandbox's network egress policy blocks
-direct requests to `mcp.wpistic.cloud`, and secret *values* are never readable via the Cloudflare
+direct requests to `mcp.bridgistic.app`, and secret *values* are never readable via the Cloudflare
 API, only whether a binding exists:
 
 1. **`TENANT_ENC_KEY` secret is actually set on the Worker.** If it isn't, every request that
@@ -76,12 +76,12 @@ API, only whether a binding exists:
    encrypted with the original key, and overwriting it locks those tenants out permanently (they'd
    need to reconnect). Only set a fresh one if this is truly a first-time setup.
 
-2. **The `mcp.wpistic.cloud` DNS route is actually resolving to this Worker.** `wrangler.toml`
-   declares the route (`mcp.wpistic.cloud/*` on zone `wpistic.cloud`), which requires the
+2. **The `mcp.bridgistic.app` DNS route is actually resolving to this Worker.** `wrangler.toml`
+   declares the route (`mcp.bridgistic.app/*` on zone `wpistic.cloud`), which requires the
    `wpistic.cloud` zone to be on this Cloudflare account with the route attached. Confirm from a
    machine that isn't behind this sandbox's egress policy:
    ```bash
-   curl -i https://mcp.wpistic.cloud/mcp
+   curl -i https://mcp.bridgistic.app/mcp
    ```
    A `401`/`426`/JSON-RPC-shaped response means it's reachable and answering as an MCP endpoint. A
    TLS/DNS failure means the route or zone isn't attached yet — check
@@ -113,5 +113,5 @@ operational logging. What's left:
 
 WP Admin → **Bridgistic Cloud** shows the connector URL and the same steps as below. To try it
 with Claude's remote connector directly: Settings → Connectors → Add custom connector →
-`https://mcp.wpistic.cloud/mcp` → approve in your own WP admin when prompted. See
+`https://mcp.bridgistic.app/mcp` → approve in your own WP admin when prompted. See
 [CHATGPT_SETUP.md](CHATGPT_SETUP.md) for the ChatGPT-specific flow.

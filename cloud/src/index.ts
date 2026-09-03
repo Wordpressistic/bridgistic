@@ -7,7 +7,7 @@ import { hashIdentifier, logEvent, newRequestId } from "./observability.js";
 export { BridgisticMcpAgent };
 
 /**
- * mcp.wpistic.cloud entry point. This Worker is simultaneously:
+ * mcp.bridgistic.app entry point. This Worker is simultaneously:
  *  - an OAuth 2.1 *server* to the AI client (Claude, ChatGPT, ...), handled
  *    by OAuthProvider itself (token/registration/metadata endpoints, PKCE,
  *    grant storage in OAUTH_KV);

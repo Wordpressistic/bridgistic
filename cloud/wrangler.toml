@@ -7,6 +7,7 @@ compatibility_flags = ["nodejs_compat"]
 # routes to this Worker. Verify the DNS route is active in the dashboard if
 # requests to it don't reach this Worker.
 routes = [
+  { pattern = "mcp.bridgistic.app/*", zone_name = "bridgistic.app" },
   { pattern = "mcp.wpistic.cloud/*", zone_name = "wpistic.cloud" }
 ]
 

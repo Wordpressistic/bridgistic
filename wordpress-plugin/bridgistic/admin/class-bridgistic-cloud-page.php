@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class CloudPage extends Page {
 
 	/** The one fixed connector URL every site's AI client points at. */
-	public const CONNECTOR_URL = 'https://mcp.wpistic.cloud/mcp';
+	public const CONNECTOR_URL = 'https://mcp.bridgistic.app/mcp';
 
 	protected function view(): string {
 		return 'cloud';

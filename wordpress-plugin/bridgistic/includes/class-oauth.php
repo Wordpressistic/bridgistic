@@ -45,7 +45,7 @@ final class Oauth {
 	public const CLIENT_ID = 'bridgistic-cloud';
 
 	/** Hosts an authorize redirect_uri is allowed to point at. */
-	private const ALLOWED_REDIRECT_HOSTS = array( 'mcp.wpistic.cloud' );
+	private const ALLOWED_REDIRECT_HOSTS = array( 'mcp.bridgistic.app', 'mcp.wpistic.cloud' );
 
 	/** Authorization codes expire quickly and are single-use. */
 	private const CODE_TTL = 300;
@@ -65,8 +65,8 @@ final class Oauth {
 	 * Validate a redirect_uri against the allowed cloud connector host(s).
 	 * https-only; exact host match (no subdomain wildcards).
 	 *
-	 * Rejects embedded credentials and any explicit port: `https://user:pw@mcp.wpistic.cloud`
-	 * and `https://mcp.wpistic.cloud:8443` both carry the allowed host but are
+	 * Rejects embedded credentials and any explicit port: `https://user:pw@mcp.bridgistic.app`
+	 * and `https://mcp.bridgistic.app:8443` both carry the allowed host but are
 	 * not the connector, and a userinfo segment is a classic way to make a
 	 * hostile origin read like an allowed one in a URL bar.
 	 */
@@ -187,7 +187,7 @@ final class Oauth {
 
 		$scopes  = Scopes::sanitize( (array) $data['scopes'] );
 		$created = KeyStore::create(
-			'Cloud connector - mcp.wpistic.cloud',
+			'Cloud connector',
 			$scopes,
 			array(),
 			120,

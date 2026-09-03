@@ -149,7 +149,7 @@ describe("OAuth flow: GET /authorize", () => {
 
   test("stores the parsed auth request in KV and returns the site-URL form", async () => {
     const { env, kv } = fakeEnv();
-    const res = await defaultHandler.fetch(new Request("https://mcp.wpistic.cloud/authorize"), env as never, {} as ExecutionContext);
+    const res = await defaultHandler.fetch(new Request("https://mcp.bridgistic.app/authorize"), env as never, {} as ExecutionContext);
     assert.equal(res.status, 200);
     const body = await res.text();
     assert.match(body, /Connect your WordPress site/);
@@ -166,7 +166,7 @@ describe("OAuth flow: POST /authorize", () => {
     const { env } = fakeEnv();
     const form = new URLSearchParams({ flow_id: "does-not-exist", site_url: "https://example.com" });
     const res = await defaultHandler.fetch(
-      new Request("https://mcp.wpistic.cloud/authorize", { method: "POST", body: form }),
+      new Request("https://mcp.bridgistic.app/authorize", { method: "POST", body: form }),
       env as never,
       {} as ExecutionContext
     );
@@ -176,13 +176,13 @@ describe("OAuth flow: POST /authorize", () => {
 
   test("rejects a non-https site URL and re-shows the form with an error", async () => {
     const { env } = fakeEnv();
-    const getRes = await defaultHandler.fetch(new Request("https://mcp.wpistic.cloud/authorize"), env as never, {} as ExecutionContext);
+    const getRes = await defaultHandler.fetch(new Request("https://mcp.bridgistic.app/authorize"), env as never, {} as ExecutionContext);
     const flowId = (await getRes.text()).match(/name="flow_id" value="([^"]+)"/)?.[1];
     assert.ok(flowId);
 
     const form = new URLSearchParams({ flow_id: flowId!, site_url: "http://example.com" });
     const res = await defaultHandler.fetch(
-      new Request("https://mcp.wpistic.cloud/authorize", { method: "POST", body: form }),
+      new Request("https://mcp.bridgistic.app/authorize", { method: "POST", body: form }),
       env as never,
       {} as ExecutionContext
     );
@@ -192,12 +192,12 @@ describe("OAuth flow: POST /authorize", () => {
 
   test("valid site URL redirects to that site's WP admin consent screen and stores wpstate", async () => {
     const { env, kv } = fakeEnv();
-    const getRes = await defaultHandler.fetch(new Request("https://mcp.wpistic.cloud/authorize"), env as never, {} as ExecutionContext);
+    const getRes = await defaultHandler.fetch(new Request("https://mcp.bridgistic.app/authorize"), env as never, {} as ExecutionContext);
     const flowId = (await getRes.text()).match(/name="flow_id" value="([^"]+)"/)?.[1]!;
 
     const form = new URLSearchParams({ flow_id: flowId, site_url: "https://example.com" });
     const res = await defaultHandler.fetch(
-      new Request("https://mcp.wpistic.cloud/authorize", { method: "POST", body: form, redirect: "manual" }),
+      new Request("https://mcp.bridgistic.app/authorize", { method: "POST", body: form, redirect: "manual" }),
       env as never,
       {} as ExecutionContext
     );
@@ -227,11 +227,11 @@ describe("OAuth flow: GET /wp-callback (full happy path)", () => {
 
   /** Drives GET /authorize -> POST /authorize to get to a valid wp-callback URL, without asserting on those steps. */
   async function driveToWpCallback(env: ReturnType<typeof fakeEnv>["env"]) {
-    const getRes = await defaultHandler.fetch(new Request("https://mcp.wpistic.cloud/authorize"), env as never, {} as ExecutionContext);
+    const getRes = await defaultHandler.fetch(new Request("https://mcp.bridgistic.app/authorize"), env as never, {} as ExecutionContext);
     const flowId = (await getRes.text()).match(/name="flow_id" value="([^"]+)"/)?.[1]!;
     const form = new URLSearchParams({ flow_id: flowId, site_url: "https://example.com" });
     const postRes = await defaultHandler.fetch(
-      new Request("https://mcp.wpistic.cloud/authorize", { method: "POST", body: form, redirect: "manual" }),
+      new Request("https://mcp.bridgistic.app/authorize", { method: "POST", body: form, redirect: "manual" }),
       env as never,
       {} as ExecutionContext
     );
@@ -250,7 +250,7 @@ describe("OAuth flow: GET /wp-callback (full happy path)", () => {
     const redirectedTo = await driveToWpCallback(env);
     const wpState = redirectedTo.searchParams.get("state")!;
 
-    const callbackUrl = `https://mcp.wpistic.cloud/wp-callback?code=wp-auth-code&state=${wpState}`;
+    const callbackUrl = `https://mcp.bridgistic.app/wp-callback?code=wp-auth-code&state=${wpState}`;
     const res = await defaultHandler.fetch(new Request(callbackUrl, { redirect: "manual" }), env as never, {} as ExecutionContext);
 
     assert.equal(res.status, 302);
@@ -283,7 +283,7 @@ describe("OAuth flow: GET /wp-callback (full happy path)", () => {
     const redirectedTo = await driveToWpCallback(env);
     const wpState = redirectedTo.searchParams.get("state")!;
 
-    const callbackUrl = `https://mcp.wpistic.cloud/wp-callback?error=access_denied&state=${wpState}`;
+    const callbackUrl = `https://mcp.bridgistic.app/wp-callback?error=access_denied&state=${wpState}`;
     const res = await defaultHandler.fetch(new Request(callbackUrl, { redirect: "manual" }), env as never, {} as ExecutionContext);
 
     assert.equal(res.status, 302);
@@ -299,7 +299,7 @@ describe("OAuth flow: GET /wp-callback (full happy path)", () => {
   test("rejects a wp-callback with an unknown/reused state", async () => {
     const { env } = fakeEnv();
     const res = await defaultHandler.fetch(
-      new Request("https://mcp.wpistic.cloud/wp-callback?code=x&state=never-issued", { redirect: "manual" }),
+      new Request("https://mcp.bridgistic.app/wp-callback?code=x&state=never-issued", { redirect: "manual" }),
       env as never,
       {} as ExecutionContext
     );
@@ -312,7 +312,7 @@ describe("OAuth flow: GET /wp-callback (full happy path)", () => {
     stubFetchForWpTokenExchange({ site_url: "https://example.com", key_id: "k1", key_secret: "s1", scopes: ["read"] });
     const redirectedTo = await driveToWpCallback(env);
     const wpState = redirectedTo.searchParams.get("state")!;
-    const callbackUrl = `https://mcp.wpistic.cloud/wp-callback?code=wp-auth-code&state=${wpState}`;
+    const callbackUrl = `https://mcp.bridgistic.app/wp-callback?code=wp-auth-code&state=${wpState}`;
 
     const first = await defaultHandler.fetch(new Request(callbackUrl, { redirect: "manual" }), env as never, {} as ExecutionContext);
     assert.equal(first.status, 302);
@@ -328,7 +328,7 @@ describe("OAuth flow: GET /wp-callback (full happy path)", () => {
 
     const redirectedTo = await driveToWpCallback(env);
     const wpState = redirectedTo.searchParams.get("state")!;
-    const callbackUrl = `https://mcp.wpistic.cloud/wp-callback?code=wp-auth-code&state=${wpState}`;
+    const callbackUrl = `https://mcp.bridgistic.app/wp-callback?code=wp-auth-code&state=${wpState}`;
 
     const res = await defaultHandler.fetch(new Request(callbackUrl, { redirect: "manual" }), env as never, {} as ExecutionContext);
     assert.equal(res.status, 502);
@@ -341,7 +341,7 @@ describe("OAuth flow: GET /wp-callback (full happy path)", () => {
 describe("OAuth flow: unrecognized routes", () => {
   test("returns 404 for anything that isn't /authorize or /wp-callback", async () => {
     const { env } = fakeEnv();
-    const res = await defaultHandler.fetch(new Request("https://mcp.wpistic.cloud/nope"), env as never, {} as ExecutionContext);
+    const res = await defaultHandler.fetch(new Request("https://mcp.bridgistic.app/nope"), env as never, {} as ExecutionContext);
     assert.equal(res.status, 404);
   });
 });

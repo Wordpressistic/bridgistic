@@ -85,7 +85,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php if ( $data['error'] ) : ?>
 			<p class="bridgistic-consent-error"><?php echo esc_html( (string) $data['error'] ); ?></p>
 		<?php else : ?>
-			<p class="lead"><?php esc_html_e( 'The Bridgistic cloud connector (mcp.wpistic.cloud) is asking to control this site through your AI assistant. Choose what it can do, then allow or deny.', 'bridgistic' ); ?></p>
+			<p class="lead"><?php esc_html_e( 'The Bridgistic cloud connector is asking to control this site through your AI assistant. Choose what it can do, then allow or deny.', 'bridgistic' ); ?></p>
 
 			<div class="bridgistic-consent-beta">
 				<?php echo Page::icon( 'warn', 15 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>

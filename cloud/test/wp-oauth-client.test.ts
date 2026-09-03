@@ -17,13 +17,13 @@ import { buildWpAuthorizeUrl, exchangeWpCode } from "../src/wp-oauth-client.js";
 describe("buildWpAuthorizeUrl", () => {
   test("builds the WP admin consent-screen URL with all required query params", () => {
     const url = new URL(
-      buildWpAuthorizeUrl("https://example.com", "https://mcp.wpistic.cloud/wp-callback", "challenge-abc", "state-xyz")
+      buildWpAuthorizeUrl("https://example.com", "https://mcp.bridgistic.app/wp-callback", "challenge-abc", "state-xyz")
     );
     assert.equal(url.origin, "https://example.com");
     assert.equal(url.pathname, "/wp-admin/admin.php");
     assert.equal(url.searchParams.get("page"), "bridgistic-oauth-authorize");
     assert.equal(url.searchParams.get("client_id"), "bridgistic-cloud");
-    assert.equal(url.searchParams.get("redirect_uri"), "https://mcp.wpistic.cloud/wp-callback");
+    assert.equal(url.searchParams.get("redirect_uri"), "https://mcp.bridgistic.app/wp-callback");
     assert.equal(url.searchParams.get("code_challenge"), "challenge-abc");
     assert.equal(url.searchParams.get("code_challenge_method"), "S256");
     assert.equal(url.searchParams.get("state"), "state-xyz");
@@ -42,7 +42,7 @@ describe("buildWpAuthorizeUrl", () => {
 
   test("round-trips special characters in state/redirect_uri via proper URL encoding", () => {
     const state = "a b&c=d";
-    const redirectUri = "https://mcp.wpistic.cloud/wp-callback?x=1&y=2";
+    const redirectUri = "https://mcp.bridgistic.app/wp-callback?x=1&y=2";
     const url = new URL(buildWpAuthorizeUrl("https://example.com", redirectUri, "chal", state));
     // searchParams getters decode automatically - round trip proves encoding was correct.
     assert.equal(url.searchParams.get("state"), state);

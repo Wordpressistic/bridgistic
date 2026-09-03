@@ -19,7 +19,7 @@ use Bridgistic\Security\Scopes;
 
 bridgistic_suite( 'oauth' );
 
-const VALID_REDIRECT = 'https://mcp.wpistic.cloud/wp-callback';
+const VALID_REDIRECT = 'https://mcp.bridgistic.app/wp-callback';
 
 // ---- 1. redirect_uri allowlist ---------------------------------------------
 
@@ -28,10 +28,10 @@ check( Oauth::redirect_uri_allowed( VALID_REDIRECT ), 'the official connector ca
 $rejected_redirects = array(
 	'http://mcp.wpistic.cloud/wp-callback'            => 'plain http',
 	'https://evil.example/wp-callback'                => 'a different host',
-	'https://mcp.wpistic.cloud.evil.example/wp-callback' => 'a suffix-extended host',
-	'https://evil.example/?x=https://mcp.wpistic.cloud/wp-callback' => 'the allowed host in a query string',
-	'https://user:pass@mcp.wpistic.cloud/wp-callback' => 'embedded credentials',
-	'https://mcp.wpistic.cloud:8443/wp-callback'      => 'a non-default port',
+	'https://mcp.bridgistic.app.evil.example/wp-callback' => 'a suffix-extended host',
+	'https://evil.example/?x=https://mcp.bridgistic.app/wp-callback' => 'the allowed host in a query string',
+	'https://user:pass@mcp.bridgistic.app/wp-callback' => 'embedded credentials',
+	'https://mcp.bridgistic.app:8443/wp-callback'      => 'a non-default port',
 	'https://mcp.wpistic.cloud/somewhere-else'        => 'a different path on the allowed host',
 	'https://mcp.wpistic.cloud'                       => 'no callback path',
 	'//mcp.wpistic.cloud/wp-callback'                 => 'a scheme-relative URL',
