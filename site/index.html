@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bridgistic — Connect WordPress to Any AI</title>
+<meta name="description" content="Connect your WordPress site to any AI model — Claude, ChatGPT, Codex, Gemini, Cursor, any MCP client — with signed requests, scoped keys, approvals, snapshots and full audit. Free core, paid plans under the WPistic licensing system.">
+<link rel="canonical" href="https://bridgistic.app/">
+<meta property="og:title" content="Bridgistic — Connect WordPress to Any AI">
+<meta property="og:description" content="One bridge, any AI model. Production-safe AI control for WordPress.">
+<meta property="og:url" content="https://bridgistic.app/">
+<meta property="og:type" content="website">
+<style>
+:root{
+  --ink:#0b1220;--ink2:#101a2e;--card:#141f36;--line:rgba(148,163,184,.16);
+  --txt:#e6edf7;--mut:#94a3b8;--acc:#34d399;--acc2:#22d3ee;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--ink);color:var(--txt)}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(11,18,32,.85);backdrop-filter:blur(8px);z-index:9}
+nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-weight:800;font-size:20px;color:var(--txt);letter-spacing:.2px}
+.logo span{color:var(--acc)}
+nav .links{display:flex;gap:22px;font-size:14.5px}
+nav .links a{color:var(--mut)}
+nav .links a:hover{color:var(--txt);text-decoration:none}
+.btn{display:inline-block;padding:11px 20px;border-radius:10px;font-weight:600;font-size:15px;transition:.15s}
+.btn-p{background:var(--acc);color:#05261a}
+.btn-p:hover{filter:brightness(1.08);text-decoration:none}
+.btn-g{border:1px solid var(--line);color:var(--txt)}
+.btn-g:hover{border-color:var(--acc);text-decoration:none}
+.hero{padding:96px 0 72px;text-align:center;background:radial-gradient(60% 55% at 50% 0%,rgba(52,211,153,.13),transparent 70%)}
+.hero h1{font-size:clamp(34px,5.4vw,56px);line-height:1.12;font-weight:800;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:720px;margin:22px auto 0;font-size:18.5px;color:var(--mut)}
+.hero .cta{margin-top:34px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:38px}
+.chip{border:1px solid var(--line);background:var(--ink2);border-radius:999px;padding:7px 16px;font-size:13.5px;color:var(--mut)}
+section{padding:72px 0}
+h2{font-size:clamp(26px,3.4vw,36px);font-weight:800;letter-spacing:-.01em;text-align:center;margin-bottom:14px}
+.sub{text-align:center;color:var(--mut);max-width:640px;margin:0 auto 44px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px}
+.card h3{font-size:17px;margin-bottom:8px}
+.card p{color:var(--mut);font-size:14.5px}
+.card .ic{font-size:22px;margin-bottom:12px;display:block}
+.tblwrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:14.5px;min-width:640px}
+th,td{padding:13px 16px;text-align:center;border-bottom:1px solid var(--line)}
+th{background:var(--ink2);font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+td:first-child,th:first-child{text-align:left}
+.yes{color:var(--acc);font-weight:700}
+.no{color:#475569}
+.plan-note{text-align:center;color:var(--mut);font-size:13.5px;margin-top:18px}
+.steps{counter-reset:s;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px;position:relative;counter-increment:s}
+.step::before{content:counter(s);position:absolute;top:-14px;left:22px;background:var(--acc);color:#05261a;font-weight:800;border-radius:8px;padding:2px 11px;font-size:14px}
+.step h3{margin:8px 0 8px;font-size:16.5px}
+.step p{color:var(--mut);font-size:14.5px}
+.step code{display:block;margin-top:12px;background:#0a1120;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12.8px;color:var(--acc2);overflow-x:auto;white-space:nowrap}
+footer{border-top:1px solid var(--line);padding:36px 0;color:var(--mut);font-size:13.5px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.08em;border:1px solid var(--line);color:var(--acc);border-radius:6px;padding:2px 8px;margin-left:10px;vertical-align:middle}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="logo">Bridg<span>istic</span></div>
+      <div class="links">
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#install">Install</a>
+        <a href="https://github.com/Wordpressistic/bridgistic" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <a class="btn btn-p" href="#install">Get Started Free</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <h1>Connect your WordPress site<br>to <em>any AI model</em></h1>
+    <p>Bridgistic is one secure bridge between your WordPress site and Claude, ChatGPT, OpenAI Codex, Gemini, Cursor — or any MCP client. No full-admin passwords. Every action signed, scoped, approved and reversible.</p>
+    <div class="cta">
+      <a class="btn btn-p" href="https://github.com/Wordpressistic/bridgistic/releases/latest" target="_blank" rel="noopener">Download Free</a>
+      <a class="btn btn-g" href="#install">3-Minute Setup</a>
+    </div>
+    <div class="chips">
+      <span class="chip">Claude Desktop</span><span class="chip">Claude Code</span><span class="chip">ChatGPT</span>
+      <span class="chip">Codex CLI</span><span class="chip">Gemini CLI</span><span class="chip">Cursor</span><span class="chip">Any MCP client</span>
+    </div>
+  </div>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <h2>Production-safe by default</h2>
+    <p class="sub">Handing an AI agent a full-admin Application Password and hoping for the best is not a strategy. Bridgistic replaces hope with hard guarantees.</p>
+    <div class="grid">
+      <div class="card"><span class="ic">🔐</span><h3>Scoped, signed keys</h3><p>HMAC-signed requests with least-privilege scopes. Start read-only, widen as you build trust.</p></div>
+      <div class="card"><span class="ic">🧭</span><h3>Dry-run &amp; approvals</h3><p>Preview destructive actions before they run; hold them for human approval when you want.</p></div>
+      <div class="card"><span class="ic">📸</span><h3>Snapshots &amp; rollback</h3><p>Automatic snapshot before every destructive write — any change is one call away from undo.</p></div>
+      <div class="card"><span class="ic">📜</span><h3>Full audit log</h3><p>Every request by every key is logged. Per-key rate limits and usage metering included.</p></div>
+      <div class="card"><span class="ic">♻️</span><h3>Playbooks &amp; schedules</h3><p>Reusable, parameterised playbooks that run unattended on a schedule.</p></div>
+      <div class="card"><span class="ic">🛡️</span><h3>Hard PHP sandbox</h3><p>Executable PHP can only land in one quarantined directory. WordPress autoload paths stay off-limits.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" style="background:var(--ink2)">
+  <div class="wrap">
+    <h2>Free core. Paid power.</h2>
+    <p class="sub">The full secure bridge — connecting any AI, keys, approvals, audit, snapshots, manual playbooks — is free forever. Paid plans unlock scale, under the WPistic licensing system.</p>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>Feature</th><th>Free</th><th>Starter</th><th>Pro</th><th>Agency</th></tr></thead>
+        <tbody>
+          <tr><td>Connect any AI client (Claude, ChatGPT, Codex, Gemini, Cursor, MCP…)</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>HMAC keys, scopes, approvals, audit, snapshots</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Scheduled playbooks</td><td>3</td><td class="yes">Unlimited</td><td class="yes">Unlimited</td><td class="yes">Unlimited</td></tr>
+          <tr><td>Advanced snapshots (retention, history)</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Audit export &amp; analytics</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>AI skills marketplace (SEO, schema, audits)</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Agency dashboard — many sites</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+          <tr><td>Team permissions</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+          <tr><td>White-label</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="plan-note">Activate a license key in <strong>Bridgistic → License</strong> inside WP Admin. Get a key at <a href="https://wpistic.com/pricing" target="_blank" rel="noopener">wpistic.com/pricing</a>. 7-day offline grace — your site never breaks because a license server is down.</p>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>Live in 3 minutes</h2>
+    <p class="sub">No terminal required for Claude Desktop. The setup wizard generates every config for every AI client.</p>
+    <div class="steps">
+      <div class="step"><h3>Install the plugin</h3><p>Upload the zip via <strong>Plugins → Add New → Upload</strong> and activate.</p><code>bridgistic-wordpress-plugin-1.3.0.zip</code></div>
+      <div class="step"><h3>Mint a key</h3><p>Open <strong>Bridgistic → AI / MCP Connections</strong>, pick your client and a permission preset (start read-only). The secret is shown once.</p></div>
+      <div class="step"><h3>Connect your AI</h3><p>Double-click the generated desktop extension, or paste the generated config into Claude Code, Codex, Gemini or Cursor.</p></div>
+    </div>
+    <p style="text-align:center;margin-top:38px"><a class="btn btn-p" href="https://github.com/Wordpressistic/bridgistic/releases/latest" target="_blank" rel="noopener">Download from GitHub</a>&nbsp;&nbsp;<a class="btn btn-g" href="https://github.com/Wordpressistic/bridgistic#readme" target="_blank" rel="noopener">Read the docs</a></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 WordPressistic LLC · Bridgistic is GPL-2.0-or-later · Part of the <a href="https://wpistic.com" target="_blank" rel="noopener">WPistic</a> galaxy</div>
+    <div><a href="https://github.com/Wordpressistic/bridgistic" target="_blank" rel="noopener">GitHub</a> · <a href="https://wpistic.com/pricing" target="_blank" rel="noopener">Pricing</a> · <a href="https://github.com/Wordpressistic/bridgistic/issues" target="_blank" rel="noopener">Support</a></div>
+  </div>
+</footer>
+</body>
+</html>
