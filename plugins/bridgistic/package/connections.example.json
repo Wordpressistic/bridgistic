@@ -1,0 +1,12 @@
+{
+  "my-blog": {
+    "siteUrl": "https://blog.example.com",
+    "keyId": "wpk_xxxxxxxxxxxxxxxxxxxxxxxx",
+    "secret": "wps_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  "my-shop": {
+    "siteUrl": "https://shop.example.com",
+    "keyId": "wpk_yyyyyyyyyyyyyyyyyyyyyyyy",
+    "secret": "wps_yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"
+  }
+}

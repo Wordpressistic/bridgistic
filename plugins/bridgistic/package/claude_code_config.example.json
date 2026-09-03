@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "bridgistic": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/bridgistic-claude-marketplace/mcp-server/dist/index.js"
+      ],
+      "env": {
+        "BRIDGISTIC_SITE_URL": "https://example.com",
+        "BRIDGISTIC_KEY_ID": "your_key_id",
+        "BRIDGISTIC_KEY_SECRET": "your_key_secret"
+      }
+    }
+  }
+}

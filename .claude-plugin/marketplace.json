@@ -1,0 +1,19 @@
+{
+  "name": "bridgistic-marketplace",
+  "description": "Claude Code marketplace for Bridgistic, a free WordPress MCP connector for safely connecting Claude to WordPress websites.",
+  "owner": {
+    "name": "WordPressistic",
+    "email": "support@wordpressistic.com"
+  },
+  "plugins": [
+    {
+      "name": "bridgistic",
+      "source": "./plugins/bridgistic",
+      "description": "Connect Claude Code to WordPress through the Bridgistic MCP server.",
+      "version": "1.3.0",
+      "author": {
+        "name": "WordPressistic"
+      }
+    }
+  ]
+}

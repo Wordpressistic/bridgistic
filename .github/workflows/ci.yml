@@ -1,0 +1,212 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A second push to the same PR makes the first run's answer irrelevant.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Node: MCP server, cloud Worker, packaging, and the shipped-bundle smoke test.
+  # ---------------------------------------------------------------------------
+  node:
+    name: MCP server, cloud, packaging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          # Both subprojects carry a lockfile, so restore their caches by it.
+          cache: npm
+          cache-dependency-path: |
+            mcp-server/package-lock.json
+            cloud/package-lock.json
+
+      # npm ci, never npm install: a resolved-at-CI-time dependency tree means
+      # the thing that passed is not necessarily the thing that ships.
+      - name: Install (deterministic)
+        run: |
+          cd mcp-server && npm ci --no-audit --no-fund
+          cd ../cloud && npm ci --no-audit --no-fund
+
+      - name: Build MCP server + shipped bundle
+        run: npm run build:ci
+
+      - name: MCP server tests (contract + integration)
+        run: npm test
+
+      # Mandatory: users receive plugins/bridgistic/server/index.js, not
+      # mcp-server/dist/index.js. This spawns the actual shipped artifact,
+      # completes an MCP handshake, and fails if the committed bundle differs
+      # from a clean rebuild.
+      - name: Shipped bundle smoke test
+        run: npm run test:bundle
+
+      - name: Cloud Worker typecheck
+        run: npm --prefix cloud run typecheck
+
+      - name: Cloud Worker tests
+        run: npm run test:cloud
+
+      - name: Cloud / MCP server tool drift check
+        run: npm run check:cloud-drift
+
+      - name: Marketplace validation, version consistency, secret scan
+        run: npm run validate
+
+      - name: Build distribution packages
+        run: npm run package
+
+      - name: Build Claude Desktop extension (.mcpb)
+        run: npm run desktop:package
+
+      - name: Verify package structure
+        run: node scripts/verify-packages.js
+
+  # ---------------------------------------------------------------------------
+  # PHP: lint plus the behavioural suite, across the supported version range.
+  #
+  # Testing only the newest PHP would let a syntax or behaviour change that
+  # breaks the documented 8.0 floor ship silently, and the plugin header
+  # promises 8.0.
+  # ---------------------------------------------------------------------------
+  php:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 8.0 is the documented minimum (bridgistic.php "Requires PHP");
+        # 8.3 is a current stable release.
+        php: ["8.0", "8.3"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          # sqlite3/pdo_sqlite back the test harness's $wpdb; zip and sodium
+          # are used by the export packager and secret encryption.
+          extensions: mbstring, sqlite3, pdo_sqlite, zip, sodium, openssl
+          coverage: none
+
+      - name: PHP lint
+        run: npm run lint:php
+
+      # A syntax lint proves the file parses, not that authentication works.
+      # This runs the real HMAC, OAuth/PKCE, SQL classification, filesystem
+      # containment, scope, and config-generation logic.
+      - name: PHP behavioural tests
+        run: npm run test:php
+
+  # ---------------------------------------------------------------------------
+  # The WordPress plugin ZIP must install and activate, not merely build.
+  # ---------------------------------------------------------------------------
+  wordpress-activation:
+    name: Plugin ZIP installs and activates (WP ${{ matrix.wordpress }})
+    runs-on: ubuntu-latest
+    needs: node
+    strategy:
+      fail-fast: false
+      matrix:
+        # Current stable and the previous branch. Resolved by wp-cli at run
+        # time rather than pinned, so this does not silently test a version
+        # nobody runs any more.
+        wordpress: ["latest", "6.7"]
+    services:
+      mysql:
+        image: mariadb:11
+        env:
+          MARIADB_ROOT_PASSWORD: wordpress
+          MARIADB_DATABASE: wordpress
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s --health-timeout=5s --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, mysqli, zip, sodium, openssl, gd
+          coverage: none
+
+      - name: Build the plugin ZIP
+        run: |
+          cd mcp-server && npm ci --no-audit --no-fund && cd ..
+          npm run build:ci
+          npm run package
+
+      - name: Install WP-CLI
+        run: |
+          curl -sSLo wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          chmod +x wp && sudo mv wp /usr/local/bin/wp
+          wp --info --allow-root
+
+      - name: Install WordPress
+        run: |
+          mkdir -p /tmp/wp && cd /tmp/wp
+          wp core download --version=${{ matrix.wordpress }} --allow-root
+          wp config create --dbname=wordpress --dbuser=root --dbpass=wordpress \
+            --dbhost=127.0.0.1 --allow-root
+          wp core install --url=http://localhost --title=CI \
+            --admin_user=admin --admin_password=ci-password \
+            --admin_email=ci@example.com --skip-email --allow-root
+
+      # Installing from the built ZIP rather than symlinking the source tree is
+      # the point: it proves the archive has the right root folder, carries
+      # every file activation needs, and does not fatal.
+      - name: Install and activate the built plugin ZIP
+        run: |
+          cd /tmp/wp
+          wp plugin install "$GITHUB_WORKSPACE/dist/bridgistic-wordpress-plugin.zip" --activate --allow-root
+          wp plugin list --allow-root
+
+      - name: Assert the plugin is active and reports the right version
+        run: |
+          cd /tmp/wp
+          STATUS=$(wp plugin get bridgistic --field=status --allow-root)
+          [ "$STATUS" = "active" ] || { echo "::error::plugin status is $STATUS"; exit 1; }
+          EXPECTED=$(node -p "require('$GITHUB_WORKSPACE/package.json').version")
+          HAVE=$(wp plugin get bridgistic --field=version --allow-root)
+          [ "$HAVE" = "$EXPECTED" ] || { echo "::error::plugin reports $HAVE, expected $EXPECTED"; exit 1; }
+          echo "bridgistic $HAVE active on WordPress $(wp core version --allow-root)"
+
+      # Activation creating its tables is what everything else depends on, and
+      # a silent dbDelta failure would otherwise only surface on first use.
+      - name: Assert activation created the custom tables
+        run: |
+          cd /tmp/wp
+          for table in keys audit approvals snapshots; do
+            wp db query "SELECT 1 FROM wp_bridgistic_${table} LIMIT 1" --allow-root \
+              || { echo "::error::wp_bridgistic_${table} missing after activation"; exit 1; }
+          done
+          echo "All Bridgistic tables present."
+
+      - name: Assert the REST namespace is registered
+        run: |
+          cd /tmp/wp
+          wp eval 'do_action("rest_api_init"); $r = rest_get_server()->get_routes();
+            $found = array_filter(array_keys($r), fn($x) => str_starts_with($x, "/bridgistic/v1"));
+            if (count($found) < 10) { echo "only " . count($found) . " routes\n"; exit(1); }
+            echo count($found) . " Bridgistic REST routes registered\n";' --allow-root
+
+      - name: Assert no PHP errors were emitted during activation
+        run: |
+          cd /tmp/wp
+          wp eval 'echo "boot clean\n";' --allow-root 2>&1 | tee /tmp/boot.log
+          if grep -qiE "(fatal error|parse error|warning:|deprecated:)" /tmp/boot.log; then
+            echo "::error::PHP errors during boot"; cat /tmp/boot.log; exit 1
+          fi

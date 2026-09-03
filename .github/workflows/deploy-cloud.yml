@@ -1,0 +1,92 @@
+name: Deploy Cloud Worker
+
+# Deploys the cloud/ Cloudflare Worker (mcp.wpistic.cloud) - the hosted,
+# multi-tenant MCP relay for Bridgistic. The Worker ("bridgistic-cloud"),
+# its D1 database ("bridgistic-cloud"), and its KV namespace ("OAUTH_KV")
+# are already provisioned manually on Cloudflare, and cloud/wrangler.toml
+# already has the real resource IDs filled in. This workflow only ships new
+# Worker code via `wrangler deploy` - it does not create or modify any
+# Cloudflare infrastructure.
+#
+# Requires two repo secrets, added by a repo admin under:
+#   Settings -> Secrets and variables -> Actions
+#
+#   CLOUDFLARE_API_TOKEN   A Cloudflare API token scoped at minimum to:
+#                            - Account / Workers Scripts: Edit
+#                            - Account / Workers KV Storage: Edit
+#                            - Account / D1: Edit
+#                          Create one at
+#                          https://dash.cloudflare.com/profile/api-tokens
+#                          (the "Edit Cloudflare Workers" template is a
+#                          reasonable starting point) and confirm it covers
+#                          the scopes above.
+#   CLOUDFLARE_ACCOUNT_ID  The Cloudflare account ID that owns the Worker.
+#
+# Until both secrets are added, this workflow is a safe no-op: it still
+# checks out the code, installs deps, typechecks, and runs cloud's test
+# suite (if one exists yet), but the actual deploy step is skipped with a
+# ::notice:: instead of failing the run.
+#
+# This deployment is intentionally being kept low-key (not yet publicly
+# announced), so it is NOT triggered automatically on every push to main.
+# Run it manually via Actions -> Deploy Cloud Worker -> "Run workflow", or
+# by pushing a cloud-v* tag, e.g.:
+#   git tag cloud-v0.1.0 && git push origin cloud-v0.1.0
+#
+# Deliberately independent of ci.yml and release.yml: it is not `needs:`-ed
+# by either, and neither depends on it, so it can never block normal PR/CI
+# runs or the main npm/GitHub release process.
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["cloud-v*"]
+
+jobs:
+  deploy-cloud:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cloud
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test (if cloud/ has a test script)
+        run: |
+          if node -e "process.exit(require('./package.json').scripts && require('./package.json').scripts.test ? 0 : 1)"; then
+            npm test
+          else
+            echo "::notice::cloud/package.json has no 'test' script yet - skipping test gate for this run."
+          fi
+
+      - name: Check for Cloudflare deploy secrets
+        id: cf-secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::notice::CLOUDFLARE_API_TOKEN and/or CLOUDFLARE_ACCOUNT_ID repo secret not set - skipping cloud/ Worker deploy (safe no-op). A repo admin can add both under Settings -> Secrets and variables -> Actions to enable deployment."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy to Cloudflare Workers
+        if: steps.cf-secrets.outputs.deploy == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: cloud
+          command: deploy

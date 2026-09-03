@@ -1,0 +1,44 @@
+{
+  "name": "bridgistic-claude-marketplace",
+  "version": "1.3.0",
+  "description": "Free public distribution of Bridgistic: Claude Code marketplace, Claude Desktop setup package, WordPress plugin, and local MCP server for safely connecting Claude to WordPress.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "bootstrap": "cd mcp-server && npm ci --no-audit --no-fund && cd ../cloud && npm ci --no-audit --no-fund",
+    "build": "npm --prefix mcp-server install --no-audit --no-fund && npm --prefix mcp-server run build && npm --prefix mcp-server run bundle",
+    "build:ci": "npm --prefix mcp-server run build && npm --prefix mcp-server run bundle",
+    "validate": "node scripts/validate-marketplace.js",
+    "check:cloud-drift": "node scripts/check-cloud-tools-drift.js",
+    "package": "node scripts/build-package.js",
+    "desktop:package": "node scripts/create-desktop-package.js",
+    "release": "node scripts/build-release.js",
+    "test": "npm --prefix mcp-server test",
+    "test:php": "php wordpress-plugin/bridgistic/tests/run-all.php",
+    "test:cloud": "npm --prefix cloud test",
+    "test:bundle": "node scripts/smoke-test-bundle.js",
+    "lint:php": "node scripts/php-lint.js",
+    "test:all": "npm test && npm run test:php && npm run test:cloud && npm run test:bundle"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "author": "WordPressistic",
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://github.com/wordpressistic/bridgistic",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wordpressistic/bridgistic.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wordpressistic/bridgistic/issues"
+  },
+  "keywords": [
+    "mcp",
+    "claude",
+    "claude-code",
+    "wordpress",
+    "model-context-protocol",
+    "wordpressistic"
+  ]
+}

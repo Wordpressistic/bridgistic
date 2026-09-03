@@ -1,0 +1,300 @@
+name: Release
+
+# Staged release. The ordering exists to prevent one specific failure: publishing
+# a public GitHub release, then discovering npm or the MCP Registry cannot accept
+# the same version — at which point retrying means either republishing different
+# bytes under a version that is already public, or abandoning the version.
+#
+#   Phase A  preflight   — every gate that can fail, fails here, before anything
+#                          is public. Includes checking npm auth and whether the
+#                          version already exists.
+#   Phase B  build once  — all artifacts from one commit, into one directory,
+#                          verified and checksummed. Nothing is rebuilt later.
+#   Phase C  publish     — npm first (the only irreversible step), then the MCP
+#                          Registry, then the GitHub release. A GitHub release is
+#                          editable; an npm version is not, so npm goes first.
+#
+# Two ways to trigger:
+#   - push a tag:  git tag v1.2.0 && git push origin v1.2.0
+#   - Actions → Release → "Run workflow" with the version (e.g. 1.2.0)
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g. 1.2.0) — must match the manifests"
+        required: true
+      dry_run:
+        description: "Run preflight and build, publish nothing"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write # create the GitHub release + tag
+  id-token: write # GitHub OIDC login for the MCP Registry
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Phase A — preflight. Everything that can fail must fail here.
+  # ---------------------------------------------------------------------------
+  preflight:
+    name: Phase A — preflight
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+      tag: ${{ steps.ver.outputs.tag }}
+      npm_published: ${{ steps.npmcheck.outputs.already }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, sqlite3, pdo_sqlite, zip, sodium, openssl
+          coverage: none
+
+      - name: Resolve version
+        id: ver
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            VERSION="${INPUT_VERSION#v}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          if ! echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$'; then
+            echo "::error::'$VERSION' is not a valid semver version"; exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Install (deterministic)
+        run: |
+          cd mcp-server && npm ci --no-audit --no-fund
+          cd ../cloud && npm ci --no-audit --no-fund
+
+      # `npm run validate` compares all 13 version-bearing sources against each
+      # other; this additionally pins them to the tag being released.
+      - name: Versions match the tag
+        run: |
+          V="${{ steps.ver.outputs.version }}"
+          ROOT=$(node -p "require('./package.json').version")
+          if [ "$ROOT" != "$V" ]; then
+            echo "::error::package.json is at $ROOT but the release tag is $V"; exit 1
+          fi
+          npm run validate
+
+      - name: Build
+        run: npm run build:ci
+
+      - name: MCP server tests
+        run: npm test
+
+      - name: Shipped bundle smoke test
+        run: npm run test:bundle
+
+      - name: Cloud typecheck and tests
+        run: |
+          npm --prefix cloud run typecheck
+          npm run test:cloud
+
+      - name: Cloud / MCP tool drift check
+        run: npm run check:cloud-drift
+
+      - name: PHP lint and behavioural tests
+        run: |
+          npm run lint:php
+          npm run test:php
+
+      - name: Release documents exist for this version
+        run: |
+          V="${{ steps.ver.outputs.version }}"
+          MISSING=0
+          for doc in RELEASE_NOTES TEST_REPORT SECURITY_CHECKLIST; do
+            if [ ! -f "release/${doc}_v${V}.md" ]; then
+              echo "::error::release/${doc}_v${V}.md is missing"; MISSING=1
+            fi
+          done
+          [ "$MISSING" = "0" ]
+
+      # Checked BEFORE anything is published. A missing NPM_TOKEN discovered
+      # after the GitHub release is public is exactly the failure this workflow
+      # is shaped to avoid.
+      - name: npm authentication is available
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error::NPM_TOKEN is not configured. Add it in Settings → Secrets and variables → Actions before releasing."
+            exit 1
+          fi
+          npm whoami >/dev/null || { echo "::error::NPM_TOKEN is set but not valid for this registry"; exit 1; }
+          echo "npm authentication OK"
+
+      # Republishing different bytes under an existing version is impossible on
+      # npm and undesirable everywhere else, so detect it now and let the
+      # publish step skip rather than fail.
+      - name: Is this version already on npm?
+        id: npmcheck
+        run: |
+          V="${{ steps.ver.outputs.version }}"
+          if [ -n "$(npm view "bridgistic-mcp-server@$V" version 2>/dev/null)" ]; then
+            echo "::notice::bridgistic-mcp-server@$V is already published — the publish step will skip it."
+            echo "already=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "already=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # ---------------------------------------------------------------------------
+  # Phase B — build every artifact once, verify, checksum, and hand them on as
+  # a single immutable set. Nothing downstream rebuilds anything.
+  # ---------------------------------------------------------------------------
+  build:
+    name: Phase B — build and verify artifacts
+    needs: preflight
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install (deterministic)
+        run: cd mcp-server && npm ci --no-audit --no-fund
+
+      # build-release.js builds, verifies each unpacked archive, verifies the
+      # npm tarball's contents, copies the release documents, and checksums
+      # everything.
+      - name: Build the release
+        run: npm run release
+
+      # Rehearse the exact publish command, with the exact spec string Phase C
+      # will use, before anything is public. --dry-run runs npm's full spec
+      # resolution and packaging and stops short of the upload.
+      #
+      # This gate exists because its absence cost a release: Phase C's spec was
+      # "release-artifacts/<file>.tgz", which npm resolved as a GitHub
+      # owner/repo shorthand rather than a file, and the run died at exit 128
+      # after the tag was already public. Nothing about that was detectable from
+      # Phase B until this step existed.
+      # No NPM_TOKEN here on purpose: --dry-run exits 0 without credentials
+      # (it only warns), so the rehearsal does not need the secret and should
+      # not be handed one.
+      - name: Rehearse the npm publish (dry run)
+        run: |
+          V="${{ needs.preflight.outputs.version }}"
+          # Staged in a temp directory that mirrors Phase C's layout exactly —
+          # a single "release-artifacts/" segment — so a spec-parsing
+          # regression reproduces here. Kept out of dist/ so the artifact set
+          # this job uploads cannot be polluted by the rehearsal.
+          STAGE="$RUNNER_TEMP/publish-rehearsal/release-artifacts"
+          mkdir -p "$STAGE"
+          cp "dist/release-v${V}/bridgistic-mcp-server-${V}.tgz" "$STAGE/"
+          cd "$RUNNER_TEMP/publish-rehearsal"
+          npm publish --dry-run --access public "./release-artifacts/bridgistic-mcp-server-${V}.tgz"
+          echo "npm resolved the tarball as a file and packaged it cleanly."
+
+      - name: Show checksums
+        run: cat "dist/release-v${{ needs.preflight.outputs.version }}/SHA256SUMS.txt"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-v${{ needs.preflight.outputs.version }}
+          path: dist/release-v${{ needs.preflight.outputs.version }}/
+          retention-days: 90
+          if-no-files-found: error
+
+  # ---------------------------------------------------------------------------
+  # Phase C — publish. npm first: it is the only step that cannot be undone.
+  # ---------------------------------------------------------------------------
+  publish:
+    name: Phase C — publish
+    needs: [preflight, build]
+    if: ${{ !inputs.dry_run }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-v${{ needs.preflight.outputs.version }}
+          path: release-artifacts
+
+      # Publishing the tarball Phase B already built and verified, rather than
+      # re-packing, is what guarantees the published bytes are the checksummed
+      # bytes.
+      - name: Verify the downloaded artifacts against their checksums
+        working-directory: release-artifacts
+        run: |
+          sha256sum -c SHA256SUMS.txt
+          echo "All artifacts match their recorded checksums."
+
+      - name: Publish to npm
+        if: needs.preflight.outputs.npm_published != 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          V="${{ needs.preflight.outputs.version }}"
+          # The ./ prefix is load-bearing. npm-package-arg only treats a spec as
+          # a file path when it starts with ./, ../, /, ~/, or a drive letter;
+          # otherwise a spec with exactly one slash matches the GitHub
+          # "owner/repo" shorthand. Without it, npm read
+          # "release-artifacts/bridgistic-mcp-server-1.2.0.tgz" as a repo and
+          # tried `git ls-remote ssh://git@github.com/release-artifacts/...git`,
+          # failing with exit 128 mid-release.
+          npm publish --access public "./release-artifacts/bridgistic-mcp-server-${V}.tgz"
+
+      - name: Publish to the MCP Registry
+        run: |
+          curl -sSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish
+          echo "Published io.github.Shubochandrosarker/bridgistic to registry.modelcontextprotocol.io"
+
+      # The GitHub release goes last because it is the only step that is
+      # editable afterwards — if npm or the registry had failed, nothing public
+      # would exist yet.
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ needs.preflight.outputs.tag }}"
+          V="${{ needs.preflight.outputs.version }}"
+          ASSETS=$(find release-artifacts -maxdepth 1 -type f | tr '\n' ' ')
+
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $TAG exists — replacing assets (safe retry after a partial failure)"
+            gh release upload "$TAG" $ASSETS --clobber
+          else
+            gh release create "$TAG" \
+              --target "$GITHUB_SHA" \
+              --title "Bridgistic $TAG" \
+              --notes-file "release-artifacts/RELEASE_NOTES_v${V}.md" \
+              $ASSETS
+          fi
+
+      - name: Verify the published npm version resolves
+        run: |
+          V="${{ needs.preflight.outputs.version }}"
+          for attempt in 1 2 3 4 5; do
+            if [ "$(npm view "bridgistic-mcp-server@$V" version 2>/dev/null)" = "$V" ]; then
+              echo "bridgistic-mcp-server@$V is live on npm."; exit 0
+            fi
+            echo "not visible yet (attempt $attempt); registry propagation can lag"
+            sleep 15
+          done
+          echo "::warning::bridgistic-mcp-server@$V was published but is not resolving yet. Check manually."

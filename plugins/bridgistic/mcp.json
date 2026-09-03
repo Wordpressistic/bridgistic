@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "bridgistic": {
+      "command": "node",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/server/index.js"
+      ],
+      "env": {
+        "BRIDGISTIC_SITE_URL": "${BRIDGISTIC_SITE_URL}",
+        "BRIDGISTIC_KEY_ID": "${BRIDGISTIC_KEY_ID}",
+        "BRIDGISTIC_KEY_SECRET": "${BRIDGISTIC_KEY_SECRET}",
+        "BRIDGISTIC_CONNECTIONS": "${BRIDGISTIC_CONNECTIONS}"
+      }
+    }
+  }
+}
