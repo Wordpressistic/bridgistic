@@ -46,6 +46,7 @@ jobs:
       version: ${{ steps.ver.outputs.version }}
       tag: ${{ steps.ver.outputs.tag }}
       npm_published: ${{ steps.npmcheck.outputs.already }}
+      npm_has_token: ${{ steps.npm_auth.outputs.has_token }}
     steps:
       - uses: actions/checkout@v4
 
@@ -125,25 +126,31 @@ jobs:
           done
           [ "$MISSING" = "0" ]
 
-      # Checked BEFORE anything is published. A missing NPM_TOKEN discovered
-      # after the GitHub release is public is exactly the failure this workflow
-      # is shaped to avoid.
-      - name: npm authentication is available
+      # npm is optional for the GitHub release. The GitHub release (zips) is
+      # the primary deliverable; npm publish enhances distribution but should
+      # not block a product release when the token is not yet configured.
+      - name: npm authentication check (advisory)
+        id: npm_auth
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "::error::NPM_TOKEN is not configured. Add it in Settings → Secrets and variables → Actions before releasing."
-            exit 1
+            echo "::warning::NPM_TOKEN is not configured — npm publish will be skipped (GitHub release + zips still published)."
+            echo "has_token=false" >> "$GITHUB_OUTPUT"
+          elif ! npm whoami >/dev/null 2>&1; then
+            echo "::warning::NPM_TOKEN is set but not valid — npm publish will be skipped."
+            echo "has_token=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "npm authentication OK"
+            echo "has_token=true" >> "$GITHUB_OUTPUT"
           fi
-          npm whoami >/dev/null || { echo "::error::NPM_TOKEN is set but not valid for this registry"; exit 1; }
-          echo "npm authentication OK"
 
       # Republishing different bytes under an existing version is impossible on
       # npm and undesirable everywhere else, so detect it now and let the
       # publish step skip rather than fail.
       - name: Is this version already on npm?
         id: npmcheck
+        if: steps.npm_auth.outputs.has_token == 'true'
         run: |
           V="${{ steps.ver.outputs.version }}"
           if [ -n "$(npm view "bridgistic-mcp-server@$V" version 2>/dev/null)" ]; then
@@ -244,7 +251,7 @@ jobs:
           echo "All artifacts match their recorded checksums."
 
       - name: Publish to npm
-        if: needs.preflight.outputs.npm_published != 'true'
+        if: needs.preflight.outputs.npm_published != 'true' && needs.preflight.outputs.npm_has_token == 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
@@ -259,6 +266,7 @@ jobs:
           npm publish --access public "./release-artifacts/bridgistic-mcp-server-${V}.tgz"
 
       - name: Publish to the MCP Registry
+        if: needs.preflight.outputs.npm_has_token == 'true' && needs.preflight.outputs.npm_published != 'true'
         run: |
           curl -sSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
           ./mcp-publisher login github-oidc
