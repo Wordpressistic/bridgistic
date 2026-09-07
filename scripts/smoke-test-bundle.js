@@ -59,7 +59,12 @@ copyFileSync(BUNDLE, backup);
 
 let rebuiltHash;
 try {
-  execFileSync("npm", ["run", "build:ci"], { cwd: ROOT, stdio: "pipe" });
+  const npmExecPath = process.env.npm_execpath;
+  if (npmExecPath) {
+    execFileSync(process.execPath, [npmExecPath, "run", "build:ci"], { cwd: ROOT, stdio: "pipe" });
+  } else {
+    execFileSync("npm", ["run", "build:ci"], { cwd: ROOT, stdio: "pipe" });
+  }
   rebuiltHash = createHash("sha256").update(readFileSync(BUNDLE)).digest("hex");
 } finally {
   // Whatever happened, leave the tree as we found it if the rebuild differed

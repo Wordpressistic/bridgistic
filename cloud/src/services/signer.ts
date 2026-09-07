@@ -25,7 +25,10 @@ export function signRequest(
   secret: string
 ): SignedHeaders {
   const timestamp = Math.floor(Date.now() / 1000).toString();
-  const nonce = randomBytes(16).toString("hex");
+  const nonce = Array.from(
+    randomBytes(16),
+    (byte) => byte.toString(16).padStart(2, "0")
+  ).join("");
   const bodyHash = createHash("sha256").update(body, "utf8").digest("hex");
 
   const canonical = [

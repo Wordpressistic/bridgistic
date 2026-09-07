@@ -7,6 +7,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 Nothing yet.
 
+## [1.3.1] — 2026-09-03
+
+### Fixed
+
+- Confined snapshot and restore paths by resolved parent and complete directory segments, rejecting traversal and sibling-prefix escapes.
+- Prevented a fatal PHP class redeclaration when Bridgistic and another WPistic-licensed plugin are active together; the first compatible shared SDK copy is reused.
+- Made the exact shipped-bundle smoke test invoke npm portably on Windows as well as Linux/macOS.
+
 ## [1.3.0] — 2026-09-03
 
 WPistic licensing, free/paid tiers, and the WordPressistic org move.

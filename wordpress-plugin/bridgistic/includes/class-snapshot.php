@@ -362,12 +362,21 @@ final class Snapshot {
 	/** Confine a path to ABSPATH, return realpath or ''. */
 	private static function safe_path( string $path ): string {
 		$base = realpath( ABSPATH );
+		if ( false === $base || '' === $path || false !== strpos( $path, "\0" ) ) {
+			return '';
+		}
 		$real = realpath( $path );
 		if ( false === $real ) {
-			// Allow not-yet-existing files inside ABSPATH (for create-on-restore).
-			$real = $path;
+			// A new file is safe only beneath an existing, resolved parent.
+			// Never trust a raw prefix containing traversal or a sibling name.
+			$parent = realpath( dirname( $path ) );
+			if ( false === $parent ) {
+				return '';
+			}
+			$real = $parent . DIRECTORY_SEPARATOR . basename( $path );
 		}
-		if ( false === $base || strpos( $real, $base ) !== 0 ) {
+		$prefix = rtrim( $base, '/\\' ) . DIRECTORY_SEPARATOR;
+		if ( $real !== $base && 0 !== strpos( $real, $prefix ) ) {
 			return '';
 		}
 		return $real;
