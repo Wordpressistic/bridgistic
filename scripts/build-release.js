@@ -43,6 +43,15 @@ const OUT = join(DIST, `release-v${VERSION}`);
 const run = (cmd, args, opts = {}) =>
   execFileSync(cmd, args, { cwd: ROOT, stdio: "inherit", ...opts });
 
+const runNpm = (args, opts = {}) => {
+  const npmExecPath = process.env.npm_execpath;
+  if (npmExecPath) {
+    return run(process.execPath, [npmExecPath, ...args], opts);
+  }
+
+  return run(process.platform === "win32" ? "npm.cmd" : "npm", args, opts);
+};
+
 const step = (msg) => console.log(`\n\x1b[1m▸ ${msg}\x1b[0m`);
 
 // ---- 0. Refuse to build a release from a dirty tree -------------------------
@@ -79,19 +88,19 @@ mkdirSync(OUT, { recursive: true });
 // ---- 2. Build ---------------------------------------------------------------
 
 step("Building the MCP server and shipped bundle");
-run("npm", ["run", "build:ci"]);
+runNpm(["run", "build:ci"]);
 
 step("Building distribution archives");
-run("npm", ["run", "package"]);
+runNpm(["run", "package"]);
 
 step("Building the Claude Desktop extension");
-run("npm", ["run", "desktop:package"]);
+runNpm(["run", "desktop:package"]);
 
 step("Packing the npm tarball");
 // `npm pack` writes bridgistic-mcp-server-<version>.tgz into its cwd. Packing
 // from the real package directory (not the private repo root) is what makes
 // this the same tarball `npm publish` would upload.
-run("npm", ["pack", "--silent", "--pack-destination", OUT], { cwd: join(ROOT, "mcp-server") });
+runNpm(["pack", "--silent", "--pack-destination", OUT], { cwd: join(ROOT, "mcp-server") });
 
 // ---- 3. Collect -------------------------------------------------------------
 
@@ -126,7 +135,7 @@ run("node", ["scripts/verify-packages.js", "--dir", `dist/release-v${VERSION}`])
 step("Verifying the npm tarball");
 {
   const listing = execFileSync("tar", ["-tzf", join(OUT, tarball)], { encoding: "utf8" });
-  const entries = listing.split("\n").filter(Boolean);
+  const entries = listing.split(/\r?\n/).filter(Boolean);
 
   const required = ["package/package.json", "package/dist/index.js", "package/README.md"];
   for (const entry of required) {

@@ -4,7 +4,7 @@ Tags: mcp, ai, claude, chatgpt, gemini, automation, rest-api
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,10 @@ No. Bridgistic uses its own HMAC-signed, scoped keys instead of a full-admin App
 Only inside a single quarantined sandbox directory under uploads, with direct web execution blocked. PHP cannot be written anywhere WordPress autoloads from.
 
 == Changelog ==
+
+= 1.3.1 =
+* Prevented shared WPistic SDK class redeclarations when multiple WPistic plugins are active together.
+* Made the packaged MCP bundle smoke test portable across Windows, Linux, and macOS.
 
 = 1.3.0 =
 * WPistic licensing system: the plugin now ships with the official WPistic WordPress SDK — activate your license key (Bridgistic → License) to unlock paid plans, with encrypted at-rest state, HMAC-signed validation, token rotation, a 7-day offline grace window, and secure in-dashboard updates from the WPistic platform.

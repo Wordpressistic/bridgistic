@@ -74,7 +74,14 @@ const SECRET_PATTERNS = [
 
 function unzip(archive) {
   const dir = mkdtempSync(join(tmpdir(), "bridgistic-verify-"));
-  execFileSync("unzip", ["-q", archive, "-d", dir]);
+  if (process.platform === "win32") {
+    // Windows ships bsdtar, while the Unix `unzip` executable is usually not
+    // present. bsdtar understands ZIP and MCPB archives and accepts paths as
+    // separate arguments, so no shell interpolation is involved.
+    execFileSync("tar.exe", ["-xf", archive, "-C", dir]);
+  } else {
+    execFileSync("unzip", ["-q", archive, "-d", dir]);
+  }
   return dir;
 }
 

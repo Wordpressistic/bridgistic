@@ -28,12 +28,24 @@ if (!existsSync(bundle)) {
   process.exit(1);
 }
 
-const mcpb = (args, opts = {}) =>
-  execFileSync("npx", ["--yes", "@anthropic-ai/mcpb@latest", ...args], {
-    stdio: "inherit",
-    cwd: ROOT,
-    ...opts,
-  });
+const mcpb = (args, opts = {}) => {
+  const npmExecPath = process.env.npm_execpath;
+  const execOptions = { stdio: "inherit", cwd: ROOT, ...opts };
+
+  if (npmExecPath) {
+    return execFileSync(
+      process.execPath,
+      [npmExecPath, "exec", "--yes", "--package=@anthropic-ai/mcpb@latest", "--", "mcpb", ...args],
+      execOptions
+    );
+  }
+
+  return execFileSync(
+    process.platform === "win32" ? "npx.cmd" : "npx",
+    ["--yes", "@anthropic-ai/mcpb@latest", ...args],
+    execOptions
+  );
+};
 
 // ---- stage ------------------------------------------------------------------
 

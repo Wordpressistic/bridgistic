@@ -1,7 +1,7 @@
 {
   "name": "bridgistic",
   "description": "Free WordPress MCP connector for Claude Code. Supports local Claude setup, HMAC authentication, scoped permissions, basic audit logs, limited snapshots, and manual playbooks.",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "author": {
     "name": "WordPressistic"
   },

@@ -86,20 +86,24 @@ final class License {
 	 * Called from Plugin::boot().
 	 */
 	public static function init(): void {
-		require_once BRIDGISTIC_DIR . 'includes/sdk/Activation.php';
-		require_once BRIDGISTIC_DIR . 'includes/sdk/DomainNormalizer.php';
-		require_once BRIDGISTIC_DIR . 'includes/sdk/EntitlementChecker.php';
-		require_once BRIDGISTIC_DIR . 'includes/sdk/GracePeriodManager.php';
-		require_once BRIDGISTIC_DIR . 'includes/sdk/Api/ApiClientInterface.php';
-		require_once BRIDGISTIC_DIR . 'includes/sdk/Api/RetryHandler.php';
-		require_once BRIDGISTIC_DIR . 'includes/sdk/Api/WpisticApi.php';
-		require_once BRIDGISTIC_DIR . 'includes/sdk/Security/TokenStorage.php';
-		require_once BRIDGISTIC_DIR . 'includes/sdk/Security/HmacVerifier.php';
-		require_once BRIDGISTIC_DIR . 'includes/sdk/LicenseManager.php';
-		require_once BRIDGISTIC_DIR . 'includes/sdk/UpdateClient.php';
-		require_once BRIDGISTIC_DIR . 'includes/sdk/WpisticClient.php';
-		require_once BRIDGISTIC_DIR . 'includes/sdk/Admin/SettingsPage.php';
-		require_once BRIDGISTIC_DIR . 'includes/sdk/Admin/OnboardingWizard.php';
+		// Several WPistic plugins vendor the same shared SDK. Whichever plugin
+		// loads first provides it; a second copy must not redeclare the namespace.
+		if ( ! class_exists( WpisticClient::class, false ) ) {
+			require_once BRIDGISTIC_DIR . 'includes/sdk/Activation.php';
+			require_once BRIDGISTIC_DIR . 'includes/sdk/DomainNormalizer.php';
+			require_once BRIDGISTIC_DIR . 'includes/sdk/EntitlementChecker.php';
+			require_once BRIDGISTIC_DIR . 'includes/sdk/GracePeriodManager.php';
+			require_once BRIDGISTIC_DIR . 'includes/sdk/Api/ApiClientInterface.php';
+			require_once BRIDGISTIC_DIR . 'includes/sdk/Api/RetryHandler.php';
+			require_once BRIDGISTIC_DIR . 'includes/sdk/Api/WpisticApi.php';
+			require_once BRIDGISTIC_DIR . 'includes/sdk/Security/TokenStorage.php';
+			require_once BRIDGISTIC_DIR . 'includes/sdk/Security/HmacVerifier.php';
+			require_once BRIDGISTIC_DIR . 'includes/sdk/LicenseManager.php';
+			require_once BRIDGISTIC_DIR . 'includes/sdk/UpdateClient.php';
+			require_once BRIDGISTIC_DIR . 'includes/sdk/WpisticClient.php';
+			require_once BRIDGISTIC_DIR . 'includes/sdk/Admin/SettingsPage.php';
+			require_once BRIDGISTIC_DIR . 'includes/sdk/Admin/OnboardingWizard.php';
+		}
 
 		self::client()->boot();
 	}
