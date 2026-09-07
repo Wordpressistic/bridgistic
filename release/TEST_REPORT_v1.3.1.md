@@ -1,7 +1,12 @@
 # Bridgistic v1.3.1 Test Report
 
-Verified locally on 2026-09-04. Hosted CI and the public release remain pending
-until the release-candidate branch is pushed.
+Verified locally on 2026-09-04; re-audited on 2026-09-07. The candidate is now
+published in PR #1. Hosted CI and public release remain separate gates.
+
+September 7 follow-up: fixed snapshot/restore path traversal and sibling-prefix
+containment, and corrected the filesystem test fixture's Windows realpath
+normalization. PHP now passes 438 checks across seven suites. Production
+dependency audits for both cloud and MCP remain clean.
 
 ## Gates
 

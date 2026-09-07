@@ -5,6 +5,8 @@ WPistic licensing rollout.
 
 ## Fixed
 
+- Fixed snapshot and restore path containment for new files and sibling folders;
+  traversal now fails closed and has dedicated regression checks.
 - Guarded the shared WPistic SDK loader so Bridgistic can run beside other
   WPistic-licensed plugins without redeclaring SDK classes.
 - Made the shipped-bundle and release pipelines invoke npm, MCPB packaging,

@@ -139,6 +139,7 @@ foreach ( $ordinary_files as $path ) {
 // be refused, not be silently rewritten to something inside.
 $base = sys_get_temp_dir() . '/bridgistic-fs-test';
 @mkdir( $base . '/inner', 0777, true );
+$base = (string) realpath( $base ); // Match the runtime contract on Windows too.
 $resolved_escape = realpath( $base . '/inner/../../' );
 check( is_string( $resolved_escape ), 'the traversal target resolves' );
 check( ! $contains->invoke( null, $base, (string) $resolved_escape ), 'a resolved `..` traversal lands outside the base and is refused' );

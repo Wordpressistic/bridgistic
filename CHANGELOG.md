@@ -11,6 +11,7 @@ Nothing yet.
 
 ### Fixed
 
+- Confined snapshot and restore paths by resolved parent and complete directory segments, rejecting traversal and sibling-prefix escapes.
 - Prevented a fatal PHP class redeclaration when Bridgistic and another WPistic-licensed plugin are active together; the first compatible shared SDK copy is reused.
 - Made the exact shipped-bundle smoke test invoke npm portably on Windows as well as Linux/macOS.
 
