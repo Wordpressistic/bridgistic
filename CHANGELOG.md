@@ -7,6 +7,16 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 Nothing yet.
 
+## [1.3.2] — 2026-09-11
+
+### Fixed
+
+- HMAC authentication on LiteSpeed/Hostinger hosting: incoming `X-Bridgistic-*` headers are
+  rewritten to underscored (`X_Bridgistic_*`) variants, so signature verification saw no
+  credentials and every API call failed with `401 bridgistic_auth_missing`. Header names are
+  now normalized (`_` → `-`, lowercased) before verification. Affects Hostinger, LiteSpeed
+  Enterprise and any stack that underscores custom header names.
+
 ## [1.3.1] — 2026-09-03
 
 ### Fixed
