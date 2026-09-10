@@ -37,7 +37,7 @@ abstract class Controller {
 
 		$headers = array();
 		foreach ( $request->get_headers() as $name => $values ) {
-			$headers[ strtolower( $name ) ] = is_array( $values ) ? ( $values[0] ?? '' ) : $values;
+			$headers[ str_replace( '_', '-', strtolower( $name ) ) ] = is_array( $values ) ? ( $values[0] ?? '' ) : $values;
 		}
 
 		$ctx = HmacVerifier::authenticate(
