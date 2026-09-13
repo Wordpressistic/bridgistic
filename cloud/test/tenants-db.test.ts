@@ -99,6 +99,18 @@ class FakeD1Database {
       }
       return;
     }
+    if (sql.startsWith("UPDATE tenants") && sql.includes("SET key_id")) {
+      // Mirrors upsertTenant's update path for an existing site_url.
+      const [keyId, keySecretEnc, scopes, id] = params as [string, string, string, string];
+      const row = this.rows.find((r) => r.id === id);
+      if (row) {
+        row.key_id = keyId;
+        row.key_secret_enc = keySecretEnc;
+        row.scopes = scopes;
+        row.last_used_at = this.tick();
+      }
+      return;
+    }
     if (sql.startsWith("UPDATE tenants SET last_used_at")) {
       const [id] = params as [string];
       const row = this.rows.find((r) => r.id === id);

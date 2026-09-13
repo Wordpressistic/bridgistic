@@ -33,18 +33,29 @@ export async function upsertTenant(
     .bind(siteUrl)
     .first<{ id: string }>();
 
-  const id = existing?.id ?? crypto.randomUUID();
   const keySecretEnc = await encryptSecret(keySecret, encKey);
 
+  // site_url carries the UNIQUE constraint, so re-connecting the same site
+  // must UPDATE the existing row. The previous INSERT ... ON CONFLICT(id)
+  // never fired for a new UUID and crashed on the site_url UNIQUE index
+  // whenever a site re-connected (uncaught -> Cloudflare 1101).
+  if (existing?.id) {
+    await db
+      .prepare(
+        `UPDATE tenants
+           SET key_id = ?, key_secret_enc = ?, scopes = ?, last_used_at = unixepoch()
+         WHERE id = ?`
+      )
+      .bind(keyId, keySecretEnc, JSON.stringify(scopes), existing.id)
+      .run();
+    return existing.id;
+  }
+
+  const id = crypto.randomUUID();
   await db
     .prepare(
       `INSERT INTO tenants (id, site_url, key_id, key_secret_enc, scopes, created_at, last_used_at)
-       VALUES (?, ?, ?, ?, ?, unixepoch(), unixepoch())
-       ON CONFLICT(id) DO UPDATE SET
-         key_id = excluded.key_id,
-         key_secret_enc = excluded.key_secret_enc,
-         scopes = excluded.scopes,
-         last_used_at = unixepoch()`
+       VALUES (?, ?, ?, ?, ?, unixepoch(), unixepoch())`
     )
     .bind(id, siteUrl, keyId, keySecretEnc, JSON.stringify(scopes))
     .run();

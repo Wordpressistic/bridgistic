@@ -203,26 +203,67 @@ export default {
         return html(`Could not complete the connection: ${err instanceof Error ? err.message : String(err)}`, 502);
       }
 
-      const tenantId = await upsertTenant(
-        env.DB,
-        env.TENANT_ENC_KEY,
-        tokenResult.site_url,
-        tokenResult.key_id,
-        tokenResult.key_secret,
-        tokenResult.scopes
-      );
+      // The WP exchange above is caught, but everything after it used to run
+      // uncaught: a D1 hiccup or an OAuth grant mismatch surfaced as
+      // Cloudflare 1101 "Worker threw exception" with zero diagnostics.
+      // Wrap the grant-completion region so the person connecting sees the
+      // actual failure instead of a bare 1101 page.
+      try {
+        const tenantId = await upsertTenant(
+          env.DB,
+          env.TENANT_ENC_KEY,
+          tokenResult.site_url,
+          tokenResult.key_id,
+          tokenResult.key_secret,
+          tokenResult.scopes
+        );
 
-      await env.OAUTH_KV.delete(`flow:${stored.flowId}`);
+        await env.OAUTH_KV.delete(`flow:${stored.flowId}`);
 
-      const { redirectTo } = await env.OAUTH_PROVIDER.completeAuthorization({
-        request: authRequest,
-        userId: tenantId,
-        scope: tokenResult.scopes,
-        metadata: { siteUrl: tokenResult.site_url },
-        props: { tenantId },
-      });
+        // completeAuthorization throws when a granted scope was never
+        // requested by the MCP client. The plugin grants the key's own scope
+        // set, which can be broader than a given client asked for — grant the
+        // intersection so over-broad keys still connect, and fail with a
+        // readable page only when there is no overlap at all.
+        const requestedScopes = Array.isArray(authRequest.scope)
+          ? authRequest.scope.map(String)
+          : [];
+        const grantedScopes = Array.isArray(tokenResult.scopes)
+          ? tokenResult.scopes.map(String)
+          : [];
+        const effectiveScope = requestedScopes.length
+          ? grantedScopes.filter((s) => requestedScopes.includes(s))
+          : grantedScopes;
+        if (!effectiveScope.length) {
+          await env.OAUTH_KV.delete(`flow:${stored.flowId}`);
+          return html(
+            "The Bridgistic key on your site grants permissions that don't overlap with what your AI assistant requested. Regenerate the key with the matching permissions and reconnect.",
+            400
+          );
+        }
 
-      return Response.redirect(redirectTo, 302);
+        const { redirectTo } = await env.OAUTH_PROVIDER.completeAuthorization({
+          request: authRequest,
+          userId: tenantId,
+          scope: effectiveScope,
+          metadata: { siteUrl: tokenResult.site_url },
+          props: { tenantId },
+        });
+
+        return Response.redirect(redirectTo, 302);
+      } catch (err) {
+        logEvent({
+          requestId: newRequestId(),
+          route: "/wp-callback",
+          result: "error",
+          status: 502,
+          errorCategory: "grant_completion",
+        });
+        return html(
+          `Connection succeeded with WordPress, but finalizing the grant failed: ${escapeHtml(err instanceof Error ? err.message : String(err))}<br><br>Go back to your AI assistant and try connecting again — if this repeats, contact support with this message.`,
+          502
+        );
+      }
     }
 
     return new Response("Not found.", { status: 404 });
