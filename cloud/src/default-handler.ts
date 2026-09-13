@@ -256,7 +256,35 @@ export default {
           props: { tenantId },
         });
 
-        return Response.redirect(redirectTo, 302);
+        // Branded success interstitial. The client's redirect_uri still
+        // receives the code (meta-refresh after 2s) — the OAuth flow is
+        // untouched — but the admin sees an unmistakable "it worked" page
+        // instead of a bare redirect to an empty client callback.
+        return html(
+          `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Connected — Bridgistic Cloud</title>
+<meta http-equiv="refresh" content="2;url=${escapeHtml(redirectTo)}">
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f7faf9;color:#12201e;margin:0;padding:48px 20px;display:grid;place-items:center;min-height:90vh}
+  .card{max-width:460px;width:100%;background:#fff;border:1px solid #ddebe6;border-radius:16px;padding:38px 34px;box-shadow:0 12px 40px rgba(20,20,40,.10);text-align:center}
+  .tick{width:64px;height:64px;border-radius:50%;background:#00b86b;color:#fff;font-size:34px;display:grid;place-items:center;margin:0 auto 18px;box-shadow:0 10px 30px -8px rgba(0,184,107,.6);animation:pop .45s cubic-bezier(.2,.9,.3,1.3) both}
+  @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+  h1{font-size:1.35rem;margin:0 0 8px}
+  p{color:#4f6660;font-size:.95rem;margin:0 0 6px}
+  .site{font-weight:700;color:#12201e}
+  .next{margin-top:16px;font-size:.85rem;color:#565d6d}
+  .next a{color:#0b8f57;font-weight:600;text-decoration:none}
+</style></head>
+<body><div class="card">
+  <div class="tick">&#10003;</div>
+  <h1>Site connected successfully</h1>
+  <p><span class="site">${escapeHtml(tokenResult.site_url)}</span> is now linked to Bridgistic Cloud.</p>
+  <p>Your AI assistant can use it right away.</p>
+  <p class="next">Taking you back in a moment&hellip; <a href="${escapeHtml(redirectTo)}">Continue now &rarr;</a></p>
+</div></body></html>`,
+          200
+        );
       } catch (err) {
         logEvent({
           requestId: newRequestId(),

@@ -253,8 +253,16 @@ describe("OAuth flow: GET /wp-callback (full happy path)", () => {
     const callbackUrl = `https://mcp.bridgistic.app/wp-callback?code=wp-auth-code&state=${wpState}`;
     const res = await defaultHandler.fetch(new Request(callbackUrl, { redirect: "manual" }), env as never, {} as ExecutionContext);
 
-    assert.equal(res.status, 302);
-    assert.equal(res.headers.get("Location"), "https://ai-client.example/oauth/callback?code=final-code&state=client-state-abc");
+    // Success is now a branded interstitial page (200) that meta-refreshes to
+    // the AI client's redirect_uri with the code — the OAuth flow is intact.
+    assert.equal(res.status, 200);
+    const successHtml = await res.text();
+    assert.match(successHtml, /Connected/);
+    assert.match(successHtml, /example\.com/); // the connected site echoed back
+    assert.ok(
+      successHtml.includes("https://ai-client.example/oauth/callback?code=final-code&amp;state=client-state-abc"),
+      "meta refresh must carry the client's redirect with code + state"
+    );
 
     // Tenant really landed in D1, and the secret really round-trips through encryption.
     assert.equal(d1.rows.length, 1);
@@ -315,7 +323,7 @@ describe("OAuth flow: GET /wp-callback (full happy path)", () => {
     const callbackUrl = `https://mcp.bridgistic.app/wp-callback?code=wp-auth-code&state=${wpState}`;
 
     const first = await defaultHandler.fetch(new Request(callbackUrl, { redirect: "manual" }), env as never, {} as ExecutionContext);
-    assert.equal(first.status, 302);
+    assert.equal(first.status, 200);
 
     const second = await defaultHandler.fetch(new Request(callbackUrl, { redirect: "manual" }), env as never, {} as ExecutionContext);
     assert.equal(second.status, 400);
