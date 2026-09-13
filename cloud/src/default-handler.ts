@@ -57,7 +57,13 @@ function html(body: string, status = 200): Response {
       "Content-Type": "text/html; charset=utf-8",
       // These pages are self-contained: no scripts, no third-party assets, and
       // nothing that should ever be framed by another origin.
-      "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'",
+      //
+      // NOTE: no form-action directive on purpose. The connect form POSTs to
+      // this Worker, which 302s to the customer's WordPress site — a
+      // `form-action 'self'` here made Chrome abort that cross-origin
+      // redirect mid-navigation (net::ERR_ABORTED), bouncing the user back to
+      // the connect form with no visible error.
+      "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'",
       "Referrer-Policy": "no-referrer",
       "X-Content-Type-Options": "nosniff",
     },
