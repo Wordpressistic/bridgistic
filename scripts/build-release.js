@@ -12,6 +12,7 @@
  *   bridgistic-wordpress-plugin.zip
  *   bridgistic-claude-package.zip
  *   bridgistic.mcpb
+ *   bridgistic-openai-plugin.zip
  *   bridgistic-mcp-server-<version>.tgz
  *   SHA256SUMS.txt
  *
@@ -106,7 +107,12 @@ runNpm(["pack", "--silent", "--pack-destination", OUT], { cwd: join(ROOT, "mcp-s
 
 step("Collecting artifacts");
 
-const ARCHIVES = ["bridgistic-wordpress-plugin.zip", "bridgistic-claude-package.zip", "bridgistic.mcpb"];
+const ARCHIVES = [
+  "bridgistic-wordpress-plugin.zip",
+  "bridgistic-claude-package.zip",
+  "bridgistic-openai-plugin.zip",
+  "bridgistic.mcpb",
+];
 for (const name of ARCHIVES) {
   const from = join(DIST, name);
   if (!existsSync(from)) {

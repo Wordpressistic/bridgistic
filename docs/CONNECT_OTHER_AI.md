@@ -67,7 +67,7 @@ other local MCP-compatible client not listed by name.
 
 **Why ChatGPT is different:** ChatGPT does not run a local server process the way Claude
 Desktop/Code, Codex, and Gemini CLI do — it only connects to a **remote** MCP server over HTTPS.
-Bridgistic's remote server (`mcp.wpistic.cloud`) is deployed and linked from WP Admin
+Bridgistic's remote server (`mcp.bridgistic.app`) is deployed and linked from WP Admin
 (**Bridgistic → Bridgistic Cloud**), free to use, but without an independent security review yet.
 See [CLOUD_CONNECTOR.md](CLOUD_CONNECTOR.md) for status, and
 [CHATGPT_SETUP.md](CHATGPT_SETUP.md) for the flow.

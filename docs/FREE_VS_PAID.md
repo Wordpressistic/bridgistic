@@ -1,10 +1,10 @@
 # Free vs Paid
 
-The free public version centers on the **local Claude/WordPress connection**, plus a free public-beta hosted connector for remote-only clients. Advanced skills, multi-site team management, and SaaS automation belong to the paid/private version.
+The free public version centers on the **local WordPress/MCP connection**, plus a free public-beta hosted connector for remote-only clients. Advanced skills, multi-site team management, and SaaS automation belong to the paid/private version.
 
 That split is deliberate:
 
-- **Free plugin = the local secure bridge, plus a beta hosted relay.** Complete, not crippled: full HMAC auth, all scopes, approvals, audit logs, snapshots, manual playbooks, guided setup, health diagnostics, export packages, and (as of the public beta) a hosted connector for clients that can't run a local server. It's everything an individual needs to connect Claude to their own site safely.
+- **Free plugin = the local secure bridge, plus a beta hosted relay.** Complete, not crippled: full HMAC auth, all scopes, approvals, audit logs, snapshots, manual playbooks, guided setup, health diagnostics, export packages, and (as of the public beta) a hosted connector for clients that can't run a local server. It's everything an individual needs to connect an MCP client to their own site safely.
 - **Paid SaaS = skills, agencies, automation.** The layer on top for teams and businesses running many sites.
 
 ## Feature comparison
@@ -32,7 +32,7 @@ That split is deliberate:
 | Usage billing | No | Yes |
 | White-label | No | Yes |
 
-¹ The hosted `mcp.wpistic.cloud` relay is free to use (WP Admin → Bridgistic Cloud) but is a
+¹ The hosted `mcp.bridgistic.app` relay is free to use (WP Admin → Bridgistic Cloud) but is a
 public beta without an independent security review yet — see
 [CLOUD_CONNECTOR.md](CLOUD_CONNECTOR.md). The paid tier's version of this is the same connector
 plus the SaaS layer on top (multi-site management, team permissions, usage billing).
@@ -47,5 +47,5 @@ plus the SaaS layer on top (multi-site management, team permissions, usage billi
 ## Promises to free users
 
 1. The free plugin is not a demo — the local bridge and its security layer are fully functional and maintained here, in public.
-2. Locked SaaS features are **display-only** in the free plugin: no billing code, no account system, no nag walls.
+2. Locked SaaS features are **display-only** in the free plugin: no license activation, billing code, account system, entitlement refresh, or nag walls.
 3. Security fixes always land in the free version.

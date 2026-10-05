@@ -1,0 +1,74 @@
+name: Deploy Bridgistic site from release
+
+# GitHub Pages currently follows main. This workflow makes the published
+# release tag the source of truth for bridgistic.app instead. A repository
+# administrator must switch Pages > Build and deployment > Source to
+# "GitHub Actions" once before this workflow can deploy.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to deploy, for example v1.5.0"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy the published release
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out the exact release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
+
+      - name: Resolve and inject release version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          VERSION="${RELEASE_TAG#v}"
+          if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$'; then
+            echo "::error::Invalid release tag: $RELEASE_TAG"
+            exit 1
+          fi
+          perl -0pi -e "s/__BRIDGISTIC_RELEASE_VERSION__/$VERSION/g" index.html
+          if grep -q '__BRIDGISTIC_RELEASE_VERSION__' index.html; then
+            echo "::error::The release version marker was not fully replaced"
+            exit 1
+          fi
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Stage only the public site
+        run: |
+          rm -rf dist/pages-site
+          mkdir -p dist/pages-site/assets
+          cp index.html dist/pages-site/index.html
+          cp CNAME dist/pages-site/CNAME
+          cp assets/bridgistic-icon.png dist/pages-site/assets/bridgistic-icon.png
+          cp assets/bridgistic-logo.png dist/pages-site/assets/bridgistic-logo.png
+
+      - name: Upload release site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/pages-site
+
+      - name: Deploy release site
+        id: deployment
+        uses: actions/deploy-pages@v4

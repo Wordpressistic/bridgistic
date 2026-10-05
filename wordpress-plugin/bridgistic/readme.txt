@@ -4,11 +4,11 @@ Tags: mcp, ai, claude, chatgpt, gemini, automation, rest-api
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
-Stable tag: 1.3.2
+Stable tag: 1.5.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Connect your WordPress site to any AI model — Claude, ChatGPT, OpenAI Codex, Gemini, Cursor, or any MCP client — with signed requests, scoped keys, approvals, audit logs, and snapshots. Free core, paid plans under the WPistic licensing system.
+Connect your WordPress site to any AI model — Claude, ChatGPT, OpenAI Codex, Gemini, Cursor, or any MCP client — with signed requests, scoped keys, approvals, audit logs, and snapshots. The public plugin is free-only; paid WPistic/SaaS features are display-only and are not activated from this package.
 
 == Description ==
 
@@ -16,7 +16,7 @@ Bridgistic is the WordPress side of an MCP (Model Context Protocol) bridge. It l
 
 Every request is HMAC-signed and tied to a least-privilege key. Destructive actions can be previewed (dry-run), held for human approval, and are snapshotted first so any change is one call away from a rollback. Usage is metered per key, and playbooks can run unattended on a schedule.
 
-**Free plan, forever:** the complete secure bridge — connect Claude, ChatGPT, Codex, Gemini, Cursor or any MCP client, with every security feature included. **Paid plans** (Starter / Pro / Agency) add unlimited scheduled playbooks, advanced snapshots, audit export, the AI skills marketplace, agency dashboard, team permissions and white-label — activated with a WPistic license key under Bridgistic → License.
+**Free edition, forever:** the complete secure bridge — connect Claude, ChatGPT, Codex, Gemini, Cursor or any MCP client, with every security feature included. Bridgistic SaaS may provide unlimited scheduled playbooks, advanced snapshots, audit export, an AI skills marketplace, an agency dashboard, team permissions and white-label options, but those features are not shipped or unlockable in this public plugin.
 
 = What you get =
 
@@ -60,6 +60,12 @@ No. Bridgistic uses its own HMAC-signed, scoped keys instead of a full-admin App
 Only inside a single quarantined sandbox directory under uploads, with direct web execution blocked. PHP cannot be written anywhere WordPress autoloads from.
 
 == Changelog ==
+
+= 1.5.0 =
+* Free-only public build: removed remote license activation, entitlement refresh, billing hooks, and the License admin screen.
+* Premium features remain display-only; scheduled playbooks and snapshots always enforce the free edition limits.
+* The shipped ZIP excludes the unused WPistic licensing SDK and premium activation UI.
+* Synchronized the plugin and package manifests to 1.5.0.
 
 = 1.3.1 =
 * Prevented shared WPistic SDK class redeclarations when multiple WPistic plugins are active together.

@@ -1,7 +1,8 @@
 <?php
 /**
  * A small OAuth 2.1 authorization server for the official cloud connector
- * (mcp.wpistic.cloud). This is intentionally NOT a general-purpose dynamic
+ * (mcp.bridgistic.app, with the legacy mcp.wpistic.cloud host retained for
+ * existing connections). This is intentionally NOT a general-purpose dynamic
  * client registry - there is exactly one recognized client (the cloud
  * connector itself), identified by CLIENT_ID. Everything it issues is a
  * normal Bridgistic key (via KeyStore::create()), so the existing

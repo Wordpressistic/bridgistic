@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <header class="bridgistic-page-head bridgistic-fade-in">
 	<h1><?php esc_html_e( 'Premium Features', 'bridgistic' ); ?></h1>
-	<p><?php esc_html_e( 'The free version is the complete bridge: connect any AI, keys, scopes, approvals, logs, snapshots, playbooks. Paid WPistic plans add skills, unlimited schedules, and team workflows on top — activate a license key under Bridgistic → License.', 'bridgistic' ); ?></p>
+	<p><?php esc_html_e( 'The free version is the complete local bridge: connect any AI, keys, scopes, approvals, logs, snapshots, playbooks and limited scheduling. Paid WPistic plans add skills, advanced history and team workflows in Bridgistic SaaS.', 'bridgistic' ); ?></p>
 </header>
 
 <div class="bridgistic-callout is-info bridgistic-fade-in">
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		printf(
 			/* translators: %s: link to the Bridgistic Cloud page. */
 			esc_html__( 'The remote MCP connector is no longer SaaS-exclusive — it\'s free, but in public beta with no independent security review yet. See %s.', 'bridgistic' ),
-			'<a href="' . esc_url( admin_url( 'admin.php?page=bridgistic-license' ) ) . '">' . esc_html__( 'Bridgistic Cloud', 'bridgistic' ) . '</a>'
+			'<a href="' . esc_url( admin_url( 'admin.php?page=bridgistic-cloud' ) ) . '">' . esc_html__( 'Bridgistic Cloud', 'bridgistic' ) . '</a>'
 		); // phpcs:ignore WordPress.Security.EscapeOutput
 		?>
 	</p>

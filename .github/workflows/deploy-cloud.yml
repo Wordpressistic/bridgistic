@@ -1,6 +1,6 @@
 name: Deploy Cloud Worker
 
-# Deploys the cloud/ Cloudflare Worker (mcp.wpistic.cloud) - the hosted,
+# Deploys the cloud/ Cloudflare Worker (mcp.bridgistic.app) - the hosted,
 # multi-tenant MCP relay for Bridgistic. The Worker ("bridgistic-cloud"),
 # its D1 database ("bridgistic-cloud"), and its KV namespace ("OAUTH_KV")
 # are already provisioned manually on Cloudflare, and cloud/wrangler.toml

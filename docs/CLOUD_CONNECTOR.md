@@ -77,8 +77,8 @@ API, only whether a binding exists:
    need to reconnect). Only set a fresh one if this is truly a first-time setup.
 
 2. **The `mcp.bridgistic.app` DNS route is actually resolving to this Worker.** `wrangler.toml`
-   declares the route (`mcp.bridgistic.app/*` on zone `wpistic.cloud`), which requires the
-   `wpistic.cloud` zone to be on this Cloudflare account with the route attached. Confirm from a
+   declares the primary route (`mcp.bridgistic.app/*` on zone `bridgistic.app`) and retains the
+   legacy `mcp.wpistic.cloud/*` route on the `wpistic.cloud` zone. Confirm from a
    machine that isn't behind this sandbox's egress policy:
    ```bash
    curl -i https://mcp.bridgistic.app/mcp

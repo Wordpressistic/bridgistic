@@ -40,7 +40,7 @@ pointing at a multi-site registry — see [CONNECT_OTHER_AI.md](CONNECT_OTHER_AI
 ## Remote (cloud connector)
 
 Codex also supports remote Streamable-HTTP MCP servers with OAuth (`codex mcp add bridgistic --url
-https://mcp.wpistic.cloud/mcp` followed by `codex mcp login bridgistic`). Bridgistic's hosted
+https://mcp.bridgistic.app/mcp` followed by `codex mcp login bridgistic`). Bridgistic's hosted
 connector is deployed and is a free public beta — see [CLOUD_CONNECTOR.md](CLOUD_CONNECTOR.md)
 for status. The local config above is the supported path until that opens up.
 
