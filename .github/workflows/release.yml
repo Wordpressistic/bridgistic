@@ -34,6 +34,7 @@ on:
 permissions:
   contents: write # create the GitHub release + tag
   id-token: write # GitHub OIDC login for the MCP Registry
+  actions: write # dispatch the release-backed Pages deployment
 
 jobs:
   # ---------------------------------------------------------------------------
@@ -294,6 +295,21 @@ jobs:
               --notes-file "release-artifacts/RELEASE_NOTES_v${V}.md" \
               $ASSETS
           fi
+
+      # A workflow started with GITHUB_TOKEN does not create a second release
+      # event, so the Pages workflow would otherwise never receive the
+      # release.published trigger. Dispatch it explicitly after the release
+      # exists. It checks out the immutable tag, not the moving default branch.
+      - name: Dispatch release-backed Pages deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ needs.preflight.outputs.tag }}"
+          gh workflow run pages-release.yml \
+            --repo "$GITHUB_REPOSITORY" \
+            --ref "$TAG" \
+            -f tag="$TAG"
+          echo "Dispatched Pages deployment for $TAG"
 
       - name: Verify the published npm version resolves
         run: |
