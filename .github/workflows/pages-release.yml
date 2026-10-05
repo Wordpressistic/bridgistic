@@ -1,18 +1,20 @@
 name: Deploy Bridgistic site from release
 
-# GitHub Pages currently follows main. This workflow makes the published
-# release tag the source of truth for bridgistic.app instead. A repository
-# administrator must switch Pages > Build and deployment > Source to
-# "GitHub Actions" once before this workflow can deploy.
+# The WordPressistic marketplace repository is the public distribution source
+# for bridgistic.app. The scheduled sync keeps the site on the latest public
+# marketplace release without requiring a cross-repository personal token.
+# A repository administrator must switch Pages > Build and deployment > Source
+# to "GitHub Actions" once before this workflow can deploy.
 
 on:
-  release:
-    types: [published]
+  schedule:
+    - cron: "*/15 * * * *"
   workflow_dispatch:
     inputs:
       tag:
-        description: "Release tag to deploy, for example v1.5.0"
-        required: true
+        description: "Marketplace release tag (blank uses the latest release)"
+        required: false
+        default: ""
         type: string
 
 permissions:
@@ -26,49 +28,106 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy the published release
+    name: Deploy the latest marketplace release
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Check out the exact release tag
+      - name: Resolve the marketplace release
+        id: release
+        env:
+          EVENT_TAG: ${{ github.event.release.tag_name || '' }}
+          INPUT_TAG: ${{ inputs.tag || '' }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          if [ -n "$EVENT_TAG" ]; then
+            TAG="$EVENT_TAG"
+          elif [ -n "$INPUT_TAG" ]; then
+            TAG="$INPUT_TAG"
+          else
+            TAG=$(curl --fail --silent --show-error --location \
+              --connect-timeout 10 --max-time 30 \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              https://api.github.com/repos/Wordpressistic/bridgistic-claude-marketplace/releases/latest \
+              | jq -r '.tag_name')
+          fi
+          if ! printf '%s' "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$'; then
+            echo "::error::Invalid marketplace release tag: $TAG"
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Using marketplace release $TAG"
+
+      - name: Skip when this release is already deployed
+        id: deployed
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          VERSION="${TAG#v}"
+          CURRENT=$(curl --silent --show-error --location --connect-timeout 10 --max-time 20 https://bridgistic.app/ 2>/dev/null || true)
+          if printf '%s' "$CURRENT" | grep -q "v${VERSION}"; then
+            echo "already=true" >> "$GITHUB_OUTPUT"
+            echo "${TAG} is already live on bridgistic.app."
+          else
+            echo "already=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check out the exact marketplace release
+        if: steps.deployed.outputs.already != 'true'
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.tag_name || inputs.tag }}
+          repository: Wordpressistic/bridgistic-claude-marketplace
+          ref: ${{ steps.release.outputs.tag }}
+          path: source
 
       - name: Resolve and inject release version
+        if: steps.deployed.outputs.already != 'true'
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
         run: |
           VERSION="${RELEASE_TAG#v}"
           if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$'; then
             echo "::error::Invalid release tag: $RELEASE_TAG"
             exit 1
           fi
-          perl -0pi -e "s/__BRIDGISTIC_RELEASE_VERSION__/$VERSION/g" index.html
-          if grep -q '__BRIDGISTIC_RELEASE_VERSION__' index.html; then
+          perl -0pi -e "s/__BRIDGISTIC_RELEASE_VERSION__/$VERSION/g" source/index.html
+          # Keep the public site aligned with the organization marketplace
+          # even when deploying an older marketplace tag that still contained
+          # the previous release links.
+          perl -0pi -e 's#https://github.com/Wordpressistic/bridgistic(?=/|")#https://github.com/Wordpressistic/bridgistic-claude-marketplace#g' source/index.html
+          if grep -q '__BRIDGISTIC_RELEASE_VERSION__' source/index.html; then
             echo "::error::The release version marker was not fully replaced"
             exit 1
           fi
 
       - name: Configure GitHub Pages
+        if: steps.deployed.outputs.already != 'true'
         uses: actions/configure-pages@v5
 
       - name: Stage only the public site
+        if: steps.deployed.outputs.already != 'true'
         run: |
           rm -rf dist/pages-site
           mkdir -p dist/pages-site/assets
-          cp index.html dist/pages-site/index.html
-          cp CNAME dist/pages-site/CNAME
-          cp assets/bridgistic-icon.png dist/pages-site/assets/bridgistic-icon.png
-          cp assets/bridgistic-logo.png dist/pages-site/assets/bridgistic-logo.png
+          cp source/index.html dist/pages-site/index.html
+          printf 'bridgistic.app\n' > dist/pages-site/CNAME
+          cp source/assets/bridgistic-icon.png dist/pages-site/assets/bridgistic-icon.png
+          cp source/assets/bridgistic-logo.png dist/pages-site/assets/bridgistic-logo.png
 
       - name: Upload release site
+        if: steps.deployed.outputs.already != 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist/pages-site
 
       - name: Deploy release site
         id: deployment
+        if: steps.deployed.outputs.already != 'true'
         uses: actions/deploy-pages@v4
+
+      - name: Confirm deployment is current
+        if: steps.deployed.outputs.already == 'true'
+        run: echo "GitHub Pages already serves ${{ steps.release.outputs.tag }}."
