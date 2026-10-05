@@ -41,7 +41,9 @@ $bridgistic_nav_icons = array(
 
 		<header class="bridgistic-topbar">
 			<div class="bridgistic-brand">
-				<span class="bridgistic-brand-mark"><?php echo Page::icon( 'bridge', 22 ); // phpcs:ignore WordPress.Security.EscapeOutput -- static SVG. ?></span>
+				<span class="bridgistic-brand-mark">
+					<img class="bridgistic-brand-image" src="<?php echo esc_url( BRIDGISTIC_URL . 'assets/brand/bridgistic-icon.png' ); ?>" alt="" width="40" height="40" />
+				</span>
 				<span class="bridgistic-brand-text">
 					<strong>Bridgistic</strong>
 					<em><?php esc_html_e( 'Safe AI Control Bridge for WordPress', 'bridgistic' ); ?></em>

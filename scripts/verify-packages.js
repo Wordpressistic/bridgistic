@@ -182,6 +182,24 @@ withArchive("bridgistic-wordpress-plugin.zip", (entries, dir) => {
     ok("no test files shipped");
   }
 
+  if (entries.some((e) => e.rel.startsWith("bridgistic/includes/sdk/"))) {
+    fail("the WPistic licensing SDK was shipped in the free plugin ZIP");
+  } else {
+    ok("no licensing SDK shipped in the free plugin ZIP");
+  }
+
+  if (
+    entries.some(
+      (e) =>
+        e.rel === "bridgistic/admin/class-bridgistic-license-page.php" ||
+        e.rel === "bridgistic/admin/views/license.php"
+    )
+  ) {
+    fail("the license activation UI was shipped in the free plugin ZIP");
+  } else {
+    ok("no license activation UI shipped");
+  }
+
   if (entries.some((e) => e.rel.endsWith("composer.json") && e.rel.includes("vendor/"))) {
     fail("vendor/ directory shipped");
   }
@@ -193,6 +211,13 @@ withArchive("bridgistic-wordpress-plugin.zip", (entries, dir) => {
     ok(`plugin header and BRIDGISTIC_VERSION both report ${EXPECTED_VERSION}`);
   } else {
     fail(`version mismatch in the shipped plugin: header=${headerVersion}, constant=${constVersion}, expected ${EXPECTED_VERSION}`);
+  }
+
+  const policy = readFileSync(join(dir, "bridgistic/includes/class-license.php"), "utf8");
+  if (policy.includes("FREE_ONLY") && !policy.includes("WpisticClient")) {
+    ok("shipped feature policy is free-only and has no remote SDK client");
+  } else {
+    fail("shipped feature policy is not the free-only policy");
   }
 
   const readme = readFileSync(join(dir, "bridgistic/readme.txt"), "utf8");
@@ -207,7 +232,49 @@ withArchive("bridgistic-wordpress-plugin.zip", (entries, dir) => {
   ok(`${entries.filter((e) => !e.dir).length} files, no dev junk or secrets`);
 });
 
-// ---- 2. Claude setup package ------------------------------------------------
+// ---- 2. OpenAI plugin directory package -------------------------------------
+
+console.log("\nbridgistic-openai-plugin.zip");
+withArchive("bridgistic-openai-plugin.zip", (entries, dir) => {
+  const roots = readdirSync(dir);
+  if (roots.includes("plugin.json") && roots.includes("mcp.json")) {
+    ok("contains the portable plugin manifest and MCP configuration");
+  } else {
+    fail("missing plugin.json or mcp.json");
+  }
+
+  const manifestPath = join(dir, "plugin.json");
+  if (existsSync(manifestPath)) {
+    const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+    if (manifest.version === EXPECTED_VERSION) ok(`manifest reports ${EXPECTED_VERSION}`);
+    else fail(`manifest reports ${manifest.version}, expected ${EXPECTED_VERSION}`);
+    const openaiInterface = manifest.extensions?.["com.openai"]?.interface;
+    if (openaiInterface?.logo === "./assets/icon.png" && openaiInterface?.composerIcon === "./assets/icon.png") {
+      ok("manifest logo and composerIcon point to the packaged icon");
+    } else {
+      fail("manifest does not point to assets/icon.png");
+    }
+  }
+
+  const mcpPath = join(dir, "mcp.json");
+  if (existsSync(mcpPath)) {
+    const mcp = JSON.parse(readFileSync(mcpPath, "utf8"));
+    const url = mcp.mcpServers?.bridgistic?.url;
+    if (url === "https://mcp.bridgistic.app/mcp") ok("MCP URL is the canonical hosted endpoint");
+    else fail(`unexpected MCP URL: ${url ?? "missing"}`);
+  }
+
+  for (const required of ["assets/icon.png", "skills/get-started/SKILL.md"]) {
+    if (existsSync(join(dir, required))) ok(`contains ${required}`);
+    else fail(`missing ${required}`);
+  }
+
+  checkNoJunk("openai-plugin.zip", entries);
+  checkNoSecrets("openai-plugin.zip", entries);
+  ok(`${entries.filter((e) => !e.dir).length} files, no dev junk or secrets`);
+});
+
+// ---- 3. Claude setup package ------------------------------------------------
 
 console.log("\nbridgistic-claude-package.zip");
 withArchive("bridgistic-claude-package.zip", (entries, dir) => {
@@ -228,7 +295,7 @@ withArchive("bridgistic-claude-package.zip", (entries, dir) => {
   ok(`${entries.filter((e) => !e.dir).length} files, no dev junk or secrets`);
 });
 
-// ---- 3. Claude Desktop extension --------------------------------------------
+// ---- 4. Claude Desktop extension --------------------------------------------
 
 console.log("\nbridgistic.mcpb");
 withArchive("bridgistic.mcpb", (entries, dir) => {

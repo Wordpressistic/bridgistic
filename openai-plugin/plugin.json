@@ -1,0 +1,55 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "bridgistic",
+  "version": "1.5.0",
+  "description": "Connect ChatGPT and Codex to a WordPress site through the free Bridgistic MCP bridge with scoped access, approvals, snapshots and audit logs.",
+  "author": {
+    "name": "WordPressistic",
+    "email": "support@wordpressistic.com",
+    "url": "https://wordpressistic.com"
+  },
+  "homepage": "https://bridgistic.app/",
+  "repository": "https://github.com/wordpressistic/bridgistic",
+  "license": "GPL-2.0-or-later",
+  "keywords": [
+    "wordpress",
+    "mcp",
+    "chatgpt",
+    "codex",
+    "automation",
+    "security"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Bridgistic",
+        "shortDescription": "Safe AI control for WordPress",
+        "longDescription": "Connect ChatGPT or Codex to a WordPress site running the free Bridgistic plugin. Use scoped keys, human approvals, snapshots and audit logs to inspect and manage the site without sharing a WordPress administrator password. Start with read-only access and grant write scopes only when needed.",
+        "developerName": "WordPressistic",
+        "category": "Developer Tools",
+        "capabilities": [
+          "Inspect WordPress sites",
+          "Read content and settings",
+          "Manage approved WordPress tasks"
+        ],
+        "websiteURL": "https://bridgistic.app/",
+        "supportURL": "https://github.com/wordpressistic/bridgistic/issues",
+        "privacyPolicyURL": "https://github.com/wordpressistic/bridgistic/blob/main/docs/PRIVACY.md",
+        "termsOfServiceURL": "https://wordpressistic.com/terms",
+        "defaultPrompt": [
+          "Inspect my WordPress site with read-only access.",
+          "Summarize my WordPress site health and active plugins.",
+          "Show me what Bridgistic can safely do on this site."
+        ],
+        "brandColor": "#0EA979",
+        "brandColorDark": "#54E6B2",
+        "composerIcon": "./assets/icon.png",
+        "logo": "./assets/icon.png"
+      },
+      "onboardingSkill": "./skills/get-started/SKILL.md",
+      "publication": {
+        "release_notes": "Bridgistic 1.5.0 is the free-only public release. Premium WPistic/SaaS features are display-only and cannot be activated from the plugin."
+      }
+    }
+  }
+}

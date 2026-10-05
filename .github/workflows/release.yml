@@ -82,7 +82,7 @@ jobs:
           cd mcp-server && npm ci --no-audit --no-fund
           cd ../cloud && npm ci --no-audit --no-fund
 
-      # `npm run validate` compares all 13 version-bearing sources against each
+      # `npm run validate` compares all 14 version-bearing sources against each
       # other; this additionally pins them to the tag being released.
       - name: Versions match the tag
         run: |

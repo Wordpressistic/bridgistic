@@ -6,6 +6,8 @@
   <meta name="theme-color" content="#07111f" />
   <meta name="color-scheme" content="dark light" />
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+  <link rel="icon" type="image/png" sizes="1254x1254" href="assets/bridgistic-icon.png" />
+  <link rel="apple-touch-icon" href="assets/bridgistic-icon.png" />
 
   <title>Bridgistic — Safe AI Control for WordPress via MCP</title>
   <meta name="description" content="Connect Claude, ChatGPT, Codex, Gemini, Cursor and other MCP clients to WordPress with signed requests, scoped access, approvals, snapshots, rollback and audit logs." />
@@ -16,9 +18,13 @@
   <meta property="og:title" content="Bridgistic — Safe AI Control for WordPress via MCP" />
   <meta property="og:description" content="Give AI a controlled, auditable path into WordPress — without handing over full-admin credentials." />
   <meta property="og:url" content="https://bridgistic.app/" />
+  <meta property="og:image" content="https://bridgistic.app/assets/bridgistic-logo.png" />
+  <meta property="og:image:alt" content="Bridgistic — AI Control for WordPress" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Bridgistic — Safe AI Control for WordPress via MCP" />
   <meta name="twitter:description" content="Signed. Scoped. Approved. Reversible. A production-minded MCP bridge for WordPress." />
+  <meta name="twitter:image" content="https://bridgistic.app/assets/bridgistic-logo.png" />
+  <meta name="twitter:image:alt" content="Bridgistic — AI Control for WordPress" />
 
   <script type="application/ld+json">
   {
@@ -31,7 +37,7 @@
         "url": "https://bridgistic.app/",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "WordPress 6.4+, PHP 8.0+",
-        "softwareVersion": "1.3.0",
+        "softwareVersion": "__BRIDGISTIC_RELEASE_VERSION__",
         "license": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
         "description": "A secure MCP bridge that connects AI clients to WordPress using HMAC-signed requests, scoped keys, approvals, snapshots and audit logs.",
         "offers": {
@@ -255,10 +261,12 @@
       border-radius:10px;
       display:grid;
       place-items:center;
+      overflow:hidden;
       border:1px solid rgba(84,230,178,.24);
       background:linear-gradient(145deg, rgba(84,230,178,.15), rgba(99,216,255,.05));
       box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);
     }
+    .brand-mark img { width:100%; height:100%; display:block; object-fit:cover; }
     .brand-mark svg { width:20px; height:20px; color:var(--green); }
     .brand span { color:var(--green); }
     .nav-links { display:flex; align-items:center; gap:5px; margin-left:auto; }
@@ -339,6 +347,16 @@
       gap:64px;
     }
     .hero-copy { max-width:670px; }
+    .hero-logo {
+      display:block;
+      width:min(100%, 245px);
+      height:auto;
+      margin:0 0 22px;
+      padding:9px;
+      border-radius:16px;
+      background:#fff;
+      box-shadow:0 14px 32px rgba(0,0,0,.18);
+    }
     .hero-copy .eyebrow { margin-bottom:22px; }
     .hero h1 {
       margin:0;
@@ -949,9 +967,7 @@
     <div class="wrap nav">
       <a class="brand" href="#top" aria-label="Bridgistic home">
         <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 17h16M6.5 17v-5.5a5.5 5.5 0 0 1 11 0V17M9 17v-5a3 3 0 0 1 6 0v5M3 20h18"/>
-          </svg>
+          <img src="assets/bridgistic-icon.png" alt="" width="1254" height="1254" />
         </span>
         Bridg<span>istic</span>
       </a>
@@ -984,7 +1000,7 @@
   <main id="top">
     <div class="announcement">
       <div class="wrap announcement-inner">
-        <span class="badge live">v1.3.0</span>
+        <span class="badge live">v__BRIDGISTIC_RELEASE_VERSION__</span>
         <span>Open-source WordPress bridge + MCP server</span>
         <span aria-hidden="true">·</span>
         <a href="https://github.com/Wordpressistic/bridgistic/releases/latest" target="_blank" rel="noopener">View latest release →</a>
@@ -994,6 +1010,7 @@
     <section class="hero">
       <div class="wrap hero-grid">
         <div class="hero-copy reveal visible">
+          <img class="hero-logo" src="assets/bridgistic-logo.png" alt="Bridgistic — AI Control for WordPress" width="1448" height="1086" />
           <span class="eyebrow"><span class="dot"></span> WordPress × Model Context Protocol</span>
           <h1>Give AI a <span class="gradient">safe control plane</span> for WordPress.</h1>
           <p class="hero-lead">Connect Claude, ChatGPT, Codex, Gemini, Cursor and other MCP clients to WordPress through a bridge built around <strong>least privilege, human approval and reversibility</strong>.</p>
@@ -1486,7 +1503,7 @@ Bridgistic Cloud is currently a public beta.</pre>
           <h2>Connect your first WordPress site without surrendering control.</h2>
           <p>Install the free plugin, mint a Read-only key, connect your MCP client and verify the bridge before granting write access.</p>
           <div class="cta-buttons">
-            <a class="btn btn-primary" href="https://github.com/Wordpressistic/bridgistic/releases/latest/download/bridgistic-wordpress-plugin.zip">Download Bridgistic v1.3.0
+            <a class="btn btn-primary" href="https://github.com/Wordpressistic/bridgistic/releases/latest/download/bridgistic-wordpress-plugin.zip">Download Bridgistic v__BRIDGISTIC_RELEASE_VERSION__
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>
             </a>
             <a class="btn btn-secondary" href="https://github.com/Wordpressistic/bridgistic" target="_blank" rel="noopener">View on GitHub
@@ -1502,7 +1519,7 @@ Bridgistic Cloud is currently a public beta.</pre>
     <div class="wrap footer-main">
       <div class="footer-brand">
         <a class="brand" href="#top">
-          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17h16M6.5 17v-5.5a5.5 5.5 0 0 1 11 0V17M9 17v-5a3 3 0 0 1 6 0v5M3 20h18"/></svg></span>
+          <span class="brand-mark" aria-hidden="true"><img src="assets/bridgistic-icon.png" alt="" width="1254" height="1254" /></span>
           Bridg<span>istic</span>
         </a>
         <p>A local-first MCP bridge for giving AI assistants controlled, auditable and reversible access to WordPress.</p>

@@ -36,7 +36,6 @@ require_once __DIR__ . '/class-bridgistic-snapshots-page.php';
 require_once __DIR__ . '/class-bridgistic-playbooks-page.php';
 require_once __DIR__ . '/class-bridgistic-export-page.php';
 require_once __DIR__ . '/class-bridgistic-premium-page.php';
-require_once __DIR__ . '/class-bridgistic-license-page.php';
 require_once __DIR__ . '/class-bridgistic-settings-page.php';
 require_once __DIR__ . '/class-bridgistic-oauth-page.php';
 
@@ -67,7 +66,6 @@ final class Controller {
 			'bridgistic-playbooks' => array( __( 'Playbooks', 'bridgistic' ), PlaybooksPage::class ),
 			'bridgistic-export'    => array( __( 'Export Package', 'bridgistic' ), ExportPage::class ),
 			'bridgistic-premium'   => array( __( 'Premium Features', 'bridgistic' ), PremiumPage::class ),
-			'bridgistic-license'   => array( __( 'License', 'bridgistic' ), LicensePage::class ),
 			'bridgistic-settings'  => array( __( 'Settings', 'bridgistic' ), SettingsPage::class ),
 		);
 	}
@@ -75,7 +73,6 @@ final class Controller {
 	public function hooks(): void {
 		add_action( 'admin_menu', array( $this, 'menu' ) );
 		add_action( 'admin_init', array( $this, 'maybe_redirect_after_activation' ) );
-		add_action( 'admin_init', array( LicensePage::class, 'handle_actions' ) );
 		( new Assets() )->hooks();
 		( new Actions() )->hooks();
 	}

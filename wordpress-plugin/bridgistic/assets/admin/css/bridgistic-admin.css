@@ -123,10 +123,18 @@
 	width: 40px;
 	height: 40px;
 	border-radius: 12px;
+	overflow: hidden;
 	color: var(--bz-accent);
 	background: linear-gradient(145deg, var(--bz-card), var(--bz-bg-2));
 	border: 1px solid var(--bz-border-strong);
 	box-shadow: 0 0 18px rgba(0, 255, 133, 0.12);
+}
+
+.bridgistic-brand-image {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 }
 
 .bridgistic-brand-text { display: flex; flex-direction: column; line-height: 1.25; }

@@ -521,7 +521,7 @@ final class Actions {
 		if ( ! \Bridgistic\License::gate( 'snapshots_advanced' )
 			&& count( Snapshot::list_recent( self::SNAPSHOT_LIMIT + 1 ) ) >= self::SNAPSHOT_LIMIT ) {
 			wp_send_json_error(
-				array( 'message' => sprintf( __( 'The free version keeps up to %d snapshots. Upgrade to Pro for unlimited snapshot history, or delete old ones to create new ones.', 'bridgistic' ), self::SNAPSHOT_LIMIT ) ),
+				array( 'message' => sprintf( __( 'The free version keeps up to %d snapshots. Advanced snapshot history belongs to Bridgistic SaaS; delete old snapshots to create new ones.', 'bridgistic' ), self::SNAPSHOT_LIMIT ) ),
 				400
 			);
 		}

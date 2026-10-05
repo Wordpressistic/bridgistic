@@ -7,6 +7,25 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 Nothing yet.
 
+## [1.5.0] — 2026-10-05
+
+The free-only public release: the local bridge remains fully functional while
+paid WPistic/SaaS behavior is locked and no longer has an activation path.
+
+### Changed
+
+- Removed the public plugin's remote licensing, entitlement, billing, and
+  account activation path. The free build always reports the free edition and
+  cannot unlock paid features.
+- Kept the premium feature page as a display-only overview and removed the
+  License admin screen from the shipped plugin package.
+- Enforced the free caps for scheduled playbooks and snapshots regardless of
+  any stale local license state.
+- Excluded the unused WPistic licensing SDK and license UI from the public ZIP.
+- Added release-tag GitHub Pages deployment support and a ChatGPT/Codex plugin
+  package manifest for the official directory submission flow.
+- Synchronized all release manifests and the public landing page to 1.5.0.
+
 ## [1.3.2] — 2026-09-11
 
 ### Fixed

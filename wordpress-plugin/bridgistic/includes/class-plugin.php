@@ -67,9 +67,8 @@ final class Plugin {
 		// Scheduled playbooks: register custom cron intervals + the run hook.
 		Scheduler::boot();
 
-		// WPistic licensing (validation cron, entitlements, secure updates,
-		// Connect-to-WPistic onboarding). Runs on every request so background
-		// update checks and cron validation work outside admin too.
+		// Initialise the free-edition feature policy. This is intentionally a
+		// local no-op: the public plugin has no billing or license unlock path.
 		License::init();
 	}
 

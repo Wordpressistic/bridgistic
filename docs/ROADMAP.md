@@ -42,7 +42,7 @@ What's planned for this repository. SaaS plans live elsewhere; this roadmap only
 
 ## Cloud connector (`cloud/`) — deployed, public beta, linked in WP Admin
 
-`mcp.wpistic.cloud`: a hosted, multi-tenant MCP relay so connecting is "paste
+`mcp.bridgistic.app`: a hosted, multi-tenant MCP relay so connecting is "paste
 one URL, approve in your own WP admin" — no local server, no Node.js, no
 copy-pasted secrets. The WordPress side (a small OAuth 2.1 authorization
 server, `includes/class-oauth.php` + the consent screen) and the

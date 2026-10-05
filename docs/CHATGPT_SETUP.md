@@ -2,7 +2,7 @@
 
 **Status: live, public beta.** ChatGPT only connects to **remote** MCP servers over
 HTTPS — unlike Claude, Codex, and Gemini CLI, it cannot launch a local server process, so it can
-only reach Bridgistic through the hosted cloud connector (`mcp.wpistic.cloud`). That connector is
+only reach Bridgistic through the hosted cloud connector (`mcp.bridgistic.app`). That connector is
 deployed and linked from WP Admin (**Bridgistic → Bridgistic Cloud**), but it has not yet had an
 independent third-party security review — see [CLOUD_CONNECTOR.md](CLOUD_CONNECTOR.md) for exactly
 what "public beta" means here before connecting a site you can't afford to risk.
@@ -14,7 +14,7 @@ ChatGPT calls this **Developer Mode** (Settings → Connectors → Advanced → 
 or Enterprise) — it is not available on the free tier.
 
 1. In ChatGPT: **Settings → Connectors → Advanced settings → Developer mode** → toggle on.
-2. **Create connector** → paste `https://mcp.wpistic.cloud/mcp` as the server URL, leave transport
+2. **Create connector** → paste `https://mcp.bridgistic.app/mcp` as the server URL, leave transport
    as Streamable HTTP, and leave the OAuth client ID/secret fields blank (Bridgistic's server
    registers itself with ChatGPT automatically the first time — see "Technical notes" below).
 3. Approve the connection — this opens the same WordPress consent screen Claude's remote connector

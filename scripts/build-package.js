@@ -6,6 +6,8 @@
  *                                            scripts, bundled MCP server
  *   dist/bridgistic-wordpress-plugin.zip   — the WordPress plugin, ready to
  *                                            upload via Plugins → Add New
+ *   dist/bridgistic-openai-plugin.zip      — official ChatGPT/Codex directory
+ *                                            package with the remote MCP setup
  *
  * Run `npm run build` first so the server bundle exists (the package is
  * still produced without it, with a warning).
@@ -66,8 +68,25 @@ function addTree(zip, dir, prefix, skip = new Set()) {
 
 {
   const zip = new ZipWriter();
-  addTree(zip, join(ROOT, "wordpress-plugin/bridgistic"), "bridgistic/", new Set(["tests"]));
+  // The public ZIP is the free edition. Keep the premium showcase out of the
+  // executable package: it must not carry the WPistic licensing SDK or an
+  // activation screen that could be mistaken for a supported unlock path.
+  addTree(
+    zip,
+    join(ROOT, "wordpress-plugin/bridgistic"),
+    "bridgistic/",
+    new Set(["tests", "sdk", "class-bridgistic-license-page.php", "license.php"])
+  );
   const out = zip.write(join(DIST, "bridgistic-wordpress-plugin.zip"));
+  console.log(`✓ ${relative(ROOT, out)} (${(statSync(out).size / 1024).toFixed(0)} KB)`);
+}
+
+// ---- 3. OpenAI plugin directory package -----------------------------------------
+
+{
+  const zip = new ZipWriter();
+  addTree(zip, join(ROOT, "openai-plugin"), "");
+  const out = zip.write(join(DIST, "bridgistic-openai-plugin.zip"));
   console.log(`✓ ${relative(ROOT, out)} (${(statSync(out).size / 1024).toFixed(0)} KB)`);
 }
 

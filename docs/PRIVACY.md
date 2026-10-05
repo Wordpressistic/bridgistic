@@ -43,7 +43,7 @@ Bridgistic is a developer/site-administration tool. It is not directed at childr
 
 ## Changes to this policy
 
-**Bridgistic Cloud** (`mcp.wpistic.cloud`), shipped as a free public beta in v1.2.0, is different, because a hosted relay necessarily sees connection traffic in transit. If you use it: your site URL and a scoped Bridgistic key are stored in the connector's database, with the key secret encrypted at rest under AES-256-GCM; tool requests and responses pass through the relay in memory and are not stored; and the relay's operational logs record a request id, route, an opaque tenant handle, latency, and a status — never the key secret, never an OAuth code or PKCE verifier, and never request or response bodies. The cloud connector is entirely optional: the local connection described above sends nothing to any third party.
+**Bridgistic Cloud** (`mcp.bridgistic.app`), shipped as a free public beta in v1.2.0, is different, because a hosted relay necessarily sees connection traffic in transit. If you use it: your site URL and a scoped Bridgistic key are stored in the connector's database, with the key secret encrypted at rest under AES-256-GCM; tool requests and responses pass through the relay in memory and are not stored; and the relay's operational logs record a request id, route, an opaque tenant handle, latency, and a status — never the key secret, never an OAuth code or PKCE verifier, and never request or response bodies. The cloud connector is entirely optional: the local connection described above sends nothing to any third party.
 
 ## Contact
 

@@ -52,7 +52,7 @@ pointing at a multi-site registry — see [CONNECT_OTHER_AI.md](CONNECT_OTHER_AI
 ## Remote (cloud connector)
 
 Gemini CLI also supports remote Streamable-HTTP MCP servers with OAuth discovery — add an entry
-with `"httpUrl": "https://mcp.wpistic.cloud/mcp"` instead of `command`/`args`/`env`, and Gemini CLI
+with `"httpUrl": "https://mcp.bridgistic.app/mcp"` instead of `command`/`args`/`env`, and Gemini CLI
 handles the OAuth flow itself. Bridgistic's hosted connector is deployed but currently a private
 beta — see [CLOUD_CONNECTOR.md](CLOUD_CONNECTOR.md) for status. The local config above is the
 supported path until that opens up.

@@ -26,7 +26,7 @@ final class Scheduler {
 
 	public const HOOK = 'bridgistic_run_scheduled_playbook';
 
-	/** Free-plan cap on enabled schedules (license lifts it — License::gate). */
+	/** Free-edition cap on enabled schedules; SaaS scheduling is separate. */
 	public const FREE_MAX_ACTIVE = 3;
 
 	/** Allowed recurrences → human label. 'once' = single event. */

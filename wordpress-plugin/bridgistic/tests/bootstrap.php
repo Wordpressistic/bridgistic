@@ -40,7 +40,7 @@ define( 'DAY_IN_SECONDS', 86400 );
 define( 'MB_IN_BYTES', 1048576 );
 define( 'AUTH_KEY', 'unit-test-auth-key-000000000000000000' );
 define( 'SECURE_AUTH_KEY', 'unit-test-secure-auth-key-00000000000' );
-define( 'BRIDGISTIC_VERSION', '1.2.0' );
+define( 'BRIDGISTIC_VERSION', '1.5.0' );
 define( 'BRIDGISTIC_DIR', dirname( __DIR__ ) . '/' );
 define( 'BRIDGISTIC_URL', 'https://example.test/wp-content/plugins/bridgistic/' );
 define( 'BRIDGISTIC_REST_NAMESPACE', 'bridgistic/v1' );

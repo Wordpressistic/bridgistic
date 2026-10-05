@@ -3,7 +3,7 @@
  * Plugin Name:       Bridgistic
  * Plugin URI:        https://github.com/wordpressistic/bridgistic
  * Description:        Connect your WordPress site to any AI model — Claude, ChatGPT, Codex, Gemini, Cursor or any MCP client — with production-safe, scoped control — HMAC-signed requests, least-privilege keys, dry-run and human approval on destructive ops, one-call rollback, full audit, usage metering, and scheduled playbooks.
- * Version:           1.3.2
+ * Version:           1.5.0
  * Requires at least: 6.4
  * Requires PHP:      8.0
  * Author:            Shuvo Sarker (WordPressistic)
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // No direct access.
 }
 
-define( 'BRIDGISTIC_VERSION', '1.3.2' );
+define( 'BRIDGISTIC_VERSION', '1.5.0' );
 define( 'BRIDGISTIC_FILE', __FILE__ );
 define( 'BRIDGISTIC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BRIDGISTIC_URL', plugin_dir_url( __FILE__ ) );
@@ -63,12 +63,6 @@ spl_autoload_register(
 
 register_activation_hook( __FILE__, array( 'Bridgistic\Plugin', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'Bridgistic\Plugin', 'deactivate' ) );
-
-/*
- * The plugin ships its own License tab (admin.php?page=bridgistic-license).
- * Suppress the SDK's duplicate "Settings → Bridgistic License" menu entry.
- */
-add_filter( 'wpistic_sdk_show_settings_menu', '__return_false' );
 
 add_action(
 	'plugins_loaded',

@@ -1,5 +1,10 @@
 # Connecting Bridgistic — the complete guide
 
+<p align="center"><img src="assets/bridgistic-logo.png" alt="Bridgistic — AI Control for WordPress" width="420"></p>
+
+Branding source files and distribution rules are documented in
+[docs/BRANDING.md](docs/BRANDING.md).
+
 This is the single walkthrough to go from "I just installed the plugin" to "my AI assistant can
 safely read and edit my WordPress site." It's written for site owners, not developers — if
 something below doesn't match what you see, jump to [Troubleshooting](#troubleshooting) or run
@@ -20,7 +25,7 @@ Bridgistic has two ways to connect an AI assistant to your site.
 | | Local connection (this guide) | Cloud connector |
 |---|---|---|
 | Status | **Live, fully supported, most-used path** | **Live, public beta** — no independent security review yet |
-| How it works | Your AI app runs a small server on your own computer that talks to your site | A hosted relay (`mcp.wpistic.cloud`) brokers the connection with no local install |
+| How it works | Your AI app runs a small server on your own computer that talks to your site | A hosted relay (`mcp.bridgistic.app`) brokers the connection with no local install |
 | Setup effort | One key to create, one app to configure | Paste one URL into your AI client, approve in WP Admin |
 | Works with | Claude Desktop, Claude Code, Codex CLI, Gemini CLI | ChatGPT and any other remote-only MCP client (also works with Claude's remote connector) |
 

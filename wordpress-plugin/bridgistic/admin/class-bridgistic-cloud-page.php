@@ -1,7 +1,7 @@
 <?php
 /**
  * Bridgistic Cloud: informational entry point for the hosted MCP connector
- * (mcp.wpistic.cloud). Public beta — see docs/CLOUD_CONNECTOR.md for what
+ * (mcp.bridgistic.app). Public beta — see docs/CLOUD_CONNECTOR.md for what
  * that status means. This page doesn't perform the OAuth handshake itself
  * (that's OAuthAuthorizePage, reached via a deep link from the Worker); it
  * just makes the option discoverable and explains it honestly, since it was

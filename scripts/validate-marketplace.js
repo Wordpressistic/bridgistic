@@ -58,7 +58,15 @@ const REQUIRED = [
   "mcp-server/README.md",
   "mcpb/manifest.json",
   "mcpb/icon.png",
+  "openai-plugin/plugin.json",
+  "openai-plugin/mcp.json",
+  "openai-plugin/assets/icon.png",
+  "openai-plugin/skills/get-started/SKILL.md",
   "server.json",
+  "assets/bridgistic-icon.png",
+  "assets/bridgistic-logo.png",
+  "docs/BRANDING.md",
+  "docs/OPENAI_PLUGIN_SUBMISSION.md",
   "wordpress-plugin/bridgistic/bridgistic.php",
   "docs/INSTALL.md",
   "docs/CLAUDE_DESKTOP.md",
@@ -166,6 +174,21 @@ if (mcpbManifest) {
   if (!missing.length) ok("mcpb/manifest.json valid (one-click user_config wired)");
 }
 
+const openaiPlugin = readJson("openai-plugin/plugin.json");
+if (openaiPlugin) {
+  const openaiInterface = openaiPlugin.extensions?.["com.openai"]?.interface;
+  if (openaiPlugin.name !== "bridgistic") fail(`openai-plugin/plugin.json: name is "${openaiPlugin.name}"`);
+  if (openaiInterface?.logo !== "./assets/icon.png") {
+    fail("openai-plugin/plugin.json: interface.logo must be ./assets/icon.png");
+  }
+  if (openaiInterface?.composerIcon !== "./assets/icon.png") {
+    fail("openai-plugin/plugin.json: interface.composerIcon must be ./assets/icon.png");
+  }
+  if (openaiInterface?.logo === "./assets/icon.png" && openaiInterface?.composerIcon === "./assets/icon.png") {
+    ok("openai-plugin/plugin.json valid (square logo and composerIcon wired)");
+  }
+}
+
 // MCP Registry listing.
 const registry = readJson("server.json");
 if (registry) {
@@ -217,6 +240,7 @@ function versionFrom(path, re) {
 
 const versions = {
   "package.json": readJson("package.json")?.version,
+  "openai-plugin/plugin.json": readJson("openai-plugin/plugin.json")?.version,
   "mcp-server/package.json": readJson("mcp-server/package.json")?.version,
   "cloud/package.json": readJson("cloud/package.json")?.version,
   "plugins/bridgistic/.claude-plugin/plugin.json": plugin?.version,
