@@ -7,6 +7,8 @@ name: Deploy Bridgistic site from release
 # to "GitHub Actions" once before this workflow can deploy.
 
 on:
+  release:
+    types: [published]
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
