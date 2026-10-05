@@ -801,6 +801,28 @@
     .trust-note strong { color:var(--text); }
 
     .pricing-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:980px; margin:0 auto; }
+
+    .billing-toggle {
+      display:inline-flex; align-items:center; gap:4px; margin:28px auto 8px;
+      padding:5px; border-radius:999px; border:1px solid var(--line);
+      background:color-mix(in srgb, var(--panel) 88%, transparent);
+    }
+    .billing-toggle button {
+      appearance:none; border:0; cursor:pointer; border-radius:999px;
+      padding:10px 18px; font:650 13px/1 var(--font,inherit); color:var(--muted);
+      background:transparent;
+    }
+    .billing-toggle button[aria-pressed="true"] {
+      color:var(--bg, #07111f); background:linear-gradient(135deg, #54e6b2, #63d8ff);
+      box-shadow:0 8px 24px rgba(84,230,178,.22);
+    }
+    .pricing-grid.three { grid-template-columns:repeat(3,minmax(0,1fr)); max-width:1100px; }
+    .price-card .price [data-cycle] { display:none; }
+    .price-card .price [data-cycle].is-active { display:inline; }
+    .price-card[data-show-cycle="month"] .btn[data-cycle="year"],
+    .price-card[data-show-cycle="year"] .btn[data-cycle="month"] { display:none; }
+    @media (max-width:900px){ .pricing-grid.three { grid-template-columns:1fr; } }
+
     .price-card { position:relative; padding:34px; border:1px solid var(--line); border-radius:26px; background:var(--panel); box-shadow:var(--shadow-soft); }
     .price-card.pro { border-color:rgba(99,216,255,.22); background:linear-gradient(145deg, rgba(99,216,255,.055), transparent 44%), var(--panel); }
     .price-card h3 { margin:18px 0 8px; font-size:27px; letter-spacing:-.035em; }
@@ -1433,44 +1455,64 @@ Bridgistic Cloud is currently a public beta.</pre>
     <section class="section" id="pricing">
       <div class="wrap">
         <div class="section-head reveal">
-          <span class="eyebrow"><span class="dot"></span> Free bridge. Paid scale.</span>
-          <h2>Start with the complete secure core.</h2>
-          <p>The open-source plugin is not a demo. Paid SaaS layers on team, agency and advanced automation capabilities.</p>
+          <span class="eyebrow"><span class="dot"></span> Free core. Pro scale.</span>
+          <h2>Start free. Upgrade when you need WPistic licensing.</h2>
+          <p>Open-source plugin download is free. Bridgistic Pro unlocks the paid license via Paddle ($12/mo or $99/yr). No Agency SKU in Paddle yet.</p>
         </div>
 
-        <div class="pricing-grid">
+        <div style="text-align:center" class="reveal">
+          <div class="billing-toggle" role="group" aria-label="Billing period">
+            <button type="button" id="bill-month" aria-pressed="false">Monthly</button>
+            <button type="button" id="bill-year" aria-pressed="true">Yearly <small style="opacity:.8">save ~31%</small></button>
+          </div>
+        </div>
+
+        <div class="pricing-grid three" id="pricing-cards" data-cycle="year">
           <article class="price-card reveal">
             <span class="badge free">Open source</span>
             <h3>Bridgistic Free</h3>
-            <div class="price">$0 <small>core bridge</small></div>
-            <p>For developers and site owners who want controlled AI access to their own WordPress sites.</p>
+            <div class="price">$0 <small>forever</small></div>
+            <p>Controlled AI access for your own WordPress sites. GPL-2.0-or-later.</p>
             <ul class="price-list">
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>Local MCP bridge</strong> for supported clients</li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>HMAC keys, scopes and approvals</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Basic audit logs and limited snapshots</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Manual playbooks + limited scheduling</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Multi-site connections builder</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Cloud connector during public beta</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Basic audit logs and snapshots</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Latest GitHub release zip</li>
             </ul>
-            <a class="btn btn-primary" href="https://github.com/Wordpressistic/bridgistic/releases/latest/download/bridgistic-wordpress-plugin.zip">Download free</a>
-            <div class="price-fine">GPL-2.0-or-later. Security fixes remain in the free version.</div>
+            <a class="btn btn-primary" href="https://github.com/Wordpressistic/bridgistic/releases/latest/download/bridgistic-wordpress-plugin.zip">Download free (latest release)</a>
+            <div class="price-fine">Also: <a href="https://github.com/Wordpressistic/bridgistic/releases/latest" target="_blank" rel="noopener">release notes</a></div>
           </article>
 
-          <article class="price-card pro reveal">
-            <span class="badge">SaaS layer</span>
-            <h3>Bridgistic Pro / Agency</h3>
-            <div class="price">Scale <small>with WPistic</small></div>
-            <p>For agencies and teams that need centralized operations, advanced skills and managed automation across sites.</p>
+          <article class="price-card pro reveal" data-show-cycle="year">
+            <span class="badge">Paddle · Pro</span>
+            <h3>Bridgistic Pro</h3>
+            <div class="price">
+              <span data-cycle="month">$12 <small>/mo</small></span>
+              <span data-cycle="year" class="is-active">$99 <small>/yr</small></span>
+            </div>
+            <p>Licensed Pro through WPistic. Checkout opens on pay.wpistic.com (Paddle overlay) and issues your license by email.</p>
             <ul class="price-list">
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>AI skills marketplace</strong> and advanced skills</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Advanced audit history and export</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Advanced snapshot retention + history</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Managed schedules, monitoring and reporting</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Agency dashboard + team permissions</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Usage billing + white-label options</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>Everything in Free</strong></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>WPistic license + secure updates</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Priority product support path</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Paddle price IDs: monthly <code>pri_01m1ykar8…</code> / yearly <code>pri_01m1ykaqy…</code></li>
             </ul>
-            <a class="btn btn-secondary" href="https://wpistic.com/pricing" target="_blank" rel="noopener">Explore WPistic pricing</a>
-            <div class="price-fine">Exact paid packaging is managed through the WPistic SaaS layer.</div>
+            <a class="btn btn-primary" data-cycle="month" href="https://pay.wpistic.com/?price=pri_01m1ykar8aq033865h68a4b9hh">Buy Pro — $12/mo</a>
+            <a class="btn btn-primary" data-cycle="year" href="https://pay.wpistic.com/?price=pri_01m1ykaqyaaeewsbah07akmpka">Buy Pro — $99/yr</a>
+            <div class="price-fine">Amounts from live Paddle product <code>pro_01m1ykaqjsgcgt6xvwsy4jpn83</code>.</div>
+          </article>
+
+          <article class="price-card reveal">
+            <span class="badge">Catalog only</span>
+            <h3>Agency</h3>
+            <div class="price">— <small>not in Paddle</small></div>
+            <p>WPistic catalog lists an Agency plan, but there is <strong>no Paddle Agency price</strong> yet. No invented amount.</p>
+            <ul class="price-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Team / white-label (catalog entitlements)</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Buy path: talk to sales until a Paddle SKU exists</li>
+            </ul>
+            <a class="btn btn-secondary" href="https://wpistic.com/contact">Talk to sales</a>
+            <div class="price-fine">Will light up when a Paddle Agency price is created and mapped.</div>
           </article>
         </div>
       </div>
@@ -1617,5 +1659,27 @@ Bridgistic Cloud is currently a public beta.</pre>
       }
     })();
   </script>
+
+<script>
+(function () {
+  var cards = document.getElementById('pricing-cards');
+  var monthBtn = document.getElementById('bill-month');
+  var yearBtn = document.getElementById('bill-year');
+  if (!cards || !monthBtn || !yearBtn) return;
+  function setCycle(cycle) {
+    cards.setAttribute('data-cycle', cycle);
+    cards.querySelectorAll('.price-card.pro').forEach(function (c) { c.setAttribute('data-show-cycle', cycle); });
+    cards.querySelectorAll('.price [data-cycle]').forEach(function (el) {
+      el.classList.toggle('is-active', el.getAttribute('data-cycle') === cycle);
+    });
+    monthBtn.setAttribute('aria-pressed', cycle === 'month' ? 'true' : 'false');
+    yearBtn.setAttribute('aria-pressed', cycle === 'year' ? 'true' : 'false');
+  }
+  monthBtn.addEventListener('click', function () { setCycle('month'); });
+  yearBtn.addEventListener('click', function () { setCycle('year'); });
+  setCycle('year');
+})();
+</script>
+
 </body>
 </html>
