@@ -1,22 +1,33 @@
-# Release-backed Bridgistic site
+# GitHub Pages deployment
 
-The public site at https://bridgistic.app/ should represent a published
-release, not an arbitrary commit on main.
+The public site at https://bridgistic.app/ is built from this repository's
+`index.html` and `assets/` directory. This keeps the landing page, download
+links, security information, and product documentation aligned with the
+canonical Bridgistic repository.
 
-The pages-release.yml workflow checks out the exact GitHub release tag,
-injects that tag's version into the landing page, stages only the public
-landing page and its branding assets, and deploys the result to the
-github-pages environment. The download links continue to use GitHub's
-stable releases/latest/download/... URLs, so they move to the newest
-published release automatically.
+## Deployment behavior
+
+- Changes to the landing page, its brand assets, or the Pages workflow on
+  `main` trigger a deployment.
+- Each deployment resolves the latest published Bridgistic release and injects
+  its version into the page. A source commit marker also ensures page edits are
+  deployed even when the release version has not changed.
+- The release workflow dispatches a Pages deployment at the immutable release
+  tag, so a newly published release can be verified against its exact source.
+- A scheduled run reconciles the public page with the current `main` source and
+  latest release. Manual dispatch can select a specific release tag.
+- The workflow stages only `index.html`, the two public brand assets, and the
+  `bridgistic.app` CNAME file.
+
+The page's download buttons use GitHub's stable `releases/latest/download/...`
+URLs, so downloads continue to follow the newest published release.
 
 ## One-time repository setting
 
-In the repository settings, open Pages → Build and deployment and change
-Source from branch deployment to **GitHub Actions**. This is a repository
-setting and cannot be safely inferred or changed by a source-code commit.
-After that one-time change, publishing a release triggers the workflow.
+In repository settings, open **Pages → Build and deployment** and set Source to
+**GitHub Actions**. The current repository setting is already configured for
+GitHub Actions; this note is retained for maintainers setting up a new repo.
 
-Use the manual workflow dispatch only to repair or redeploy a known release
-tag. Verify both the workflow environment URL and the public
-https://bridgistic.app/ page after deployment.
+After deployment, verify the workflow environment URL and the public
+https://bridgistic.app/ page. Confirm that the page shows the expected release
+version and source commit.
