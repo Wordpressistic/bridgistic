@@ -2,6 +2,13 @@
 
 <p align="center"><img src="assets/bridgistic-logo.png" alt="Bridgistic — AI Control for WordPress" width="420"></p>
 
+> **📌 This is the canonical Bridgistic repository.** All development — the free plugin,
+> MCP server, cloud connector, landing page, and every future release (free and Pro) —
+> happens here. The sibling repo `Wordpressistic/bridgistic-claude-marketplace` is a
+> **frozen release mirror** (historical npm/MCP-registry provenance only); do not commit
+> new work there. See [docs/REPO-STRUCTURE.md](docs/REPO-STRUCTURE.md) and
+> [docs/FEATURE-MATRIX.md](docs/FEATURE-MATRIX.md).
+
 Branding source files and distribution rules are documented in
 [docs/BRANDING.md](docs/BRANDING.md).
 
