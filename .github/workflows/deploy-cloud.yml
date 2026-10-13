@@ -27,10 +27,9 @@ name: Deploy Cloud Worker
 # suite (if one exists yet), but the actual deploy step is skipped with a
 # ::notice:: instead of failing the run.
 #
-# This deployment is intentionally being kept low-key (not yet publicly
-# announced), so it is NOT triggered automatically on every push to main.
-# Run it manually via Actions -> Deploy Cloud Worker -> "Run workflow", or
-# by pushing a cloud-v* tag, e.g.:
+# This deployment does not run on every push to main. It runs automatically
+# when a GitHub release is published, or can be run manually via Actions ->
+# Deploy Cloud Worker -> "Run workflow" or by pushing a cloud-v* tag, e.g.:
 #   git tag cloud-v0.1.0 && git push origin cloud-v0.1.0
 #
 # Deliberately independent of ci.yml and release.yml: it is not `needs:`-ed
@@ -39,6 +38,8 @@ name: Deploy Cloud Worker
 
 on:
   workflow_dispatch:
+  release:
+    types: [published]
   push:
     tags: ["cloud-v*"]
 

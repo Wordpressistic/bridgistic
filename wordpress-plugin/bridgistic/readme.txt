@@ -4,7 +4,7 @@ Tags: mcp, ai, claude, chatgpt, gemini, automation, rest-api
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
-Stable tag: 1.5.0
+Stable tag: 1.5.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,15 @@ No. Bridgistic uses its own HMAC-signed, scoped keys instead of a full-admin App
 Only inside a single quarantined sandbox directory under uploads, with direct web execution blocked. PHP cannot be written anywhere WordPress autoloads from.
 
 == Changelog ==
+
+= 1.5.2 =
+* Hardened hosted OAuth authorization against the short dynamic-client KV propagation window.
+* Replaced unhandled authorization exceptions with a safe, readable error response.
+* Updated the public Free/Pro pricing presentation and removed internal pricing identifiers from visible copy.
+
+= 1.5.1 =
+* Corrective patch release: the MCP Registry namespace is now aligned with the WordPressistic organization ownership and the npm package metadata.
+* No functional feature changes from 1.5.0; the free-only premium lock remains enforced.
 
 = 1.5.0 =
 * Free-only public build: removed remote license activation, entitlement refresh, billing hooks, and the License admin screen.

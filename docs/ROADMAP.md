@@ -15,7 +15,7 @@ What's planned for this repository. SaaS plans live elsewhere; this roadmap only
 
 - **Claude Desktop Extension (`.mcpb`)** — one-click install, validated against the official MCPB schema; site URL / key ID / secret collected via `user_config` (secret stored by Claude Desktop)
 - **npm-publishable server** (`npx bridgistic-mcp-server`) with `prepublishOnly` build
-- **MCP Registry listing** (`server.json`, `io.github.wordpressistic/bridgistic`) published automatically from CI via GitHub OIDC
+- **MCP Registry listing** (`server.json`, `io.github.Wordpressistic/bridgistic`) published automatically from CI via GitHub OIDC
 - **Release automation** — one tag push builds, tests, validates, creates the GitHub release with all assets, publishes npm + registry
 - CI on every PR: build, tests, marketplace validation + secret scan, PHP lint
 

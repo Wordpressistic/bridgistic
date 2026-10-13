@@ -18,7 +18,7 @@
 import { test, describe, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import type { D1Database } from "@cloudflare/workers-types";
-import defaultHandler from "../src/default-handler.js";
+import defaultHandler, { parseAuthRequestWithRetry } from "../src/default-handler.js";
 import { getTenant } from "../src/tenants-db.js";
 
 const ENC_KEY = Buffer.alloc(32, 9).toString("base64");
@@ -158,6 +158,37 @@ describe("OAuth flow: GET /authorize", () => {
     // Exactly one flow: stored under an opaque UUID key.
     const flowKeys = [...kv.store.keys()].filter((k) => k.startsWith("flow:"));
     assert.equal(flowKeys.length, 1);
+  });
+
+  test("retries a just-registered client while KV converges", async () => {
+    let attempts = 0;
+    const request = new Request("https://mcp.bridgistic.app/authorize");
+    const result = await parseAuthRequestWithRetry(
+      {
+        parseAuthRequest: async () => {
+          attempts += 1;
+          if (attempts < 3) throw new Error("Invalid client. The clientId provided does not match to this client.");
+          return { redirectUri: "https://client.example/callback", state: "state" };
+        },
+      } as never,
+      request
+    );
+    assert.equal(attempts, 3);
+    assert.equal(result.redirectUri, "https://client.example/callback");
+  });
+
+  test("renders a safe 400 instead of leaking an authorization exception as 1101", async () => {
+    const { env } = fakeEnv();
+    env.OAUTH_PROVIDER.parseAuthRequest = async () => {
+      throw new Error("Invalid client. The clientId provided does not match to this client.");
+    };
+    const res = await defaultHandler.fetch(
+      new Request("https://mcp.bridgistic.app/authorize?client_id=expired"),
+      env as never,
+      {} as ExecutionContext
+    );
+    assert.equal(res.status, 400);
+    assert.match(await res.text(), /invalid or expired/i);
   });
 });
 

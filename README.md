@@ -5,6 +5,11 @@
 Branding source files and distribution rules are documented in
 [docs/BRANDING.md](docs/BRANDING.md).
 
+This is the WordPressistic organization repository for the Bridgistic Claude marketplace,
+OpenAI plugin, Claude Desktop extension, MCP server, and release artifacts. npm publishing is
+configured through GitHub Actions trusted publishing; see
+[docs/NPM_TRUSTED_PUBLISHER.md](docs/NPM_TRUSTED_PUBLISHER.md).
+
 This is the single walkthrough to go from "I just installed the plugin" to "my AI assistant can
 safely read and edit my WordPress site." It's written for site owners, not developers — if
 something below doesn't match what you see, jump to [Troubleshooting](#troubleshooting) or run

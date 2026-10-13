@@ -1,6 +1,6 @@
 # Bridgistic MCP Server
 
-mcp-name: io.github.wordpressistic/bridgistic
+mcp-name: io.github.Wordpressistic/bridgistic
 
 Connect Claude (Desktop, Code, or any MCP client) to WordPress **safely**: every request is HMAC-SHA256-signed with a scoped, least-privilege key minted by the free [Bridgistic WordPress plugin](https://github.com/wordpressistic/bridgistic). Destructive operations support dry-run, human approval queues, and automatic snapshots with one-call rollback — and everything is audit-logged on the WordPress side.
 

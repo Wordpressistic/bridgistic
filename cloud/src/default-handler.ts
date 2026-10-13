@@ -50,6 +50,35 @@ interface OAuthEnv extends Env {
   };
 }
 
+// Dynamic client registration writes the client record to Cloudflare KV, then
+// the AI client immediately follows the returned client_id to /authorize.
+// KV is eventually consistent across edge locations, so a just-created client
+// can briefly look missing at the authorization edge. Retry only that known
+// lookup race; do not turn arbitrary authorization errors into blind retries.
+const CLIENT_LOOKUP_RETRY_DELAYS_MS = [0, 100, 300, 700];
+
+function isMissingClientError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return /invalid client(?:\. the clientid provided does not match to this client\.)?/i.test(message);
+}
+
+export async function parseAuthRequestWithRetry(
+  provider: OAuthEnv["OAUTH_PROVIDER"],
+  request: Request
+): Promise<ParsedAuthRequest> {
+  let lastError: unknown;
+  for (const delay of CLIENT_LOOKUP_RETRY_DELAYS_MS) {
+    if (delay) await new Promise<void>((resolve) => setTimeout(resolve, delay));
+    try {
+      return await provider.parseAuthRequest(request);
+    } catch (error) {
+      lastError = error;
+      if (!isMissingClientError(error)) throw error;
+    }
+  }
+  throw lastError;
+}
+
 function html(body: string, status = 200): Response {
   return new Response(body, {
     status,
@@ -126,7 +155,25 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname === "/authorize" && request.method === "GET") {
-      const authRequest = await env.OAUTH_PROVIDER.parseAuthRequest(request);
+      let authRequest: ParsedAuthRequest;
+      try {
+        authRequest = await parseAuthRequestWithRetry(env.OAUTH_PROVIDER, request);
+      } catch (error) {
+        // A malformed or expired client request must never become a Cloudflare
+        // 1101 page. The redirect URI cannot be trusted when client lookup
+        // failed, so return a safe local error instead of redirecting.
+        logEvent({
+          requestId: newRequestId(),
+          route: "/authorize",
+          result: "rejected",
+          status: 400,
+          errorCategory: error instanceof Error ? error.name : "invalid_authorization_request",
+        });
+        return html(
+          "This authorization request is invalid or expired. Return to your AI assistant and start the Bridgistic connection again.",
+          400
+        );
+      }
       const flowId = crypto.randomUUID();
       const flow: StoredFlow = { authRequest };
       await env.OAUTH_KV.put(`flow:${flowId}`, JSON.stringify(flow), { expirationTtl: FLOW_TTL });

@@ -47085,7 +47085,7 @@ function signRequest(method, path, body, keyId, secret) {
 
 // dist/constants.js
 var SERVER_NAME = "bridgistic-mcp-server";
-var SERVER_VERSION = "1.5.0";
+var SERVER_VERSION = "1.5.2";
 var WP_NAMESPACE = "bridgistic/v1";
 var CHARACTER_LIMIT = 5e4;
 var REQUEST_TIMEOUT_MS = 3e4;

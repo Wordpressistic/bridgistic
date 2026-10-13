@@ -15,8 +15,8 @@ name: Release
 #                          editable; an npm version is not, so npm goes first.
 #
 # Two ways to trigger:
-#   - push a tag:  git tag v1.2.0 && git push origin v1.2.0
-#   - Actions → Release → "Run workflow" with the version (e.g. 1.2.0)
+#   - push a tag:  git tag v1.5.0 && git push origin v1.5.0
+#   - Actions → Release → "Run workflow" with the version (e.g. 1.5.0)
 
 on:
   push:
@@ -33,8 +33,7 @@ on:
 
 permissions:
   contents: write # create the GitHub release + tag
-  id-token: write # GitHub OIDC login for the MCP Registry
-  actions: write # dispatch the release-backed Pages deployment
+  id-token: write # GitHub OIDC login for npm and the MCP Registry
 
 jobs:
   # ---------------------------------------------------------------------------
@@ -47,13 +46,13 @@ jobs:
       version: ${{ steps.ver.outputs.version }}
       tag: ${{ steps.ver.outputs.tag }}
       npm_published: ${{ steps.npmcheck.outputs.already }}
-      npm_has_token: ${{ steps.npm_auth.outputs.has_token }}
+      registry_published: ${{ steps.registrycheck.outputs.already }}
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           registry-url: "https://registry.npmjs.org"
 
       - uses: shivammathur/setup-php@v2
@@ -127,36 +126,33 @@ jobs:
           done
           [ "$MISSING" = "0" ]
 
-      # npm is optional for the GitHub release. The GitHub release (zips) is
-      # the primary deliverable; npm publish enhances distribution but should
-      # not block a product release when the token is not yet configured.
-      - name: npm authentication check (advisory)
-        id: npm_auth
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "::warning::NPM_TOKEN is not configured — npm publish will be skipped (GitHub release + zips still published)."
-            echo "has_token=false" >> "$GITHUB_OUTPUT"
-          elif ! npm whoami >/dev/null 2>&1; then
-            echo "::warning::NPM_TOKEN is set but not valid — npm publish will be skipped."
-            echo "has_token=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "npm authentication OK"
-            echo "has_token=true" >> "$GITHUB_OUTPUT"
-          fi
-
       # Republishing different bytes under an existing version is impossible on
       # npm and undesirable everywhere else, so detect it now and let the
       # publish step skip rather than fail.
       - name: Is this version already on npm?
         id: npmcheck
-        if: steps.npm_auth.outputs.has_token == 'true'
         run: |
           V="${{ steps.ver.outputs.version }}"
           if [ -n "$(npm view "bridgistic-mcp-server@$V" version 2>/dev/null)" ]; then
             echo "::notice::bridgistic-mcp-server@$V is already published — the publish step will skip it."
             echo "already=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "already=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Is this version already in the MCP Registry?
+        id: registrycheck
+        run: |
+          V="${{ steps.ver.outputs.version }}"
+          NAME="io.github.Wordpressistic/bridgistic"
+          ENCODED="${NAME//\//%2F}"
+          if curl --connect-timeout 10 --max-time 30 -fsSL "https://registry.modelcontextprotocol.io/v0.1/servers/${ENCODED}/versions" > "$RUNNER_TEMP/mcp-registry-versions.json"; then
+            if jq -e --arg version "$V" '.servers[]?.server.version == $version' "$RUNNER_TEMP/mcp-registry-versions.json" >/dev/null; then
+              echo "::notice::${NAME}@${V} is already published — the registry publish step will skip it."
+              echo "already=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "already=false" >> "$GITHUB_OUTPUT"
+            fi
           else
             echo "already=false" >> "$GITHUB_OUTPUT"
           fi
@@ -174,7 +170,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Install (deterministic)
         run: cd mcp-server && npm ci --no-audit --no-fund
@@ -187,7 +183,12 @@ jobs:
 
       # Rehearse the exact publish command, with the exact spec string Phase C
       # will use, before anything is public. --dry-run runs npm's full spec
-      # resolution and packaging and stops short of the upload.
+      # resolution and packaging and stops short of the upload. npm still
+      # checks the live registry during a dry run, however, and rejects a
+      # version that preflight has already confirmed is public. In that retry
+      # case the immutable npm publish is intentionally skipped; the artifact
+      # build and checksum gates below still run, and the remaining registry
+      # and GitHub-release work can recover independently.
       #
       # This gate exists because its absence cost a release: Phase C's spec was
       # "release-artifacts/<file>.tgz", which npm resolved as a GitHub
@@ -198,6 +199,7 @@ jobs:
       # (it only warns), so the rehearsal does not need the secret and should
       # not be handed one.
       - name: Rehearse the npm publish (dry run)
+        if: needs.preflight.outputs.npm_published != 'true'
         run: |
           V="${{ needs.preflight.outputs.version }}"
           # Staged in a temp directory that mirrors Phase C's layout exactly —
@@ -210,6 +212,10 @@ jobs:
           cd "$RUNNER_TEMP/publish-rehearsal"
           npm publish --dry-run --access public "./release-artifacts/bridgistic-mcp-server-${V}.tgz"
           echo "npm resolved the tarball as a file and packaged it cleanly."
+
+      - name: Confirm npm rehearsal was intentionally skipped
+        if: needs.preflight.outputs.npm_published == 'true'
+        run: echo "npm already contains bridgistic-mcp-server@${{ needs.preflight.outputs.version }}; publish and rehearsal are skipped for this immutable version."
 
       - name: Show checksums
         run: cat "dist/release-v${{ needs.preflight.outputs.version }}/SHA256SUMS.txt"
@@ -229,18 +235,38 @@ jobs:
     needs: [preflight, build]
     if: ${{ !inputs.dry_run }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           registry-url: "https://registry.npmjs.org"
+
+      # Trusted publishing requires npm 11.5.1 or newer. Keep this explicit so
+      # the release cannot silently fall back to token-only authentication when
+      # the Node distribution's bundled npm changes.
+      - name: Ensure npm supports trusted publishing
+        run: |
+          npm install --global "npm@^11.5.1"
+          node --version
+          npm --version
 
       - uses: actions/download-artifact@v4
         with:
           name: release-v${{ needs.preflight.outputs.version }}
           path: release-artifacts
+
+      - name: Verify OIDC context is available
+        env:
+          NODE_AUTH_TOKEN: ""
+        run: |
+          test -n "$ACTIONS_ID_TOKEN_REQUEST_URL"
+          test -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN"
+          echo "GitHub OIDC context is available for trusted publishing."
 
       # Publishing the tarball Phase B already built and verified, rather than
       # re-packing, is what guarantees the published bytes are the checksummed
@@ -252,11 +278,24 @@ jobs:
           echo "All artifacts match their recorded checksums."
 
       - name: Publish to npm
-        if: needs.preflight.outputs.npm_published != 'true' && needs.preflight.outputs.npm_has_token == 'true'
+        if: needs.preflight.outputs.npm_published != 'true'
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # New GitHub repositories currently receive immutable OIDC subject
+          # claims, which npm's registry does not yet accept for trusted
+          # publishing. Keep the token as an explicit fallback until npm
+          # supports that claim format. The secret is repository-scoped.
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ""
         run: |
           V="${{ needs.preflight.outputs.version }}"
+          # Preflight runs in a separate job and npm metadata can lag between
+          # jobs. Re-check here so a delayed preflight cannot attempt an
+          # immutable version a second time.
+          if [ "$(npm view "bridgistic-mcp-server@$V" version 2>/dev/null)" = "$V" ]; then
+            echo "bridgistic-mcp-server@$V became visible on npm after preflight; skipping the immutable publish."
+            exit 0
+          fi
+
           # The ./ prefix is load-bearing. npm-package-arg only treats a spec as
           # a file path when it starts with ./, ../, /, ~/, or a drive letter;
           # otherwise a spec with exactly one slash matches the GitHub
@@ -264,15 +303,64 @@ jobs:
           # "release-artifacts/bridgistic-mcp-server-1.2.0.tgz" as a repo and
           # tried `git ls-remote ssh://git@github.com/release-artifacts/...git`,
           # failing with exit 128 mid-release.
-          npm publish --access public "./release-artifacts/bridgistic-mcp-server-${V}.tgz"
+          publish_npm() {
+            if [ -n "${NPM_TOKEN:-}" ]; then
+              printf 'registry=https://registry.npmjs.org/\n//registry.npmjs.org/:_authToken=%s\n' "$NPM_TOKEN" > "$RUNNER_TEMP/npm-token.npmrc"
+              NPM_CONFIG_USERCONFIG="$RUNNER_TEMP/npm-token.npmrc" \
+                npm publish --provenance --loglevel verbose --access public \
+                "./release-artifacts/bridgistic-mcp-server-${V}.tgz"
+            else
+              # setup-node creates the registry config, but any inherited token
+              # would make npm choose token auth before attempting OIDC exchange.
+              unset NODE_AUTH_TOKEN
+              printf 'registry=https://registry.npmjs.org/\n' > "$RUNNER_TEMP/npm-oidc.npmrc"
+              NPM_CONFIG_USERCONFIG="$RUNNER_TEMP/npm-oidc.npmrc" \
+                npm publish --provenance --loglevel verbose --access public \
+                "./release-artifacts/bridgistic-mcp-server-${V}.tgz"
+            fi
+          }
+
+          if publish_npm; then
+            exit 0
+          fi
+
+          # If npm accepted the publish but the client received a late error,
+          # allow metadata propagation before deciding that the release failed.
+          for attempt in 1 2 3 4 5; do
+            if [ "$(npm view "bridgistic-mcp-server@$V" version 2>/dev/null)" = "$V" ]; then
+              echo "bridgistic-mcp-server@$V is live after the publish response; continuing."
+              exit 0
+            fi
+            if [ "$attempt" -lt 5 ]; then
+              echo "npm publish did not complete; waiting 10 seconds before checking again."
+              sleep 10
+            fi
+          done
+          echo "::error::npm publication failed and $V is not visible after 5 checks."
+          exit 1
 
       - name: Publish to the MCP Registry
-        if: needs.preflight.outputs.npm_has_token == 'true' && needs.preflight.outputs.npm_published != 'true'
+        if: needs.preflight.outputs.registry_published != 'true'
         run: |
           curl -sSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
           ./mcp-publisher login github-oidc
-          ./mcp-publisher publish
-          echo "Published io.github.Shubochandrosarker/bridgistic to registry.modelcontextprotocol.io"
+          # The registry validates the npm package immediately. npm and the
+          # registry are eventually consistent, and the registry can also
+          # briefly return a database connection error. Retry only this
+          # idempotent publication step; npm publishing and release creation
+          # remain single-shot and immutable/order-sensitive.
+          for attempt in 1 2 3 4 5; do
+            if ./mcp-publisher publish; then
+              echo "Published io.github.Wordpressistic/bridgistic to registry.modelcontextprotocol.io"
+              exit 0
+            fi
+            if [ "$attempt" -lt 5 ]; then
+              echo "Registry publish attempt $attempt failed; waiting 20 seconds before retrying."
+              sleep 20
+            fi
+          done
+          echo "::error::MCP Registry publication failed after 5 attempts."
+          exit 1
 
       # The GitHub release goes last because it is the only step that is
       # editable afterwards — if npm or the registry had failed, nothing public
@@ -295,21 +383,6 @@ jobs:
               --notes-file "release-artifacts/RELEASE_NOTES_v${V}.md" \
               $ASSETS
           fi
-
-      # A workflow started with GITHUB_TOKEN does not create a second release
-      # event, so the Pages workflow would otherwise never receive the
-      # release.published trigger. Dispatch it explicitly after the release
-      # exists. It checks out the immutable tag, not the moving default branch.
-      - name: Dispatch release-backed Pages deployment
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          TAG="${{ needs.preflight.outputs.tag }}"
-          gh workflow run pages-release.yml \
-            --repo "$GITHUB_REPOSITORY" \
-            --ref "$TAG" \
-            -f tag="$TAG"
-          echo "Dispatched Pages deployment for $TAG"
 
       - name: Verify the published npm version resolves
         run: |
