@@ -825,12 +825,6 @@
       color:var(--bg, #07111f); background:linear-gradient(135deg, #54e6b2, #63d8ff);
       box-shadow:0 8px 24px rgba(84,230,178,.22);
     }
-    .pricing-grid.three { grid-template-columns:repeat(3,minmax(0,1fr)); max-width:1100px; }
-    .price-card .price [data-cycle] { display:none; }
-    .price-card .price [data-cycle].is-active { display:inline; }
-    .price-card[data-show-cycle="month"] .btn[data-cycle="year"],
-    .price-card[data-show-cycle="year"] .btn[data-cycle="month"] { display:none; }
-    @media (max-width:900px){ .pricing-grid.three { grid-template-columns:1fr; } }
 
     .price-card { position:relative; padding:34px; border:1px solid var(--line); border-radius:26px; background:var(--panel); box-shadow:var(--shadow-soft); }
     .price-card.pro { border-color:rgba(99,216,255,.22); background:linear-gradient(145deg, rgba(99,216,255,.055), transparent 44%), var(--panel); }
@@ -1297,7 +1291,7 @@
           <article class="feature reveal"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3 4 7v5c0 5 3.4 8 8 9 4.6-1 8-4 8-9V7l-8-4Z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>Scoped connection keys</h3><p>Choose a permission preset or individual scopes. Rotate, revoke or delete keys from WordPress at any time.</p><span class="mini">Least privilege by design</span></article>
           <article class="feature reveal"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 3h12v18H6zM9 7h6m-6 4h6m-6 4h4"/></svg></div><h3>Audit logs</h3><p>Track the key, action, status, source IP and time for operations while keeping secrets out of logs.</p><span class="mini">Attributable activity</span></article>
           <article class="feature reveal"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 7h16v13H4zM7 4h10v3M8 11h8M8 15h5"/></svg></div><h3>Snapshots + rollback</h3><p>Capture pre-change state around destructive writes and restore snapshots when a change needs to be reversed.</p><span class="mini">Recovery built in</span></article>
-          <article class="feature reveal"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="8"/></svg></div><h3>Multi-site connections</h3><p>Local clients can use a shared connections registry and target WordPress sites by alias from the same MCP server.</p><span class="mini">Agency-friendly foundation</span></article>
+          <article class="feature reveal"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="8"/></svg></div><h3>Multi-site connections</h3><p>Local clients can use a shared connections registry and target WordPress sites by alias from the same MCP server.</p></article>
           <article class="feature reveal"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 5h16v14H4zM8 9h8M8 13h5"/></svg></div><h3>Playbooks + schedules</h3><p>Save repeatable routines and run supported playbooks from WordPress or through the MCP tool surface.</p><span class="mini">Repeatable automation</span></article>
           <article class="feature reveal"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 7h12l-1 13H7L6 7Zm2-3h8l1 3H7l1-3Z"/></svg></div><h3>WooCommerce tools</h3><p>Structured WooCommerce operations sit behind the same authentication, scopes, guard parameters and audit controls.</p><span class="mini">Commerce-aware MCP</span></article>
           <article class="feature reveal"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="m8 9-4 3 4 3m8-6 4 3-4 3M14 5l-4 14"/></svg></div><h3>Developer tools, contained</h3><p>Database, filesystem and PHP execution require Developer Mode scopes; PHP writes are confined to a protected sandbox.</p><span class="mini">High-risk tools gated</span></article>
@@ -1465,7 +1459,7 @@ Bridgistic Cloud is currently a public beta.</pre>
         <div class="section-head reveal">
           <span class="eyebrow"><span class="dot"></span> Free core. Pro scale.</span>
           <h2>Start free. Upgrade when you need WPistic licensing.</h2>
-          <p>Open-source plugin download is free. Bridgistic Pro unlocks the paid license via Paddle ($12/mo or $99/yr). No Agency SKU in Paddle yet.</p>
+          <p>The plugin download is free and open source — the full local bridge. Bridgistic Pro adds a WPistic license with secure updates and priority support: $12/mo or $99/yr, checkout via Paddle.</p>
         </div>
 
         <div style="text-align:center" class="reveal">
@@ -1475,7 +1469,7 @@ Bridgistic Cloud is currently a public beta.</pre>
           </div>
         </div>
 
-        <div class="pricing-grid three" id="pricing-cards" data-cycle="year">
+        <div class="pricing-grid" id="pricing-cards" data-cycle="year">
           <article class="price-card reveal">
             <span class="badge free">Open source</span>
             <h3>Bridgistic Free</h3>
@@ -1483,44 +1477,31 @@ Bridgistic Cloud is currently a public beta.</pre>
             <p>Controlled AI access for your own WordPress sites. GPL-2.0-or-later.</p>
             <ul class="price-list">
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>Local MCP bridge</strong> for supported clients</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>HMAC keys, scopes and approvals</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Basic audit logs and snapshots</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>HMAC-signed requests, scoped keys, approvals</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Audit logs and pre-destructive snapshots</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Manual playbooks, plus up to 3 scheduled playbooks</li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Latest GitHub release zip</li>
             </ul>
             <a class="btn btn-primary" href="https://github.com/Wordpressistic/bridgistic/releases/latest/download/bridgistic-wordpress-plugin.zip">Download free (latest release)</a>
-            <div class="price-fine">Also: <a href="https://github.com/Wordpressistic/bridgistic/releases/latest" target="_blank" rel="noopener">release notes</a></div>
           </article>
 
-          <article class="price-card pro reveal" data-show-cycle="year">
-            <span class="badge">Paddle · Pro</span>
+          <article class="price-card pro reveal">
+            <span class="badge">Pro</span>
             <h3>Bridgistic Pro</h3>
             <div class="price">
               <span data-cycle="month">$12 <small>/mo</small></span>
               <span data-cycle="year" class="is-active">$99 <small>/yr</small></span>
             </div>
-            <p>Licensed Pro through WPistic. Checkout opens on pay.wpistic.com (Paddle overlay) and issues your license by email.</p>
+            <p>Checkout opens on pay.wpistic.com (Paddle overlay); your WPistic license key is issued by email.</p>
             <ul class="price-list">
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>Everything in Free</strong></li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>WPistic license + secure updates</li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Priority product support path</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Paddle price IDs: monthly <code>pri_01m1ykar8…</code> / yearly <code>pri_01m1ykaqy…</code></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Unlimited scheduled playbooks (Free: 3)</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Skills marketplace, advanced snapshots and audit export</li>
             </ul>
-            <a class="btn btn-primary" data-cycle="month" href="https://pay.wpistic.com/?price=pri_01m1ykar8aq033865h68a4b9hh">Buy Pro — $12/mo</a>
-            <a class="btn btn-primary" data-cycle="year" href="https://pay.wpistic.com/?price=pri_01m1ykaqyaaeewsbah07akmpka">Buy Pro — $99/yr</a>
-            <div class="price-fine">Amounts from live Paddle product <code>pro_01m1ykaqjsgcgt6xvwsy4jpn83</code>.</div>
-          </article>
-
-          <article class="price-card reveal">
-            <span class="badge">Catalog only</span>
-            <h3>Agency</h3>
-            <div class="price">— <small>not in Paddle</small></div>
-            <p>WPistic catalog lists an Agency plan, but there is <strong>no Paddle Agency price</strong> yet. No invented amount.</p>
-            <ul class="price-list">
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Team / white-label (catalog entitlements)</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Buy path: talk to sales until a Paddle SKU exists</li>
-            </ul>
-            <a class="btn btn-secondary" href="https://wpistic.com/contact">Talk to sales</a>
-            <div class="price-fine">Will light up when a Paddle Agency price is created and mapped.</div>
+            <a class="btn btn-primary" href="https://pay.wpistic.com/" target="_blank" rel="noopener">Buy Pro</a>
+            <div class="price-fine">Prices in USD. Secure checkout via Paddle.</div>
           </article>
         </div>
       </div>
