@@ -54,7 +54,14 @@ final class Guard {
 		$approval_id = (string) ( $request->get_param( 'approval_id' ) ?? '' );
 		$force       = self::truthy( $request->get_param( 'force' ) );
 
-		// 1. Dry-run — never mutates, never snapshots, never queues.
+		// Approval requirement is decided first, so a dry run can never be a
+		// side door around the approval gate: it reports that approval would be
+		// needed, and dry-run closures must be pure previews (they never execute
+		// the operation — see ExecuteController::db_query for why a "rolled back
+		// transaction" is not a safe preview in MySQL).
+		$needs_approval = $mutating && ( self::key_requires_approval( $key_id ) || ! empty( $op['force_approval'] ) );
+
+		// 1. Dry-run — never mutates, never snapshots, never queues, never executes.
 		if ( $dry_run ) {
 			$report = isset( $op['dry_run'] ) && is_callable( $op['dry_run'] )
 				? (array) call_user_func( $op['dry_run'] )
@@ -62,15 +69,15 @@ final class Guard {
 			AuditLog::record( $key_id, $action, 'dry_run', $payload, $summary );
 			return self::ok(
 				array(
-					'dry_run' => true,
-					'action'  => $action,
-					'would'   => $report,
+					'dry_run'           => true,
+					'action'            => $action,
+					'would'             => $report,
+					'requires_approval' => $needs_approval,
 				)
 			);
 		}
 
 		// 2. Approval gate (per-key flag, or op forces it).
-		$needs_approval = $mutating && ( self::key_requires_approval( $key_id ) || ! empty( $op['force_approval'] ) );
 
 		if ( $needs_approval ) {
 			if ( '' === $approval_id ) {

@@ -65,8 +65,9 @@ export function registerTools(server: McpServer, registry: SiteRegistry): void {
 Args:
   - code (string): PHP to run. A leading "<?php" is optional.
   - site (string, optional): target alias.
+  - dry_run / approval_id: guard controls. dry_run never evaluates the code. If the key requires approval, the first call returns pending_approval + approval_id; retry with that approval_id after an admin approves the exact same code.
 
-Returns: { output, return, errors[], exception, elapsed_ms }.
+Returns: { output, return, errors[], exception, elapsed_ms } (wrapped in the Guard result envelope).
 
 Use when: a task has no dedicated structured tool yet. Prefer the structured tools (posts/options/etc.) when they exist, and snapshot before risky writes.`,
       inputSchema: {
@@ -76,6 +77,7 @@ Use when: a task has no dedicated structured tool yet. Prefer the structured too
           .max(100_000)
           .describe('PHP source. Example: return get_option("blogname");'),
         site: siteParam,
+        ...guardParams,
       },
       annotations: {
         readOnlyHint: false,
@@ -84,10 +86,10 @@ Use when: a task has no dedicated structured tool yet. Prefer the structured too
         openWorldHint: true,
       },
     },
-    async ({ code, site }) =>
+    async ({ code, site, dry_run, approval_id, force }) =>
       run(async () => {
         const conn = registry.resolve(site);
-        return present(await callBridge(conn, "POST", "execute", { code }));
+        return present(await callBridge(conn, "POST", "execute", withGuard({ code }, { dry_run, approval_id, force })));
       })
   );
 
@@ -96,7 +98,7 @@ Use when: a task has no dedicated structured tool yet. Prefer the structured too
     "bridgistic_db_query",
     {
       title: "Run a SQL query",
-      description: `Execute SQL against the site database. The bridge classifies the statement: SELECT/SHOW/EXPLAIN/DESCRIBE/WITH need \`db:read\`; anything else needs \`db:write\`. Writes are routed through the Guard: dry_run previews impact in a rolled-back transaction, destructive writes auto-snapshot the affected table(s), and approval applies if the key requires it.
+      description: `Execute SQL against the site database. The bridge classifies the statement: SELECT/SHOW/EXPLAIN/DESCRIBE/WITH need \`db:read\`; anything else needs \`db:write\`. Writes are routed through the Guard: dry_run classifies the statement without executing it (MySQL DDL cannot be rolled back), destructive writes auto-snapshot the affected table(s), and approval applies if the key requires it.
 
 Args:
   - sql (string): a single SQL statement using the site's real table prefix.

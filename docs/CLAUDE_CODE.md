@@ -31,7 +31,7 @@ If you prefer explicit configs, clone + build, then register the server.
 
 ```bash
 git clone https://github.com/wordpressistic/bridgistic.git
-cd bridgistic-claude-marketplace
+cd bridgistic
 npm install && npm run build
 ```
 
@@ -43,7 +43,7 @@ npm install && npm run build
     "bridgistic": {
       "command": "node",
       "args": [
-        "/absolute/path/to/bridgistic-claude-marketplace/mcp-server/dist/index.js"
+        "/absolute/path/to/bridgistic/mcp-server/dist/index.js"
       ],
       "env": {
         "BRIDGISTIC_SITE_URL": "${BRIDGISTIC_SITE_URL}",
@@ -62,7 +62,7 @@ claude mcp add bridgistic \
   --env BRIDGISTIC_SITE_URL=https://example.com \
   --env BRIDGISTIC_KEY_ID=your_key_id \
   --env BRIDGISTIC_KEY_SECRET=your_key_secret \
-  -- node /absolute/path/to/bridgistic-claude-marketplace/mcp-server/dist/index.js
+  -- node /absolute/path/to/bridgistic/mcp-server/dist/index.js
 ```
 
 The **Bridgistic → AI / MCP Connections** page generates both forms with your real values.

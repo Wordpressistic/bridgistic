@@ -23,9 +23,9 @@ something below doesn't match what you see, jump to [Troubleshooting](#troublesh
 **Bridgistic → Health Check** first.
 
 **Read this if:** you want the shortest, least error-prone path to a working connection.
-**Skip to a specific client's page** ([Claude Desktop](CLAUDE_DESKTOP.md),
-[Claude Code](CLAUDE_CODE.md), [Codex CLI](CODEX_SETUP.md), [Gemini CLI](GEMINI_SETUP.md),
-[ChatGPT](CHATGPT_SETUP.md)) only if you already know which one you're using and want copy-paste
+**Skip to a specific client's page** ([Claude Desktop](docs/CLAUDE_DESKTOP.md),
+[Claude Code](docs/CLAUDE_CODE.md), [Codex CLI](docs/CODEX_SETUP.md), [Gemini CLI](docs/GEMINI_SETUP.md),
+[ChatGPT](docs/CHATGPT_SETUP.md)) only if you already know which one you're using and want copy-paste
 config details.
 
 ---
@@ -47,7 +47,7 @@ between your own computer and your own site. **Use the cloud connector
 (WP Admin → Bridgistic → Bridgistic Cloud) only if your client can't run a local server** (ChatGPT
 is the main case) — it's functional but hasn't had an independent security review yet, so avoid it
 for sites you can't afford to risk, and prefer a Read-only or Content Manager preset over Developer
-Mode when you do use it. See [CLOUD_CONNECTOR.md](CLOUD_CONNECTOR.md) for its full status.
+Mode when you do use it. See [CLOUD_CONNECTOR.md](docs/CLOUD_CONNECTOR.md) for its full status.
 
 ---
 
@@ -116,11 +116,11 @@ it):
 
 | Client | Runs locally? | Guide |
 |---|---|---|
-| Claude Desktop (manual config, no extension) | Yes | [CLAUDE_DESKTOP.md](CLAUDE_DESKTOP.md) |
-| Claude Code | Yes | [CLAUDE_CODE.md](CLAUDE_CODE.md) |
-| OpenAI Codex CLI | Yes | [CODEX_SETUP.md](CODEX_SETUP.md) |
-| Gemini CLI | Yes | [GEMINI_SETUP.md](GEMINI_SETUP.md) |
-| ChatGPT | No — remote only | [CHATGPT_SETUP.md](CHATGPT_SETUP.md) (uses the cloud connector, a free public beta) |
+| Claude Desktop (manual config, no extension) | Yes | [CLAUDE_DESKTOP.md](docs/CLAUDE_DESKTOP.md) |
+| Claude Code | Yes | [CLAUDE_CODE.md](docs/CLAUDE_CODE.md) |
+| OpenAI Codex CLI | Yes | [CODEX_SETUP.md](docs/CODEX_SETUP.md) |
+| Gemini CLI | Yes | [GEMINI_SETUP.md](docs/GEMINI_SETUP.md) |
+| ChatGPT | No — remote only | [CHATGPT_SETUP.md](docs/CHATGPT_SETUP.md) (uses the cloud connector, a free public beta) |
 | Anything else that speaks MCP | Depends | Use the wizard's "Manual MCP JSON" option |
 
 All of the "runs locally" options follow the same shape as the extension path above, with one
@@ -135,7 +135,7 @@ only confirms your WordPress site and key are configured correctly on the server
 tool) is for. Don't stop at a green "Run test" result and assume you're fully connected; always
 do the "ask Claude to run bridgistic_get_site_info" check too.
 
-**Managing more than one WordPress site?** See [CONNECT_OTHER_AI.md](CONNECT_OTHER_AI.md) for the
+**Managing more than one WordPress site?** See [CONNECT_OTHER_AI.md](docs/CONNECT_OTHER_AI.md) for the
 multi-site `connections.json` registry — one key per site, one shared config file.
 
 ---
@@ -188,9 +188,9 @@ never sends it anywhere else.
 **Keys & Scopes** and click **Rotate** to generate a fresh secret, then re-paste it into your AI
 client.
 
-**Can I use this on more than one site?** Yes — **WP Admin → Bridgistic → Multi-Site** is a guided builder for the config file this needs. See [CONNECT_OTHER_AI.md](CONNECT_OTHER_AI.md) for details.
+**Can I use this on more than one site?** Yes — **WP Admin → Bridgistic → Multi-Site** is a guided builder for the config file this needs. See [CONNECT_OTHER_AI.md](docs/CONNECT_OTHER_AI.md) for details.
 
 **Can I just paste one cloud URL like some other tools?** Yes — that's
 **WP Admin → Bridgistic → Bridgistic Cloud**. It's live and free, but hasn't had an independent
 security review yet, so the local connection above is still the recommended default for most
-people. See [CLOUD_CONNECTOR.md](CLOUD_CONNECTOR.md) for its current state.
+people. See [CLOUD_CONNECTOR.md](docs/CLOUD_CONNECTOR.md) for its current state.

@@ -47,7 +47,7 @@ Merge this into the config (don't overwrite other servers you may have):
     "bridgistic": {
       "command": "node",
       "args": [
-        "/absolute/path/to/bridgistic-claude-marketplace/mcp-server/dist/index.js"
+        "/absolute/path/to/bridgistic/mcp-server/dist/index.js"
       ],
       "env": {
         "BRIDGISTIC_SITE_URL": "https://example.com",
@@ -61,7 +61,7 @@ Merge this into the config (don't overwrite other servers you may have):
 
 Replace:
 
-- the `args` path with the **absolute** path to `mcp-server/dist/index.js` in your clone (Windows: use double backslashes, e.g. `C:\\Users\\you\\bridgistic-claude-marketplace\\mcp-server\\dist\\index.js`);
+- the `args` path with the **absolute** path to `mcp-server/dist/index.js` in your clone (Windows: use double backslashes, e.g. `C:\\Users\\you\\bridgistic\\mcp-server\\dist\\index.js`);
 - the three `env` values with your site URL and key credentials.
 
 Shortcuts that do this for you:

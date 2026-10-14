@@ -14,8 +14,13 @@ on:
       - assets/bridgistic-icon.png
       - assets/bridgistic-logo.png
       - .github/workflows/pages-release.yml
+  # A release published from the Release workflow uses GITHUB_TOKEN and does
+  # not trigger other workflows, so a daily safety-net run remains; the old
+  # 15-minute cron produced ~96 redundant deploys a day.
+  release:
+    types: [published]
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "17 3 * * *"
   workflow_dispatch:
     inputs:
       tag:

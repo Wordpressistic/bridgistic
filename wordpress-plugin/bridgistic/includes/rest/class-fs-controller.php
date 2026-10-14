@@ -107,12 +107,34 @@ final class FsController extends Controller {
 				403
 			);
 		}
-		if ( ( $this->is_php( $path ) || $this->is_exec_control( $path ) ) && ! $this->in_sandbox( $path ) ) {
+		// Execution-control files are never writable, not even inside the
+		// sandbox: the sandbox's own .htaccess / web.config are what keep it
+		// closed, so letting fs:write overwrite them re-opens it.
+		if ( $this->is_exec_control( $path ) || $this->is_sandbox_guard_file( $path ) ) {
 			return $this->fail(
-				'bridgistic_fs_sandbox',
-				'PHP and execution-control files (.htaccess, .user.ini, php.ini, web.config) can only be written inside wp-content/uploads/' . BRIDGISTIC_SANDBOX . '/.',
+				'bridgistic_fs_exec_control',
+				'Execution-control and sandbox-protection files (.htaccess, .user.ini, php.ini, web.config, the sandbox index.php) cannot be written through the bridge, at any scope.',
 				403
 			);
+		}
+		if ( $this->is_php( $path ) ) {
+			if ( ! $this->in_sandbox( $path ) ) {
+				return $this->fail(
+					'bridgistic_fs_sandbox',
+					'PHP files can only be written inside wp-content/uploads/' . BRIDGISTIC_SANDBOX . '/.',
+					403
+				);
+			}
+			// Only plain .php in the sandbox: .phtml/.php5/.phar etc. are mapped
+			// to the PHP handler by some hosts and phar:// is a deserialisation
+			// vector.
+			if ( ! preg_match( '/\.php$/i', $path ) ) {
+				return $this->fail( 'bridgistic_fs_sandbox_ext', 'Only .php files may be written to the sandbox.', 403 );
+			}
+			// Do not rely on .htaccess (ignored by nginx, removable): every
+			// sandbox PHP file is prefixed with a guard that exits when the file
+			// is requested directly instead of being included by WordPress.
+			$content = self::sandbox_php_guard( $content );
 		}
 
 		return Guard::run(
@@ -149,6 +171,13 @@ final class FsController extends Controller {
 			return $this->fail(
 				'bridgistic_fs_protected',
 				'This file holds site credentials and cannot be deleted through the bridge, at any scope.',
+				403
+			);
+		}
+		if ( $this->is_exec_control( $path ) || $this->is_sandbox_guard_file( $path ) ) {
+			return $this->fail(
+				'bridgistic_fs_exec_control',
+				'Execution-control and sandbox-protection files cannot be deleted through the bridge, at any scope.',
 				403
 			);
 		}
@@ -267,6 +296,31 @@ final class FsController extends Controller {
 		}
 		// Any Apache .ht* control file.
 		return strpos( $base, '.ht' ) === 0;
+	}
+
+	/** First line prepended to every PHP file written into the sandbox. */
+	public const SANDBOX_PHP_GUARD = "<?php defined( 'ABSPATH' ) || exit; /* bridgistic-sandbox-guard */ ?>";
+
+	/**
+	 * Prefix sandbox PHP with a direct-access guard (idempotent).
+	 */
+	public static function sandbox_php_guard( string $content ): string {
+		if ( 0 === strpos( $content, self::SANDBOX_PHP_GUARD ) ) {
+			return $content;
+		}
+		return self::SANDBOX_PHP_GUARD . $content;
+	}
+
+	/**
+	 * The sandbox's own protective files (index.php placeholder and the
+	 * server-config files ensure_sandbox() writes).
+	 */
+	private function is_sandbox_guard_file( string $path ): bool {
+		if ( ! $this->in_sandbox( $path ) ) {
+			return false;
+		}
+		$sandbox = realpath( Plugin::ensure_sandbox() );
+		return $sandbox && dirname( $path ) === $sandbox && in_array( strtolower( basename( $path ) ), array( 'index.php', 'index.html', '.htaccess', 'web.config' ), true );
 	}
 
 	private function in_sandbox( string $path ): bool {

@@ -35,6 +35,9 @@ The signature covers `METHOD \n PATH \n TIMESTAMP \n NONCE \n sha256(body)`. The
 | Source IP not in key's allowlist | `bridgistic_auth_ip` |
 | Signature mismatch | `bridgistic_auth_signature` |
 | Nonce already used | `bridgistic_auth_replay` |
+| `dry_run` / `force` / `approval_id` in the (unsigned) query string, or any query param on POST/DELETE | `bridgistic_unsigned_param` |
+
+The query string is not part of the signature, so control parameters must travel in the signed JSON body; the bridge rejects them from the query string (1.5.3+).
 
 This is strictly stronger than a bearer Application Password: a captured request cannot be replayed and never contains the secret.
 

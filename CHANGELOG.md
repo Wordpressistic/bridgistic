@@ -7,6 +7,29 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 Nothing yet.
 
+## [1.5.3] — Unreleased (PR fix/audit-2026-10)
+
+Security release addressing the October 2026 baseline audit (S1–S5).
+
+### Security
+
+- **SQL dry run no longer executes the statement.** `db_query` with `dry_run` used to run the SQL inside `START TRANSACTION … ROLLBACK`; MySQL DDL (`DROP`, `TRUNCATE`, `ALTER`, `RENAME`, `CREATE`) commits implicitly and MyISAM ignores rollback, so a `db:write` key could apply destructive SQL with no approval and no snapshot. The dry run now classifies only, and Guard reports `requires_approval` without ever executing.
+- **MySQL executable comments are rejected.** `/*! … */`, `/*!50000 … */` and MariaDB `/*M! … */` are executed by the server but were stripped as comments by the classifier, so `SELECT /*! LOAD_FILE(…) */` read as a plain read. They are now `forbidden`.
+- **Sandbox can no longer be re-opened.** `.htaccess`, `.user.ini`, `php.ini`, `web.config` and the sandbox's own `index.php` cannot be written or deleted through the bridge at any scope, including inside the sandbox. `ensure_sandbox()` re-asserts its protective files (and now writes a `web.config` for IIS). Only `.php` may be written to the sandbox and every such file is prefixed with an `ABSPATH` guard, so direct web requests exit even on nginx where `.htaccess` is ignored.
+- **PHP execution goes through the Guard.** `php:execute` now honours `dry_run` (never evaluates) and per-key `require_approval`, with the approval bound to the SHA-256 of the exact code. MCP tool `bridgistic_execute_php` gained `dry_run` / `approval_id`.
+- **Unsigned query-string parameters rejected.** The HMAC does not cover the query string, so `dry_run`, `force`, `approval_id`, `__ctx` and `__internal_token` are refused there, and POST/DELETE requests accept no query parameters (`rest_route` excepted). Official clients already send these in the signed body.
+
+### Dependencies
+
+- `@modelcontextprotocol/sdk` 1.30 → 1.32.1 (GHSA-6qxp-vccf-f47h) in `mcp-server` and `cloud`; `agents` 0.22 → 0.28.1 and `wrangler` → 4.151 in `cloud` (required to move off the vulnerable SDK pin). `npm audit`: 0 vulnerabilities in both lockfiles.
+
+### Changed
+
+- `Tested up to: 7.1` (WordPress 7.1.3 is current per api.wordpress.org; CI's `latest` activation job covers it).
+- Package metadata (`repository`, `homepage`, `bugs`) now points at the canonical `Wordpressistic/bridgistic` repo; `server.json` moves to the 2025-12-11 schema and adds `title`, `icons`, `websiteUrl` and the `mcp.bridgistic.app` streamable-HTTP remote.
+- Release workflow ignores `-site` tags and only publishes from the canonical repo; the site deploy cron drops from every 15 minutes to daily plus `release: published`.
+- Root `SECURITY.md`, `glama.json`; fixed broken README links into `docs/`.
+
 ## [1.5.2] — 2026-10-05
 
 Maintenance release for the hosted OAuth connection flow and public product page.

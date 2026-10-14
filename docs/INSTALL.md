@@ -47,7 +47,7 @@ The plugin ships a pre-built server; you only set environment variables.
 
 ```bash
 git clone https://github.com/wordpressistic/bridgistic.git
-cd bridgistic-claude-marketplace
+cd bridgistic
 npm install
 npm run build          # produces mcp-server/dist/index.js
 ```

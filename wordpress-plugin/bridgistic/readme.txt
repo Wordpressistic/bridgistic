@@ -2,9 +2,9 @@
 Contributors: shuvoskr
 Tags: mcp, ai, claude, chatgpt, gemini, automation, rest-api
 Requires at least: 6.4
-Tested up to: 6.8
+Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,14 @@ No. Bridgistic uses its own HMAC-signed, scoped keys instead of a full-admin App
 Only inside a single quarantined sandbox directory under uploads, with direct web execution blocked. PHP cannot be written anywhere WordPress autoloads from.
 
 == Changelog ==
+
+= 1.5.3 =
+* Security: SQL dry run no longer executes the statement (MySQL DDL auto-commits); it classifies only and reports whether approval is required.
+* Security: MySQL executable comments (/*! ... */) are rejected by the SQL classifier.
+* Security: sandbox protective files (.htaccess, web.config, index.php) and all execution-control files can no longer be written or deleted through the bridge; sandbox PHP carries a direct-access guard so it is safe on nginx too.
+* Security: PHP execute now goes through the Guard (dry run, per-key approval bound to the exact code).
+* Security: control parameters (dry_run, force, approval_id) are rejected from the unsigned query string, and mutating requests accept no query parameters.
+* Updated MCP SDK to 1.32.1 and patched vulnerable npm dependencies.
 
 = 1.5.2 =
 * Hardened hosted OAuth authorization against the short dynamic-client KV propagation window.
