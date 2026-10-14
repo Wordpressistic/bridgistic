@@ -125,14 +125,22 @@ final class Plugin {
 			wp_mkdir_p( $dir );
 		}
 
-		// Block direct web execution of anything inside the sandbox.
-		$htaccess = $dir . '/.htaccess';
-		if ( ! file_exists( $htaccess ) ) {
-			file_put_contents( $htaccess, "Require all denied\n<FilesMatch \".*\">\nRequire all denied\n</FilesMatch>\n" ); // phpcs:ignore
-		}
-		$index = $dir . '/index.php';
-		if ( ! file_exists( $index ) ) {
-			file_put_contents( $index, "<?php // Silence is golden.\n" ); // phpcs:ignore
+		// Block direct web access to anything inside the sandbox. These files
+		// are re-asserted on every call (not just created once) so a tampered
+		// copy is repaired, and the bridge refuses to write or delete them
+		// (FsController). Apache/LiteSpeed read .htaccess, IIS reads
+		// web.config; nginx reads neither, which is why every sandbox PHP file
+		// also carries an ABSPATH guard (FsController::sandbox_php_guard()).
+		$guards = array(
+			'.htaccess'  => "Require all denied\n<FilesMatch \".*\">\nRequire all denied\n</FilesMatch>\n<IfModule mod_php.c>\nphp_flag engine off\n</IfModule>\n<IfModule mod_php7.c>\nphp_flag engine off\n</IfModule>\n<IfModule mod_php8.c>\nphp_flag engine off\n</IfModule>\n",
+			'web.config' => "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<configuration><system.webServer><authorization><deny users=\"*\" /></authorization><handlers><clear /></handlers></system.webServer></configuration>\n",
+			'index.php'  => "<?php // Silence is golden.\n",
+		);
+		foreach ( $guards as $name => $body ) {
+			$file = $dir . '/' . $name;
+			if ( ! file_exists( $file ) || (string) @file_get_contents( $file ) !== $body ) { // phpcs:ignore
+				file_put_contents( $file, $body ); // phpcs:ignore
+			}
 		}
 
 		return $dir;

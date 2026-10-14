@@ -48,6 +48,11 @@ was force-pushed anywhere. The marketplace repo gets a README banner and frozen 
 
 ## One open item (needs a release to complete)
 
+> 1.5.3 (PR `fix/audit-2026-10`) re-points `repository.url` in `package.json`,
+> `mcp-server/package.json`, `server.json`, `mcpb/manifest.json` and
+> `openai-plugin/plugin.json` to this repo. It completes when 1.5.3 is released from here
+> (after npm trusted publishing is moved — see [NPM_TRUSTED_PUBLISHER.md](NPM_TRUSTED_PUBLISHER.md)).
+
 The npm package metadata and the MCP Registry entry still point their `repository.url` at the
 mirror repo, because those registries are immutable per version — they can only be re-pointed
 by publishing a **new version**. The first release cut from canonical (v1.5.3 or v1.6.0)

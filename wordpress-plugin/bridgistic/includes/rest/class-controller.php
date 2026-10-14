@@ -35,6 +35,20 @@ abstract class Controller {
 			return true;
 		}
 
+		// The HMAC covers METHOD, route, timestamp, nonce and the body hash, but
+		// not the query string. Unsigned input must not be able to change what
+		// a signed request does, so: control params are never accepted from
+		// the query string, and mutating methods accept no query params at all
+		// (the official clients send everything in the signed JSON body).
+		$unsigned = self::unsigned_param_violation( $request->get_method(), (array) $request->get_query_params() );
+		if ( null !== $unsigned ) {
+			return new \WP_Error(
+				'bridgistic_unsigned_param',
+				$unsigned,
+				array( 'status' => 400 )
+			);
+		}
+
 		$headers = array();
 		foreach ( $request->get_headers() as $name => $values ) {
 			$headers[ str_replace( '_', '-', strtolower( $name ) ) ] = is_array( $values ) ? ( $values[0] ?? '' ) : $values;
@@ -61,6 +75,28 @@ abstract class Controller {
 		// Stash for the handler.
 		$request->set_param( '__ctx', $ctx );
 		return true;
+	}
+
+	/** Params that change Guard/auth behaviour and therefore must be signed. */
+	public const SIGNED_ONLY_PARAMS = array( 'dry_run', 'force', 'approval_id', '__ctx', '__internal_token' );
+
+	/**
+	 * Return an error message when the (unsigned) query string carries input it
+	 * must not, or null when it is acceptable.
+	 *
+	 * @param array<string,mixed> $query Query-string params.
+	 */
+	public static function unsigned_param_violation( string $method, array $query ): ?string {
+		unset( $query['rest_route'] ); // Plain-permalink routing, part of the path.
+		foreach ( self::SIGNED_ONLY_PARAMS as $name ) {
+			if ( array_key_exists( $name, $query ) ) {
+				return sprintf( 'Parameter "%s" is not accepted in the query string because it is not covered by the request signature. Send it in the signed JSON body.', $name );
+			}
+		}
+		if ( 'GET' !== strtoupper( $method ) && 'HEAD' !== strtoupper( $method ) && ! empty( $query ) ) {
+			return 'Query-string parameters are not accepted on mutating requests because they are not covered by the request signature. Send them in the signed JSON body.';
+		}
+		return null;
 	}
 
 	/**

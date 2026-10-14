@@ -3,7 +3,7 @@
     "bridgistic": {
       "command": "node",
       "args": [
-        "/absolute/path/to/bridgistic-claude-marketplace/mcp-server/dist/index.js"
+        "/absolute/path/to/bridgistic/mcp-server/dist/index.js"
       ],
       "env": {
         "BRIDGISTIC_SITE_URL": "https://example.com",

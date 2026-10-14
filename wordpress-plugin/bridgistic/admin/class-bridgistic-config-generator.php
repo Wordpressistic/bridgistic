@@ -34,7 +34,7 @@ final class ConfigGenerator {
 			'mcpServers' => array(
 				'bridgistic' => array(
 					'command' => 'node',
-					'args'    => array( '/absolute/path/to/bridgistic-claude-marketplace/mcp-server/dist/index.js' ),
+					'args'    => array( '/absolute/path/to/bridgistic/mcp-server/dist/index.js' ),
 					'env'     => self::env_block( $key_id, $secret ),
 				),
 			),
@@ -57,7 +57,7 @@ final class ConfigGenerator {
 	public static function code_cli( string $key_id, ?string $secret = null ): string {
 		$secret = $secret ?: self::SECRET_PLACEHOLDER;
 		return sprintf(
-			'claude mcp add bridgistic --env BRIDGISTIC_SITE_URL=%s --env BRIDGISTIC_KEY_ID=%s --env BRIDGISTIC_KEY_SECRET=%s -- node /absolute/path/to/bridgistic-claude-marketplace/mcp-server/dist/index.js',
+			'claude mcp add bridgistic --env BRIDGISTIC_SITE_URL=%s --env BRIDGISTIC_KEY_ID=%s --env BRIDGISTIC_KEY_SECRET=%s -- node /absolute/path/to/bridgistic/mcp-server/dist/index.js',
 			home_url(),
 			$key_id,
 			$secret

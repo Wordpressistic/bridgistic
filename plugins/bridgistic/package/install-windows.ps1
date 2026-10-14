@@ -5,7 +5,7 @@
 # "bridgistic" server entry, and never phones home.
 #
 # Usage (PowerShell):
-#   .\install-windows.ps1 -ServerJs "C:\path\to\bridgistic-claude-marketplace\mcp-server\dist\index.js"
+#   .\install-windows.ps1 -ServerJs "C:\path\to\bridgistic\mcp-server\dist\index.js"
 
 param(
     [Parameter(Mandatory = $true)]

@@ -39,6 +39,9 @@ final class SqlClassifier {
 	public const WRITE     = 'write';
 	public const FORBIDDEN = 'forbidden';
 
+	/** Placeholder the skeleton emits for a MySQL executable comment. */
+	private const EXEC_COMMENT_MARKER = '__bridgistic_exec_comment__';
+
 	/**
 	 * Statements that only ever read. Anything not on this list is treated as
 	 * a write, so a keyword this plugin has never heard of fails safe.
@@ -97,6 +100,15 @@ final class SqlClassifier {
 	 */
 	public static function classify( string $sql ): array {
 		$skeleton = self::skeleton( $sql );
+
+		if ( false !== strpos( $skeleton, self::EXEC_COMMENT_MARKER ) ) {
+			return self::verdict(
+				self::FORBIDDEN,
+				'',
+				false,
+				'MySQL executable comments (/*! ... */) are not permitted: the server runs their contents, so they cannot be classified safely.'
+			);
+		}
 
 		if ( '' === trim( $skeleton ) ) {
 			return self::verdict( self::FORBIDDEN, '', false, 'The statement is empty once comments are removed.' );
@@ -192,9 +204,22 @@ final class SqlClassifier {
 				continue;
 			}
 
-			// /* block comment */ — including MySQL's /*! executable comments,
-			// which are stripped the same way so their contents cannot smuggle
-			// a keyword past classification.
+			// MySQL/MariaDB executable comments (/*! ... */, /*!50100 ... */,
+			// /*M! ... */) are NOT comments: the server runs their contents.
+			// Stripping them like plain comments let `SELECT /*! LOAD_FILE(...) */`
+			// classify as a read. Emit a marker so classify() rejects the statement.
+			if ( '/' === $char && '*' === $next && $i + 2 < $len
+				&& ( '!' === $sql[ $i + 2 ] || ( ( 'M' === $sql[ $i + 2 ] || 'm' === $sql[ $i + 2 ] ) && $i + 3 < $len && '!' === $sql[ $i + 3 ] ) ) ) {
+				$out .= ' ' . self::EXEC_COMMENT_MARKER . ' ';
+				$end  = strpos( $sql, '*/', $i + 2 );
+				if ( false === $end ) {
+					break;
+				}
+				$i = $end + 2;
+				continue;
+			}
+
+			// /* plain block comment */
 			if ( '/' === $char && '*' === $next ) {
 				$end = strpos( $sql, '*/', $i + 2 );
 				if ( false === $end ) {

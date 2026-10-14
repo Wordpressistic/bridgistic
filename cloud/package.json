@@ -1,6 +1,6 @@
 {
   "name": "bridgistic-cloud",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "private": true,
   "description": "mcp.bridgistic.app - hosted, multi-tenant MCP relay for Bridgistic. Paste one URL into Claude (or any MCP-capable client); OAuth handles the rest.",
   "type": "module",
@@ -21,8 +21,8 @@
   },
   "dependencies": {
     "@cloudflare/workers-oauth-provider": "^0.10.3",
-    "@modelcontextprotocol/sdk": "^1.30.0",
-    "agents": "^0.22.0",
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "agents": "^0.28.1",
     "zod": "^4.5.4"
   },
   "devDependencies": {
@@ -30,6 +30,6 @@
     "@types/node": "^26.4.1",
     "tsx": "^4.23.13",
     "typescript": "^5.9.3",
-    "wrangler": "^4.129.0"
+    "wrangler": "^4.151.0"
   }
 }

@@ -1,8 +1,14 @@
 # npm publishing and repository ownership
 
+> **Action required before releasing 1.5.3 from this repo:** npm's trusted-publisher
+> connection (and the repo-scoped `NPM_TOKEN` fallback secret, if used) still names
+> `bridgistic-claude-marketplace`. Update it on npmjs.com → package settings → Trusted
+> publishing to the values below, and add `NPM_TOKEN` to this repo if the fallback is still
+> needed; otherwise the Release run fails with E403.
+
 `bridgistic-mcp-server` is published from the WordPressistic organization repository:
 
-- Repository: <https://github.com/Wordpressistic/bridgistic-claude-marketplace>
+- Repository: <https://github.com/Wordpressistic/bridgistic>
 - Workflow: `.github/workflows/release.yml`
 - npm package: <https://www.npmjs.com/package/bridgistic-mcp-server>
 - MCP Registry name: `io.github.Wordpressistic/bridgistic`
@@ -20,7 +26,7 @@ The npm package trusted-publisher connection must match these values exactly:
 | --- | --- |
 | Provider | GitHub Actions |
 | Organization or user | `Wordpressistic` |
-| Repository | `bridgistic-claude-marketplace` |
+| Repository | `bridgistic` |
 | Workflow filename | `release.yml` |
 | Environment name | Leave blank |
 | Allow npm publish | Enabled |

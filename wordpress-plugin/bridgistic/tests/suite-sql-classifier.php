@@ -135,7 +135,7 @@ check_equals(
 
 // MySQL executable comments run their contents on a real server, so they must
 // not be treated as inert.
-check_equals( SqlClassifier::WRITE, classify_class( '/*!50000 DELETE */ FROM wp_posts' ), 'a MySQL executable comment does not hide a mutation' );
+check_equals( SqlClassifier::FORBIDDEN, classify_class( '/*!50000 DELETE */ FROM wp_posts' ), 'a MySQL executable comment is rejected outright' );
 
 // ---- 6. File-access SQL is refused outright ---------------------------------
 

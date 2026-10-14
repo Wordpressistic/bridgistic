@@ -87,6 +87,41 @@ final class ExecuteController extends Controller {
 			return $this->fail( 'bridgistic_empty_code', 'No code provided.', 400 );
 		}
 
+		// php:execute runs arbitrary code, so it goes through the Guard like every
+		// other mutating operation: a key with require_approval queues the exact
+		// code (bound by hash) for an administrator, and dry_run never evaluates.
+		$key_id = $this->key_id( $request );
+		$self   = $this;
+		return \Bridgistic\Guard::run(
+			$request,
+			array(
+				'action'      => 'php.execute',
+				'destructive' => false,
+				'mutating'    => true,
+				'payload'     => array(
+					'code_sha256' => hash( 'sha256', $code ),
+					'code_len'    => strlen( $code ),
+				),
+				'summary'     => 'PHP: ' . mb_substr( $code, 0, 120 ),
+				'dry_run'     => static fn() => array(
+					'executed' => false,
+					'code_len' => strlen( $code ),
+					'note'     => 'PHP was not evaluated. Run without dry_run (after approval, when required) to execute it.',
+				),
+				'execute'     => static function () use ( $self, $code, $key_id ) {
+					return $self->run_php( $code, $key_id );
+				},
+			)
+		);
+	}
+
+	/**
+	 * Evaluate PHP and capture output + return value + errors. Only reachable
+	 * through Guard::run() from execute_php().
+	 *
+	 * @return array<string,mixed>
+	 */
+	public function run_php( string $code, string $key_id ): array {
 		$captured_errors = array();
 		$prev_handler    = set_error_handler( // phpcs:ignore
 			static function ( $errno, $errstr, $errfile, $errline ) use ( &$captured_errors ) {
@@ -152,22 +187,20 @@ final class ExecuteController extends Controller {
 
 		$status = $thrown ? 'error' : 'ok';
 		AuditLog::record(
-			$this->key_id( $request ),
+			$key_id,
 			'execute',
 			$status,
 			array( 'code_len' => strlen( $code ) ),
 			mb_substr( $code, 0, 500 )
 		);
 
-		return $this->ok(
-			array(
-				'output'     => $output,
-				'return'     => $this->normalize( $result ),
-				'errors'     => $captured_errors,
-				'exception'  => $thrown,
-				'elapsed_ms' => $elapsed,
-				'truncated'  => $truncated,
-			)
+		return array(
+			'output'     => $output,
+			'return'     => $this->normalize( $result ),
+			'errors'     => $captured_errors,
+			'exception'  => $thrown,
+			'elapsed_ms' => $elapsed,
+			'truncated'  => $truncated,
 		);
 	}
 
@@ -241,16 +274,17 @@ final class ExecuteController extends Controller {
 					}
 					return null; // INSERT/CREATE/SET: nothing prior to lose.
 				},
-				'dry_run'     => static function () use ( $sql, $wpdb ) {
-					// Run inside a rolled-back transaction to report impact safely.
-					$wpdb->query( 'START TRANSACTION' ); // phpcs:ignore WordPress.DB
-					$affected = $wpdb->query( $sql );    // phpcs:ignore WordPress.DB
-					$err      = $wpdb->last_error;
-					$wpdb->query( 'ROLLBACK' );          // phpcs:ignore WordPress.DB
+				'dry_run'     => static function () use ( $verdict ) {
+					// Static preview only. The statement is NOT executed: MySQL DDL
+					// (DROP/TRUNCATE/ALTER/RENAME/CREATE) commits implicitly and
+					// non-transactional engines (MyISAM) ignore ROLLBACK, so the old
+					// "run inside START TRANSACTION … ROLLBACK" preview could persist
+					// a destructive write with no approval and no snapshot.
 					return array(
-						'would_affect_rows' => false === $affected ? 0 : (int) $affected,
-						'error'             => $err ?: null,
-						'note'              => 'Executed in a transaction and rolled back; nothing was persisted.',
+						'statement'   => strtoupper( (string) $verdict['keyword'] ),
+						'destructive' => (bool) $verdict['destructive'],
+						'executed'    => false,
+						'note'        => 'Classified only; the SQL was not executed. Run without dry_run (after approval, when required) to apply it.',
 					);
 				},
 				'execute'     => static function () use ( $sql, $wpdb ) {

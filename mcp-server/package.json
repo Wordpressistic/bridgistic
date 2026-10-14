@@ -1,6 +1,6 @@
 {
   "name": "bridgistic-mcp-server",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "MCP server that bridges Claude (Desktop / Code) to any WordPress site running the free Bridgistic plugin. HMAC-signed, scope-aware, local-first.",
   "type": "module",
   "main": "dist/index.js",
@@ -22,7 +22,7 @@
     "prepublishOnly": "npm run build && npm run validate"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "express": "^5.2.1",
     "zod": "^3.25.76"
   },
@@ -40,13 +40,13 @@
   },
   "author": "Shuvo Sarker (WordPressistic)",
   "license": "GPL-2.0-or-later",
-  "homepage": "https://github.com/Wordpressistic/bridgistic-claude-marketplace",
+  "homepage": "https://github.com/Wordpressistic/bridgistic",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Wordpressistic/bridgistic-claude-marketplace"
+    "url": "https://github.com/Wordpressistic/bridgistic"
   },
   "bugs": {
-    "url": "https://github.com/Wordpressistic/bridgistic-claude-marketplace/issues"
+    "url": "https://github.com/Wordpressistic/bridgistic/issues"
   },
   "keywords": [
     "mcp",

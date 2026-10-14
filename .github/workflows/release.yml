@@ -20,7 +20,11 @@ name: Release
 
 on:
   push:
-    tags: ["v*"]
+    # Product releases only. Site-only tags such as v1.5.2-site.3 used to start
+    # this workflow and fail the version gate on every push; they are excluded.
+    tags:
+      - "v*"
+      - "!v*-site*"
   workflow_dispatch:
     inputs:
       version:
@@ -233,7 +237,11 @@ jobs:
   publish:
     name: Phase C — publish
     needs: [preflight, build]
-    if: ${{ !inputs.dry_run }}
+    # Only the canonical repository publishes. The frozen mirror
+    # (bridgistic-claude-marketplace) carries the same workflow file, and two
+    # repos racing to publish one npm version is what produced the duplicate /
+    # E403 publish runs. (Expression string comparison is case-insensitive.)
+    if: ${{ !inputs.dry_run && github.repository == 'Wordpressistic/bridgistic' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
