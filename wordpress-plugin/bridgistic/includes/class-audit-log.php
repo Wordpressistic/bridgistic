@@ -147,4 +147,16 @@ final class AuditLog {
 			$wpdb->prepare( 'DELETE FROM ' . self::table() . ' WHERE created_at < %s', $cutoff )
 		);
 	}
+
+	/**
+	 * Row shape for the dashboard API: drops the client IP, which a remote
+	 * dashboard has no need for.
+	 *
+	 * @param array<string,mixed> $row Audit row.
+	 * @return array<string,mixed>
+	 */
+	public static function public_row( array $row ): array {
+		unset( $row['ip'] );
+		return $row;
+	}
 }
