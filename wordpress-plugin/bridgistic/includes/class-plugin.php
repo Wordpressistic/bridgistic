@@ -51,6 +51,17 @@ final class Plugin {
 			}
 		);
 
+		// Let a browser dashboard (app.bridgistic.app or a local preview) send
+		// the signed headers. WordPress core already echoes the Origin; this
+		// only adds header names to the preflight allow-list. Auth is still
+		// the HMAC signature, never a cookie.
+		add_filter(
+			'rest_allowed_cors_headers',
+			static function ( array $headers ): array {
+				return array_merge( $headers, array( 'X-Bridgistic-Key', 'X-Bridgistic-Timestamp', 'X-Bridgistic-Nonce', 'X-Bridgistic-Signature', 'X-Bridgistic-Request-Id' ) );
+			}
+		);
+
 		// Admin UI: dashboard, Claude setup, keys, health, logs, snapshots,
 		// playbooks, export, premium overview, settings.
 		if ( is_admin() ) {

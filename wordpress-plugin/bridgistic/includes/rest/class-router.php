@@ -49,5 +49,8 @@ final class Router {
 		( new MemoryController() )->register( $ns );
 		( new PlaybookController() )->register( $ns );
 		( new ScheduleController() )->register( $ns );
+
+		// Dashboard (app.bridgistic.app) read routes + license link.
+		( new DashboardController() )->register( $ns );
 	}
 }

@@ -37,6 +37,8 @@ final class Scopes {
 	public const MEMORY_WRITE   = 'memory:write';
 	public const PLAYBOOK_MANAGE = 'playbook:manage';
 	public const SCHEDULE_MANAGE = 'schedule:manage';
+	public const AUDIT_READ      = 'audit:read';
+	public const LICENSE_MANAGE  = 'license:manage';
 
 	/**
 	 * WooCommerce scopes are separate from posts:* on purpose. Products and
@@ -96,6 +98,8 @@ final class Scopes {
 			self::MEMORY_WRITE   => 'Write per-site memory notes',
 			self::PLAYBOOK_MANAGE => 'Save / run reusable playbooks',
 			self::SCHEDULE_MANAGE => 'Schedule playbooks to run unattended',
+			self::AUDIT_READ      => 'Read the audit log (digests only, no arguments)',
+			self::LICENSE_MANAGE  => 'View, activate and deactivate the Bridgistic license',
 			self::WOO_PRODUCTS_READ  => 'WooCommerce: read products, variations, stock',
 			self::WOO_PRODUCTS_WRITE => 'WooCommerce: create / update products and stock',
 			self::WOO_ORDERS_READ    => 'WooCommerce: read orders and line items',
