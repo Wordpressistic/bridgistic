@@ -1,6 +1,6 @@
 <?php
 /**
- * Read-only routes for the Bridgistic dashboard (app.bridgistic.app), plus the
+ * Read-only routes for the Bridgistic dashboard (dashboard.bridgistic.app), plus the
  * license link. Everything here is HMAC-authenticated and scoped like every
  * other bridge route.
  *

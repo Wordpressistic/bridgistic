@@ -180,3 +180,11 @@ check( null === Controller::unsigned_param_violation( 'GET', array( 'approval_id
 check( null !== Controller::unsigned_param_violation( 'GET', array( 'approval_id' => 'apr_1', 'force' => '1' ), '/bridgistic/v1/approvals/status' ), 'S5 approvals/status still rejects other signed-only params' );
 check( null !== Controller::unsigned_param_violation( 'POST', array( 'approval_id' => 'apr_1' ), '/bridgistic/v1/approvals/status' ), 'S5 POST approvals/status rejects approval_id in query' );
 check( null !== Controller::unsigned_param_violation( 'GET', array( 'approval_id' => 'apr_1' ), '/bridgistic/v1/plugins' ), 'S5 approval_id stays signed-only on other routes' );
+
+// ---- Dashboard CORS origins ----------------------------------------------------
+
+check_equals( 'https://dashboard.bridgistic.app', \Bridgistic\Plugin::dashboard_cors_origin( '/bridgistic/v1/site-info', 'https://dashboard.bridgistic.app' ), 'CORS allows dashboard.bridgistic.app on the Bridgistic namespace' );
+check_equals( 'https://app.bridgistic.app', \Bridgistic\Plugin::dashboard_cors_origin( '/bridgistic/v1/approvals/status', 'https://app.bridgistic.app' ), 'CORS still allows the legacy app.bridgistic.app' );
+check_equals( '', \Bridgistic\Plugin::dashboard_cors_origin( '/bridgistic/v1/site-info', 'https://evil.example' ), 'CORS does not add unknown origins' );
+check_equals( '', \Bridgistic\Plugin::dashboard_cors_origin( '/wp/v2/users', 'https://dashboard.bridgistic.app' ), 'CORS helper only touches the Bridgistic namespace' );
+check_equals( '', \Bridgistic\Plugin::dashboard_cors_origin( '/bridgistic/v1/site-info', 'https://dashboard.bridgistic.app.evil.example' ), 'CORS origin match is exact' );
