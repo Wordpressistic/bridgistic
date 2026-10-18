@@ -5,7 +5,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 ## [Unreleased]
 
-Nothing yet.
+### Fixed
+- `GET /bridgistic/v1/approvals/status?approval_id=...` was rejected with `bridgistic_unsigned_param` on 1.5.3, so approval polling (dashboard and the `bridgistic_approval_status` MCP tool) could not work. `approval_id` is now allowed in the query string for that read-only route only; every other signed-only param stays blocked. `POST /approvals/status` with `approval_id` in the signed body is also accepted.
 
 ## [1.5.3] — Unreleased (PR fix/audit-2026-10)
 

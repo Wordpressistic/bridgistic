@@ -40,7 +40,7 @@ abstract class Controller {
 		// a signed request does, so: control params are never accepted from
 		// the query string, and mutating methods accept no query params at all
 		// (the official clients send everything in the signed JSON body).
-		$unsigned = self::unsigned_param_violation( $request->get_method(), (array) $request->get_query_params() );
+		$unsigned = self::unsigned_param_violation( $request->get_method(), (array) $request->get_query_params(), (string) $request->get_route() );
 		if ( null !== $unsigned ) {
 			return new \WP_Error(
 				'bridgistic_unsigned_param',
@@ -80,14 +80,28 @@ abstract class Controller {
 	/** Params that change Guard/auth behaviour and therefore must be signed. */
 	public const SIGNED_ONLY_PARAMS = array( 'dry_run', 'force', 'approval_id', '__ctx', '__internal_token' );
 
+	/** Per-route exceptions for read-only GET lookups (route => params). */
+	public const READ_ONLY_QUERY_PARAMS = array(
+		'/bridgistic/v1/approvals/status' => array( 'approval_id' ),
+	);
+
 	/**
 	 * Return an error message when the (unsigned) query string carries input it
 	 * must not, or null when it is acceptable.
 	 *
 	 * @param array<string,mixed> $query Query-string params.
 	 */
-	public static function unsigned_param_violation( string $method, array $query ): ?string {
+	public static function unsigned_param_violation( string $method, array $query, string $route = '' ): ?string {
 		unset( $query['rest_route'] ); // Plain-permalink routing, part of the path.
+		// Read-only lookups that take an ID by query string. Changing the value
+		// can only select a different record the same key may already read
+		// (the handler enforces ownership), so it cannot change what a signed
+		// request is allowed to do. GET cannot carry a signed body.
+		if ( 'GET' === strtoupper( $method ) && isset( self::READ_ONLY_QUERY_PARAMS[ $route ] ) ) {
+			foreach ( self::READ_ONLY_QUERY_PARAMS[ $route ] as $allowed ) {
+				unset( $query[ $allowed ] );
+			}
+		}
 		foreach ( self::SIGNED_ONLY_PARAMS as $name ) {
 			if ( array_key_exists( $name, $query ) ) {
 				return sprintf( 'Parameter "%s" is not accepted in the query string because it is not covered by the request signature. Send it in the signed JSON body.', $name );

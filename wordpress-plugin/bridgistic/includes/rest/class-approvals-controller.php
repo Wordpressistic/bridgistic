@@ -24,7 +24,9 @@ final class ApprovalsController extends Controller {
 			$namespace,
 			'/approvals/status',
 			array(
-				'methods'             => 'GET',
+				// GET ?approval_id= (read-only exception, see Controller) or
+				// POST with approval_id in the signed JSON body.
+				'methods'             => array( 'GET', 'POST' ),
 				'callback'            => array( $this, 'status' ),
 				'permission_callback' => array( $this, 'authenticate' ),
 			)

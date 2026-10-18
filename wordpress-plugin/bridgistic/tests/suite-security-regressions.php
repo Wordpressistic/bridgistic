@@ -176,3 +176,7 @@ check( null !== Controller::unsigned_param_violation( 'DELETE', array( 'id' => '
 check( null === Controller::unsigned_param_violation( 'GET', array( 'per_page' => '10', 'name' => 'blogname' ) ), 'S5 GET read filters still allowed' );
 check( null === Controller::unsigned_param_violation( 'POST', array( 'rest_route' => '/bridgistic/v1/db/query' ) ), 'S5 rest_route (plain permalinks) is allowed' );
 check( null === Controller::unsigned_param_violation( 'POST', array() ), 'S5 POST with no query is fine' );
+check( null === Controller::unsigned_param_violation( 'GET', array( 'approval_id' => 'apr_1' ), '/bridgistic/v1/approvals/status' ), 'S5 GET approvals/status accepts approval_id in query (read-only, owner-checked)' );
+check( null !== Controller::unsigned_param_violation( 'GET', array( 'approval_id' => 'apr_1', 'force' => '1' ), '/bridgistic/v1/approvals/status' ), 'S5 approvals/status still rejects other signed-only params' );
+check( null !== Controller::unsigned_param_violation( 'POST', array( 'approval_id' => 'apr_1' ), '/bridgistic/v1/approvals/status' ), 'S5 POST approvals/status rejects approval_id in query' );
+check( null !== Controller::unsigned_param_violation( 'GET', array( 'approval_id' => 'apr_1' ), '/bridgistic/v1/plugins' ), 'S5 approval_id stays signed-only on other routes' );
