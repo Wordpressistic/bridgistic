@@ -9,8 +9,10 @@ canonical Bridgistic repository.
 
 - Changes to the landing page, its brand assets, or the Pages workflow on
   `main` trigger a deployment.
-- Each deployment resolves the latest published Bridgistic release and injects
-  its version into the page. A source commit marker also ensures page edits are
+- Each deployment runs `scripts/build-site.sh`, which picks the newest published
+  release that ships `bridgistic-wordpress-plugin.zip` across this repository and
+  `wordpressistic/bridgistic-claude-marketplace`, and injects its version,
+  download base and release page into the page. A source commit marker also ensures page edits are
   deployed even when the release version has not changed.
 - The release workflow dispatches a Pages deployment at the immutable release
   tag, so a newly published release can be verified against its exact source.
@@ -19,8 +21,12 @@ canonical Bridgistic repository.
 - The workflow stages only `index.html`, the two public brand assets, and the
   `bridgistic.app` CNAME file.
 
-The page's download buttons use GitHub's stable `releases/latest/download/...`
-URLs, so downloads continue to follow the newest published release.
+The page's download buttons point at the exact release the build resolved
+(`releases/download/<tag>/...`). A plain `releases/latest` link would follow only
+this repository, which can lag behind the marketplace repository.
+
+Local preview: `SITE_COMMIT=preview scripts/build-site.sh /tmp/site` and serve
+`/tmp/site` with any static server.
 
 ## One-time repository setting
 
