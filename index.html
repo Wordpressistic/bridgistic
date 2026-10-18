@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#07111f" />
+  <meta name="theme-color" content="#0B1F3A" />
   <meta name="color-scheme" content="dark light" />
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <link rel="icon" type="image/png" sizes="1254x1254" href="assets/bridgistic-icon.png" />
@@ -13,7 +13,8 @@
   <meta name="description" content="Connect Claude, ChatGPT, Codex, Gemini, Cursor and other MCP clients to WordPress with signed requests, scoped access, approvals, snapshots, rollback and audit logs." />
   <link rel="canonical" href="https://bridgistic.app/" />
   <!-- Build metadata is injected from this repository and the latest plugin release. -->
-  <!-- site-commit=__BRIDGISTIC_SITE_COMMIT__; release=__BRIDGISTIC_RELEASE_VERSION__ -->
+  <!-- site-commit=__BRIDGISTIC_SITE_COMMIT__; release=__BRIDGISTIC_RELEASE_VERSION__; release-repo=__BRIDGISTIC_RELEASE_REPO__ -->
+  <!-- PENDING SHUVO: Privacy Policy, Terms of Service and Refund Policy text. Footer entries are placeholders, not links, until the text is approved. -->
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Bridgistic" />
@@ -42,12 +43,22 @@
         "softwareVersion": "__BRIDGISTIC_RELEASE_VERSION__",
         "license": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
         "description": "A secure MCP bridge that connects AI clients to WordPress using HMAC-signed requests, scoped keys, approvals, snapshots and audit logs.",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD",
-          "availability": "https://schema.org/InStock"
-        },
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "Bridgistic Free",
+            "price": "0",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock"
+          },
+          {
+            "@type": "Offer",
+            "name": "Bridgistic Lifetime Deal",
+            "price": "29.99",
+            "priceCurrency": "USD",
+            "url": "https://pay.bridgistic.app/"
+          }
+        ],
         "publisher": { "@id": "https://bridgistic.app/#organization" }
       },
       {
@@ -88,55 +99,55 @@
 
   <style>
     :root {
-      --bg:#07111f;
-      --bg-2:#091728;
-      --panel:#0c1b2e;
-      --panel-2:#102238;
-      --panel-3:#0a1626;
-      --text:#f2f7fb;
-      --muted:#9db0c4;
-      --muted-2:#70869d;
-      --line:rgba(149,181,211,.15);
-      --line-strong:rgba(149,181,211,.26);
-      --green:#54e6b2;
-      --green-2:#27c895;
-      --cyan:#63d8ff;
-      --blue:#7aa7ff;
-      --amber:#ffbd67;
-      --danger:#ff7f8f;
+      --bg:#0B1F3A;
+      --bg-2:#0D2342;
+      --panel:#112A4C;
+      --panel-2:#153156;
+      --panel-3:#0E2444;
+      --text:#F4F1EA;
+      --muted:#C3C2BC;
+      --muted-2:#98A0AA;
+      --line:rgba(244,241,234,.13);
+      --line-strong:rgba(244,241,234,.24);
+      --green:#C6A15B;
+      --green-2:#1F8A70;
+      --cyan:#3FAF92;
+      --blue:#C6A15B;
+      --amber:#C6A15B;
+      --danger:#ff8f8f;
       --shadow:0 24px 70px rgba(0,0,0,.30);
       --shadow-soft:0 16px 40px rgba(0,0,0,.18);
       --radius:24px;
       --radius-sm:16px;
       --wrap:1180px;
       --header:74px;
-      --grid:rgba(121,167,202,.055);
-      --code:#06101c;
-      --ring:0 0 0 4px rgba(84,230,178,.14);
+      --grid:rgba(244,241,234,.045);
+      --code:#081830;
+      --ring:0 0 0 4px rgba(198,161,91,.18);
     }
 
     html[data-theme="light"] {
-      --bg:#f6f9fc;
-      --bg-2:#edf4f8;
-      --panel:#ffffff;
-      --panel-2:#f6fafc;
-      --panel-3:#eef5f8;
-      --text:#0a1726;
-      --muted:#4f667b;
-      --muted-2:#70869a;
-      --line:rgba(37,76,104,.13);
-      --line-strong:rgba(37,76,104,.24);
-      --green:#0ea979;
-      --green-2:#087f5c;
-      --cyan:#0a89bd;
-      --blue:#446fdf;
-      --amber:#b36a00;
-      --danger:#c94157;
-      --shadow:0 24px 70px rgba(33,67,94,.13);
-      --shadow-soft:0 14px 32px rgba(33,67,94,.10);
-      --grid:rgba(28,99,143,.055);
-      --code:#0b1828;
-      --ring:0 0 0 4px rgba(14,169,121,.14);
+      --bg:#F4F1EA;
+      --bg-2:#ECE7DC;
+      --panel:#FBFAF6;
+      --panel-2:#F7F4EE;
+      --panel-3:#EFEADF;
+      --text:#0B1F3A;
+      --muted:#44546B;
+      --muted-2:#66748A;
+      --line:rgba(11,31,58,.13);
+      --line-strong:rgba(11,31,58,.24);
+      --green:#1F8A70;
+      --green-2:#176B57;
+      --cyan:#176B57;
+      --blue:#0B1F3A;
+      --amber:#8A6A2F;
+      --danger:#B23A48;
+      --shadow:0 24px 70px rgba(11,31,58,.12);
+      --shadow-soft:0 14px 32px rgba(11,31,58,.09);
+      --grid:rgba(11,31,58,.05);
+      --code:#0B1F3A;
+      --ring:0 0 0 4px rgba(31,138,112,.16);
     }
 
     * { box-sizing:border-box; }
@@ -165,11 +176,11 @@
       pointer-events:none;
       z-index:-1;
       background:
-        radial-gradient(48% 52% at 18% 8%, rgba(84,230,178,.12), transparent 68%),
-        radial-gradient(42% 54% at 80% 12%, rgba(99,216,255,.10), transparent 70%);
+        radial-gradient(48% 52% at 18% 8%, rgba(198,161,91,.12), transparent 68%),
+        radial-gradient(42% 54% at 80% 12%, rgba(31,138,112,.10), transparent 70%);
     }
 
-    ::selection { background:rgba(84,230,178,.25); color:var(--text); }
+    ::selection { background:rgba(198,161,91,.25); color:var(--text); }
     a { color:inherit; text-decoration:none; }
     button, a { -webkit-tap-highlight-color:transparent; }
     button { font:inherit; }
@@ -211,7 +222,7 @@
       height:7px;
       border-radius:50%;
       background:var(--green);
-      box-shadow:0 0 0 5px rgba(84,230,178,.10);
+      box-shadow:0 0 0 5px rgba(198,161,91,.10);
     }
     .badge {
       display:inline-flex;
@@ -264,8 +275,8 @@
       display:grid;
       place-items:center;
       overflow:hidden;
-      border:1px solid rgba(84,230,178,.24);
-      background:linear-gradient(145deg, rgba(84,230,178,.15), rgba(99,216,255,.05));
+      border:1px solid rgba(198,161,91,.24);
+      background:linear-gradient(145deg, rgba(198,161,91,.15), rgba(31,138,112,.05));
       box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);
     }
     .brand-mark img { width:100%; height:100%; display:block; object-fit:cover; }
@@ -318,10 +329,10 @@
     .btn:focus-visible, .icon-btn:focus-visible, .tab-btn:focus-visible, summary:focus-visible { outline:none; box-shadow:var(--ring); }
     .btn-primary {
       color:#041b13;
-      background:linear-gradient(135deg, #63efbd, #43d8ab);
-      box-shadow:0 14px 32px rgba(39,200,149,.20), inset 0 1px 0 rgba(255,255,255,.25);
+      background:linear-gradient(135deg, #D2B06E, #C6A15B);
+      box-shadow:0 14px 32px rgba(198,161,91,.20), inset 0 1px 0 rgba(255,255,255,.25);
     }
-    .btn-primary:hover { box-shadow:0 18px 38px rgba(39,200,149,.27), inset 0 1px 0 rgba(255,255,255,.25); }
+    .btn-primary:hover { box-shadow:0 18px 38px rgba(198,161,91,.27), inset 0 1px 0 rgba(255,255,255,.25); }
     .btn-secondary { color:var(--text); border-color:var(--line); background:color-mix(in srgb,var(--panel) 80%,transparent); }
     .btn-secondary:hover { border-color:var(--line-strong); background:var(--panel); }
     .btn-ghost { color:var(--muted); border-color:transparent; background:transparent; }
@@ -369,7 +380,7 @@
       text-wrap:balance;
     }
     .hero h1 .gradient {
-      background:linear-gradient(94deg, var(--green) 0%, var(--cyan) 62%, #9bb9ff 100%);
+      background:linear-gradient(94deg, var(--green) 0%, var(--cyan) 62%, var(--green) 100%);
       -webkit-background-clip:text;
       background-clip:text;
       color:transparent;
@@ -393,7 +404,7 @@
       position:absolute;
       inset:10% 10%;
       border-radius:50%;
-      background:radial-gradient(circle, rgba(84,230,178,.17), rgba(99,216,255,.05) 42%, transparent 70%);
+      background:radial-gradient(circle, rgba(198,161,91,.17), rgba(31,138,112,.05) 42%, transparent 70%);
       filter:blur(10px);
       pointer-events:none;
     }
@@ -419,13 +430,13 @@
       top:-120px;
       right:-100px;
       border-radius:50%;
-      border:1px solid rgba(99,216,255,.13);
-      box-shadow:0 0 0 35px rgba(99,216,255,.03), 0 0 0 70px rgba(84,230,178,.025);
+      border:1px solid rgba(31,138,112,.13);
+      box-shadow:0 0 0 35px rgba(31,138,112,.03), 0 0 0 70px rgba(198,161,91,.025);
     }
     .stage-top { display:flex; justify-content:space-between; align-items:center; position:relative; z-index:2; }
     .stage-title { display:flex; align-items:center; gap:9px; font-size:12px; font-weight:760; color:var(--muted); letter-spacing:.04em; text-transform:uppercase; }
-    .live-dot { width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 0 6px rgba(84,230,178,.08); animation:pulse 2.2s infinite; }
-    @keyframes pulse { 0%,100%{box-shadow:0 0 0 5px rgba(84,230,178,.08)} 50%{box-shadow:0 0 0 10px rgba(84,230,178,.015)} }
+    .live-dot { width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 0 6px rgba(198,161,91,.08); animation:pulse 2.2s infinite; }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 0 5px rgba(198,161,91,.08)} 50%{box-shadow:0 0 0 10px rgba(198,161,91,.015)} }
 
     .flow {
       position:relative;
@@ -441,7 +452,7 @@
       position:absolute;
       top:50%;
       height:1px;
-      background:linear-gradient(90deg, rgba(84,230,178,.08), rgba(84,230,178,.6), rgba(99,216,255,.1));
+      background:linear-gradient(90deg, rgba(198,161,91,.08), rgba(198,161,91,.6), rgba(31,138,112,.1));
       transform:translateY(-50%);
       z-index:0;
     }
@@ -487,8 +498,8 @@
     }
     .client-icon, .wp-icon { color:var(--muted); }
     .client-icon svg, .wp-icon svg { width:18px; height:18px; display:block; }
-    .ic-claude { color:#D97757; } .ic-openai { color:#E8EDF4; } .ic-gemini { color:#8AB4F8; } .ic-mcp { color:#63d8ff; }
-    .ic-wp { color:#5eb6e0; } .ic-woo { color:#A784E8; } .ic-woo svg { width:22px; height:22px; } .ic-db { color:#63d8ff; } .ic-db svg { width:19px; height:19px; } .ic-fs { color:#54e6b2; }
+    .ic-claude { color:#D97757; } .ic-openai { color:#E8EDF4; } .ic-gemini { color:#8AB4F8; } .ic-mcp { color:#3FAF92; }
+    .ic-wp { color:#5eb6e0; } .ic-woo { color:#A784E8; } .ic-woo svg { width:22px; height:22px; } .ic-db { color:#3FAF92; } .ic-db svg { width:19px; height:19px; } .ic-fs { color:#C6A15B; }
     html[data-theme="light"] .ic-claude { color:#B85C3A; }
     html[data-theme="light"] .ic-openai { color:#101828; }
     html[data-theme="light"] .ic-gemini { color:#1B6EF3; }
@@ -504,10 +515,10 @@
       z-index:3;
       padding:22px 14px;
       text-align:center;
-      border:1px solid rgba(84,230,178,.30);
+      border:1px solid rgba(198,161,91,.30);
       border-radius:22px;
-      background:linear-gradient(145deg, rgba(84,230,178,.13), rgba(99,216,255,.06)), var(--panel);
-      box-shadow:0 20px 55px rgba(0,0,0,.22), 0 0 0 6px rgba(84,230,178,.025);
+      background:linear-gradient(145deg, rgba(198,161,91,.13), rgba(31,138,112,.06)), var(--panel);
+      box-shadow:0 20px 55px rgba(0,0,0,.22), 0 0 0 6px rgba(198,161,91,.025);
     }
     .core-mark {
       width:58px;
@@ -516,8 +527,8 @@
       place-items:center;
       margin:0 auto 13px;
       border-radius:18px;
-      background:linear-gradient(145deg, rgba(84,230,178,.21), rgba(99,216,255,.07));
-      border:1px solid rgba(84,230,178,.25);
+      background:linear-gradient(145deg, rgba(198,161,91,.21), rgba(31,138,112,.07));
+      border:1px solid rgba(198,161,91,.25);
       color:var(--green);
     }
     .core-mark svg { width:32px; height:32px; }
@@ -600,7 +611,7 @@
       border-radius:50%;
       background:radial-gradient(circle, rgba(255,127,143,.08), transparent 68%);
     }
-    .problem-card.good::after { background:radial-gradient(circle, rgba(84,230,178,.13), transparent 68%); }
+    .problem-card.good::after { background:radial-gradient(circle, rgba(198,161,91,.13), transparent 68%); }
     .problem-label { display:flex; align-items:center; gap:9px; color:var(--muted); font-size:12px; font-weight:760; letter-spacing:.06em; text-transform:uppercase; }
     .problem-label .mini-dot { width:8px; height:8px; border-radius:50%; background:var(--danger); }
     .good .problem-label .mini-dot { background:var(--green); }
@@ -637,8 +648,8 @@
       display:grid;
       place-items:center;
       border-radius:14px;
-      border:1px solid rgba(84,230,178,.2);
-      background:rgba(84,230,178,.075);
+      border:1px solid rgba(198,161,91,.2);
+      background:rgba(198,161,91,.075);
       color:var(--green);
     }
     .step-icon svg { width:23px; height:23px; }
@@ -661,7 +672,7 @@
       background:var(--panel);
       box-shadow:var(--shadow-soft);
     }
-    .mode-card.recommended { border-color:rgba(84,230,178,.24); background:linear-gradient(145deg, rgba(84,230,178,.055), transparent 42%), var(--panel); }
+    .mode-card.recommended { border-color:rgba(198,161,91,.24); background:linear-gradient(145deg, rgba(198,161,91,.055), transparent 42%), var(--panel); }
     .mode-top { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; }
     .mode-icon { width:52px; height:52px; display:grid; place-items:center; border-radius:16px; border:1px solid var(--line); background:var(--panel-3); color:var(--green); }
     .mode-icon svg { width:25px; height:25px; }
@@ -701,8 +712,8 @@
       display:grid;
       place-items:center;
       border-radius:14px;
-      border:1px solid rgba(84,230,178,.18);
-      background:rgba(84,230,178,.07);
+      border:1px solid rgba(198,161,91,.18);
+      background:rgba(198,161,91,.07);
       color:var(--green);
       font:750 12px/1 "SFMono-Regular", Consolas, monospace;
     }
@@ -734,7 +745,7 @@
       transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
     }
     .feature:hover { transform:translateY(-4px); border-color:var(--line-strong); box-shadow:var(--shadow-soft); }
-    .feature-icon { width:42px; height:42px; display:grid; place-items:center; border-radius:13px; background:rgba(84,230,178,.07); border:1px solid rgba(84,230,178,.16); color:var(--green); }
+    .feature-icon { width:42px; height:42px; display:grid; place-items:center; border-radius:13px; background:rgba(198,161,91,.07); border:1px solid rgba(198,161,91,.16); color:var(--green); }
     .feature-icon svg { width:21px; height:21px; }
     .feature h3 { margin:20px 0 9px; font-size:17px; letter-spacing:-.02em; }
     .feature p { margin:0; color:var(--muted); font-size:13.5px; }
@@ -815,6 +826,8 @@
     .trust-note svg { width:18px; height:18px; flex:0 0 auto; color:var(--amber); margin-top:1px; }
     .trust-note strong { color:var(--text); }
 
+    .footer-legal span { display:block; margin:8px 0; color:var(--muted-2); font-size:13px; }
+    .footer-legal small { display:block; margin-top:10px; color:var(--muted-2); font-size:11px; }
     .pricing-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:980px; margin:0 auto; }
 
     .billing-toggle {
@@ -828,12 +841,12 @@
       background:transparent;
     }
     .billing-toggle button[aria-pressed="true"] {
-      color:var(--bg, #07111f); background:linear-gradient(135deg, #54e6b2, #63d8ff);
-      box-shadow:0 8px 24px rgba(84,230,178,.22);
+      color:var(--bg, #0B1F3A); background:linear-gradient(135deg, #C6A15B, #1F8A70);
+      box-shadow:0 8px 24px rgba(198,161,91,.22);
     }
 
     .price-card { position:relative; padding:34px; border:1px solid var(--line); border-radius:26px; background:var(--panel); box-shadow:var(--shadow-soft); }
-    .price-card.pro { border-color:rgba(99,216,255,.22); background:linear-gradient(145deg, rgba(99,216,255,.055), transparent 44%), var(--panel); }
+    .price-card.pro { border-color:rgba(31,138,112,.22); background:linear-gradient(145deg, rgba(31,138,112,.055), transparent 44%), var(--panel); }
     .price-card h3 { margin:18px 0 8px; font-size:27px; letter-spacing:-.035em; }
     .price-card .price { margin-top:24px; font-size:40px; line-height:1; font-weight:820; letter-spacing:-.045em; }
     .price-card .price small { color:var(--muted); font-size:13px; font-weight:650; letter-spacing:0; }
@@ -859,11 +872,11 @@
       position:relative;
       overflow:hidden;
       padding:64px 58px;
-      border:1px solid rgba(84,230,178,.20);
+      border:1px solid rgba(198,161,91,.20);
       border-radius:32px;
       background:
-        radial-gradient(70% 120% at 10% 50%, rgba(84,230,178,.10), transparent 64%),
-        radial-gradient(55% 100% at 90% 20%, rgba(99,216,255,.09), transparent 70%),
+        radial-gradient(70% 120% at 10% 50%, rgba(198,161,91,.10), transparent 64%),
+        radial-gradient(55% 100% at 90% 20%, rgba(31,138,112,.09), transparent 70%),
         var(--panel);
       box-shadow:var(--shadow);
       text-align:center;
@@ -884,7 +897,7 @@
     .cta-buttons .btn { min-height:50px; padding:13px 20px; font-size:14.5px; }
 
     footer { border-top:1px solid var(--line); background:color-mix(in srgb,var(--bg-2) 72%,transparent); }
-    .footer-main { display:grid; grid-template-columns:1.25fr repeat(3,.75fr); gap:48px; padding:54px 0 44px; }
+    .footer-main { display:grid; grid-template-columns:1.25fr repeat(4,.7fr); gap:40px; padding:54px 0 44px; }
     .footer-brand p { max-width:400px; margin:15px 0 0; color:var(--muted); font-size:13px; }
     .footer-col h3 { margin:0 0 13px; color:var(--muted-2); font-size:11px; text-transform:uppercase; letter-spacing:.08em; }
     .footer-col a { display:block; width:max-content; max-width:100%; margin:8px 0; color:var(--muted); font-size:13px; }
@@ -912,7 +925,7 @@
       .tab-panel { grid-template-columns:1fr; }
       .client-info { border-right:0; border-bottom:1px solid var(--line); }
       .footer-main { grid-template-columns:1.3fr 1fr 1fr; }
-      .footer-col:last-child { grid-column:2 / 4; }
+      .footer-col:last-child { grid-column:auto; }
     }
 
     @media (max-width:860px) {
@@ -1010,6 +1023,7 @@
         <a href="#features">Features</a>
         <a href="#pricing">Pricing</a>
         <a href="#faq">FAQ</a>
+        <a href="https://app.bridgistic.app/">Dashboard</a>
       </nav>
 
       <div class="nav-actions">
@@ -1018,7 +1032,7 @@
             <path d="M12 3a9 9 0 1 0 9 9c0-.45-.03-.9-.1-1.33A7 7 0 0 1 13.33 3.1C12.9 3.03 12.45 3 12 3Z"/>
           </svg>
         </button>
-        <a class="btn btn-primary" href="https://github.com/Wordpressistic/bridgistic/releases/latest/download/bridgistic-wordpress-plugin.zip">Download free
+        <a class="btn btn-primary" href="__BRIDGISTIC_RELEASE_DOWNLOAD__/bridgistic-wordpress-plugin.zip">Download free
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>
         </a>
         <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="navLinks" aria-label="Open navigation">
@@ -1034,7 +1048,7 @@
         <span class="badge live">v__BRIDGISTIC_RELEASE_VERSION__</span>
         <span>Open-source WordPress bridge + MCP server</span>
         <span aria-hidden="true">·</span>
-        <a href="https://github.com/Wordpressistic/bridgistic/releases/latest" target="_blank" rel="noopener">View latest release →</a>
+        <a href="__BRIDGISTIC_RELEASE_PAGE__" target="_blank" rel="noopener">Release notes for v__BRIDGISTIC_RELEASE_VERSION__ →</a>
       </div>
     </div>
 
@@ -1047,7 +1061,7 @@
           <p class="hero-lead">Connect Claude, ChatGPT, Codex, Gemini, Cursor and other MCP clients to WordPress through a bridge built around <strong>least privilege, human approval and reversibility</strong>.</p>
 
           <div class="hero-cta">
-            <a class="btn btn-primary" href="https://github.com/Wordpressistic/bridgistic/releases/latest/download/bridgistic-wordpress-plugin.zip">
+            <a class="btn btn-primary" href="__BRIDGISTIC_RELEASE_DOWNLOAD__/bridgistic-wordpress-plugin.zip">
               Download Bridgistic free
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>
             </a>
@@ -1140,14 +1154,14 @@
             <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg></div>
             <h3><span class="step-num">1</span> Install the free plugin</h3>
             <p>Download the latest release zip and upload it in WordPress. Activate, then open the setup wizard.</p>
-            <div class="step-code"><a href="https://github.com/Wordpressistic/bridgistic/releases/latest/download/bridgistic-wordpress-plugin.zip" style="color:inherit">Download bridgistic-wordpress-plugin.zip →</a></div>
+            <div class="step-code"><a href="__BRIDGISTIC_RELEASE_DOWNLOAD__/bridgistic-wordpress-plugin.zip" style="color:inherit">Download bridgistic-wordpress-plugin.zip →</a></div>
           </article>
 
           <article class="step reveal">
             <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M7 10V8a5 5 0 0 1 10 0v2M6 10h12v10H6zM12 14v2"/></svg></div>
             <h3><span class="step-num">2</span> Connect your AI via MCP</h3>
             <p>Claude Desktop: double-click the <strong>bridgistic.mcpb</strong> one-click extension (no terminal, no Node.js). Other clients: paste the config the wizard generates, or run <strong>npx bridgistic-mcp-server</strong>.</p>
-            <div class="step-code"><a href="https://github.com/Wordpressistic/bridgistic/releases/latest/download/bridgistic.mcpb" style="color:inherit">Download bridgistic.mcpb →</a></div>
+            <div class="step-code"><a href="__BRIDGISTIC_RELEASE_DOWNLOAD__/bridgistic.mcpb" style="color:inherit">Download bridgistic.mcpb →</a></div>
           </article>
 
           <article class="step reveal">
@@ -1160,16 +1174,16 @@
 
         <p class="connect-note reveal">One-click (.mcpb) install currently works in <strong>Claude Desktop</strong>; Claude Code, Codex CLI and Gemini CLI use the generated config or npx, and remote-only clients (ChatGPT) connect through Bridgistic Cloud (public beta).</p>
 
-        <div class="plan-strip reveal" aria-label="Free vs Pro summary">
+        <div class="plan-strip reveal" aria-label="Free and Lifetime Deal summary">
           <div class="plan-chip">
             <strong>Bridgistic Free</strong>
             <span>Full local bridge · HMAC keys, scopes, approvals, audit log, snapshots · up to 3 scheduled playbooks · community support</span>
             <a class="plan-link" href="#pricing">Details ↓</a>
           </div>
           <div class="plan-chip">
-            <strong>Bridgistic Pro — $12/mo or $99/yr</strong>
-            <span>Everything in Free · unlimited scheduled playbooks · advanced snapshots · audit export · skills marketplace · agency dashboard · team · white-label · license + secure updates + priority support</span>
-            <a class="plan-link" href="#pricing">Compare ↓</a>
+            <strong>Bridgistic Lifetime Deal — $29.99 one time</strong>
+            <span>Lifetime use of Bridgistic · all future updates included · no subscription and no renewal · license managed through your WPistic account</span>
+            <a class="plan-link" href="#pricing">Details ↓</a>
           </div>
         </div>
       </div>
@@ -1512,19 +1526,13 @@ Bridgistic Cloud is currently a public beta.</pre>
     <section class="section" id="pricing">
       <div class="wrap">
         <div class="section-head reveal">
-          <span class="eyebrow"><span class="dot"></span> Free core. Pro scale.</span>
-          <h2>Start free. Upgrade when you need WPistic licensing.</h2>
-          <p>The plugin download is free and open source — the full local bridge. Bridgistic Pro adds a WPistic license with secure updates and priority support: $12/mo or $99/yr, checkout via Paddle.</p>
+          <span class="eyebrow"><span class="dot"></span> Free core. One lifetime price.</span>
+          <h2>Start free. Pay once when you want a license.</h2>
+          <p>The plugin download is free and open source: the full local bridge. The Bridgistic Lifetime Deal is a single payment of $29.99 that includes every future update, with no subscription.</p>
         </div>
 
-        <div style="text-align:center" class="reveal">
-          <div class="billing-toggle" role="group" aria-label="Billing period">
-            <button type="button" id="bill-month" aria-pressed="false">Monthly</button>
-            <button type="button" id="bill-year" aria-pressed="true">Yearly <small style="opacity:.8">save ~31%</small></button>
-          </div>
-        </div>
 
-        <div class="pricing-grid" id="pricing-cards" data-cycle="year">
+        <div class="pricing-grid" id="pricing-cards">
           <article class="price-card reveal">
             <span class="badge free">Open source</span>
             <h3>Bridgistic Free</h3>
@@ -1537,26 +1545,22 @@ Bridgistic Cloud is currently a public beta.</pre>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Manual playbooks, plus up to 3 scheduled playbooks</li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Latest GitHub release zip</li>
             </ul>
-            <a class="btn btn-primary" href="https://github.com/Wordpressistic/bridgistic/releases/latest/download/bridgistic-wordpress-plugin.zip">Download free (latest release)</a>
+            <a class="btn btn-primary" href="__BRIDGISTIC_RELEASE_DOWNLOAD__/bridgistic-wordpress-plugin.zip">Download free (latest release)</a>
           </article>
 
           <article class="price-card pro reveal">
-            <span class="badge">Pro</span>
-            <h3>Bridgistic Pro</h3>
-            <div class="price">
-              <span data-cycle="month">$12 <small>/mo</small></span>
-              <span data-cycle="year" class="is-active">$99 <small>/yr</small></span>
-            </div>
-            <p>Checkout opens on pay.wpistic.com (Paddle overlay); your WPistic license key is issued by email.</p>
+            <span class="badge">Lifetime Deal</span>
+            <h3>Bridgistic Lifetime Deal</h3>
+            <div class="price">$29.99 <small>USD, one time</small></div>
+            <p>Pay once. Your license key arrives by email; activate it on the License screen in the <a href="https://app.bridgistic.app/license">Bridgistic dashboard</a>.</p>
             <ul class="price-list">
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>Everything in Free</strong></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>WPistic license + secure updates</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Priority product support path</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Unlimited scheduled playbooks (Free: 3)</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Skills marketplace, advanced snapshots and audit export</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>Lifetime use</strong> of Bridgistic</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>All future updates included</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>No subscription and no renewal</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>License issued and managed through your WPistic account</li>
             </ul>
-            <a class="btn btn-primary" href="https://pay.wpistic.com/" target="_blank" rel="noopener">Buy Pro</a>
-            <div class="price-fine">Prices in USD. Secure checkout via Paddle.</div>
+            <a class="btn btn-primary" href="https://pay.bridgistic.app/" target="_blank" rel="noopener">Get the Lifetime Deal</a>
+            <div class="price-fine">Price in USD. Payment is processed by Paddle, our reseller and Merchant of Record. Taxes are calculated at checkout.</div>
           </article>
         </div>
       </div>
@@ -1589,7 +1593,7 @@ Bridgistic Cloud is currently a public beta.</pre>
           <h2>Connect your first WordPress site without surrendering control.</h2>
           <p>Install the free plugin, mint a Read-only key, connect your MCP client and verify the bridge before granting write access.</p>
           <div class="cta-buttons">
-            <a class="btn btn-primary" href="https://github.com/Wordpressistic/bridgistic/releases/latest/download/bridgistic-wordpress-plugin.zip">Download Bridgistic v__BRIDGISTIC_RELEASE_VERSION__
+            <a class="btn btn-primary" href="__BRIDGISTIC_RELEASE_DOWNLOAD__/bridgistic-wordpress-plugin.zip">Download Bridgistic v__BRIDGISTIC_RELEASE_VERSION__
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>
             </a>
             <a class="btn btn-secondary" href="https://github.com/Wordpressistic/bridgistic" target="_blank" rel="noopener">View on GitHub
@@ -1610,9 +1614,10 @@ Bridgistic Cloud is currently a public beta.</pre>
         </a>
         <p>A local-first MCP bridge for giving AI assistants controlled, auditable and reversible access to WordPress.</p>
       </div>
-      <div class="footer-col"><h3>Product</h3><a href="#how">How it works</a><a href="#security">Security</a><a href="#clients">AI clients</a><a href="#pricing">Pricing</a></div>
-      <div class="footer-col"><h3>Resources</h3><a href="https://github.com/Wordpressistic/bridgistic" target="_blank" rel="noopener">GitHub</a><a href="https://github.com/Wordpressistic/bridgistic/releases/latest" target="_blank" rel="noopener">Releases</a><a href="https://github.com/Wordpressistic/bridgistic/issues" target="_blank" rel="noopener">Support</a><a href="https://github.com/Wordpressistic/bridgistic/blob/main/docs/SECURITY.md" target="_blank" rel="noopener">Security</a><a href="https://github.com/Wordpressistic/bridgistic/blob/main/docs/REPO-STRUCTURE.md" target="_blank" rel="noopener">Repo structure</a></div>
+      <div class="footer-col"><h3>Product</h3><a href="#how">How it works</a><a href="#security">Security</a><a href="#clients">AI clients</a><a href="#pricing">Pricing</a><a href="https://app.bridgistic.app/">Dashboard</a></div>
+      <div class="footer-col"><h3>Resources</h3><a href="https://github.com/Wordpressistic/bridgistic" target="_blank" rel="noopener">GitHub</a><a href="__BRIDGISTIC_RELEASE_PAGE__" target="_blank" rel="noopener">Releases</a><a href="https://github.com/Wordpressistic/bridgistic/issues" target="_blank" rel="noopener">Support</a><a href="https://github.com/Wordpressistic/bridgistic/blob/main/docs/SECURITY.md" target="_blank" rel="noopener">Security</a><a href="https://github.com/Wordpressistic/bridgistic/blob/main/docs/REPO-STRUCTURE.md" target="_blank" rel="noopener">Repo structure</a></div>
       <div class="footer-col"><h3>Ecosystem</h3><a href="https://wpistic.com/" target="_blank" rel="noopener">WPistic</a><a href="https://wordpressistic.com/" target="_blank" rel="noopener">WordPressistic</a><a href="https://wpistic.com/pricing" target="_blank" rel="noopener">Plans</a></div>
+      <div class="footer-col footer-legal"><h3>Legal</h3><span>Privacy Policy</span><span>Terms of Service</span><span>Refund Policy</span><small>Publishing soon</small></div>
     </div>
     <div class="wrap footer-bottom">
       <span>© 2026 WordPressistic LLC. Bridgistic is licensed GPL-2.0-or-later.</span>
@@ -1704,26 +1709,6 @@ Bridgistic Cloud is currently a public beta.</pre>
     })();
   </script>
 
-<script>
-(function () {
-  var cards = document.getElementById('pricing-cards');
-  var monthBtn = document.getElementById('bill-month');
-  var yearBtn = document.getElementById('bill-year');
-  if (!cards || !monthBtn || !yearBtn) return;
-  function setCycle(cycle) {
-    cards.setAttribute('data-cycle', cycle);
-    cards.querySelectorAll('.price-card.pro').forEach(function (c) { c.setAttribute('data-show-cycle', cycle); });
-    cards.querySelectorAll('.price [data-cycle]').forEach(function (el) {
-      el.classList.toggle('is-active', el.getAttribute('data-cycle') === cycle);
-    });
-    monthBtn.setAttribute('aria-pressed', cycle === 'month' ? 'true' : 'false');
-    yearBtn.setAttribute('aria-pressed', cycle === 'year' ? 'true' : 'false');
-  }
-  monthBtn.addEventListener('click', function () { setCycle('month'); });
-  yearBtn.addEventListener('click', function () { setCycle('year'); });
-  setCycle('year');
-})();
-</script>
 
 </body>
 </html>

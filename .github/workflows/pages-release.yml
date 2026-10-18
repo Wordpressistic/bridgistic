@@ -14,6 +14,7 @@ on:
       - assets/bridgistic-icon.png
       - assets/bridgistic-logo.png
       - .github/workflows/pages-release.yml
+      - scripts/build-site.sh
   # A release published from the Release workflow uses GITHUB_TOKEN and does
   # not trigger other workflows, so a daily safety-net run remains; the old
   # 15-minute cron produced ~96 redundant deploys a day.
@@ -49,76 +50,35 @@ jobs:
       - name: Check out the Bridgistic site source
         uses: actions/checkout@v4
 
-      - name: Resolve the latest Bridgistic release
+      - name: Build the site against the newest plugin release
         id: release
         env:
-          INPUT_TAG: ${{ inputs.tag || '' }}
+          BRIDGISTIC_RELEASE_TAG: ${{ inputs.tag || '' }}
+          SITE_COMMIT: ${{ github.sha }}
           GH_TOKEN: ${{ github.token }}
-        run: |
-          set -eu
-          if [ -n "$INPUT_TAG" ]; then
-            TAG="$INPUT_TAG"
-          else
-            TAG=$(curl --fail --silent --show-error --location \
-              --connect-timeout 10 --max-time 30 \
-              -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer $GH_TOKEN" \
-              https://api.github.com/repos/Wordpressistic/bridgistic/releases/latest \
-              | jq -r '.tag_name')
-          fi
-          if ! printf '%s' "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$'; then
-            echo "::error::Invalid Bridgistic release tag: $TAG"
-            exit 1
-          fi
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "Using Bridgistic release $TAG"
+        # Picks the newest published release that ships the plugin zip across
+        # this repo and wordpressistic/bridgistic-claude-marketplace, so the
+        # download links never point at an older build.
+        run: scripts/build-site.sh dist/pages-site
 
       - name: Skip when this site build is already deployed
         id: deployed
         env:
-          TAG: ${{ steps.release.outputs.tag }}
+          VERSION: ${{ steps.release.outputs.version }}
           SITE_COMMIT: ${{ github.sha }}
         run: |
-          VERSION="${TAG#v}"
           CURRENT=$(curl --silent --show-error --location --connect-timeout 10 --max-time 20 https://bridgistic.app/ 2>/dev/null || true)
           if printf '%s' "$CURRENT" | grep -Fq "release=${VERSION}" \
             && printf '%s' "$CURRENT" | grep -Fq "site-commit=${SITE_COMMIT}"; then
             echo "already=true" >> "$GITHUB_OUTPUT"
-            echo "${TAG} from ${SITE_COMMIT} is already live on bridgistic.app."
+            echo "v${VERSION} from ${SITE_COMMIT} is already live on bridgistic.app."
           else
             echo "already=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Inject release and source versions
-        if: steps.deployed.outputs.already != 'true'
-        env:
-          RELEASE_TAG: ${{ steps.release.outputs.tag }}
-          SITE_COMMIT: ${{ github.sha }}
-        run: |
-          VERSION="${RELEASE_TAG#v}"
-          if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$'; then
-            echo "::error::Invalid Bridgistic release tag: $RELEASE_TAG"
-            exit 1
-          fi
-          perl -0pi -e "s/__BRIDGISTIC_RELEASE_VERSION__/$VERSION/g; s/__BRIDGISTIC_SITE_COMMIT__/$SITE_COMMIT/g" index.html
-          if grep -Eq '__BRIDGISTIC_(RELEASE_VERSION|SITE_COMMIT)__' index.html; then
-            echo "::error::A site build marker was not fully replaced"
-            exit 1
           fi
 
       - name: Configure GitHub Pages
         if: steps.deployed.outputs.already != 'true'
         uses: actions/configure-pages@v5
-
-      - name: Stage the public site from this repository
-        if: steps.deployed.outputs.already != 'true'
-        run: |
-          rm -rf dist/pages-site
-          mkdir -p dist/pages-site/assets
-          cp index.html dist/pages-site/index.html
-          printf 'bridgistic.app\n' > dist/pages-site/CNAME
-          cp assets/bridgistic-icon.png dist/pages-site/assets/bridgistic-icon.png
-          cp assets/bridgistic-logo.png dist/pages-site/assets/bridgistic-logo.png
 
       - name: Upload the Pages artifact
         if: steps.deployed.outputs.already != 'true'
