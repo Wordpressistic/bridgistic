@@ -872,6 +872,12 @@
     .price-list strong { color:var(--text); font-weight:700; }
     .price-card .btn { width:100%; min-height:48px; }
     .price-fine { margin-top:18px; color:var(--muted-2); font-size:11.5px; }
+    .buyer-email { max-width:520px; margin:0 auto 22px; display:grid; gap:6px; text-align:left; }
+    .buyer-email label { font-size:12px; font-weight:750; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+    .buyer-email input { min-height:46px; padding:0 14px; border:1px solid var(--line-strong); border-radius:12px; background:var(--panel); color:var(--text); font:inherit; font-size:15px; }
+    .buyer-email input:focus { outline:2px solid #C6A15B; outline-offset:2px; }
+    .buyer-email.is-invalid input { border-color:#C6A15B; }
+    .buyer-email-help { font-size:12px; color:var(--muted-2); }
     .pricing-grid.three { grid-template-columns:repeat(3,1fr); max-width:1120px; }
     .plans-label { max-width:1120px; margin:34px auto 14px; color:var(--muted); font-size:12px; font-weight:750; letter-spacing:.12em; text-transform:uppercase; text-align:center; }
     .offer-card { display:grid; grid-template-columns:1.35fr 1fr; gap:34px; max-width:1120px; margin:0 auto; padding:38px; border:1px solid color-mix(in srgb,#C6A15B 55%,transparent); border-radius:28px; background:linear-gradient(135deg, rgba(198,161,91,.14), transparent 55%), var(--panel); box-shadow:var(--shadow-soft); }
@@ -1575,6 +1581,12 @@ Bridgistic Cloud is currently a public beta.</pre>
           <p>The plugin download is free and open source: the full local bridge. Bridgistic Pro is billed through Paddle.</p>
         </div>
 
+        <div class="buyer-email reveal">
+          <label for="buyer-email">Email for your license key</label>
+          <input id="buyer-email" type="email" autocomplete="email" placeholder="you@example.com" />
+          <span class="buyer-email-help" id="buyer-email-help">Your WPistic license is issued to this email after payment.</span>
+        </div>
+
         <article class="offer-card offer-only reveal" id="welcome-offer" aria-labelledby="offer-title">
           <div class="offer-main">
             <span class="badge offer">Welcome offer: Lifetime Deal</span>
@@ -1866,14 +1878,26 @@ Bridgistic Cloud is currently a public beta.</pre>
       var priceId = CFG.prices[plan];
       if (!/^pri_[a-z0-9]{26}$/.test(priceId || "")) return;
       ev.preventDefault();
+      var emailBox = document.querySelector(".buyer-email");
+      var emailEl = document.getElementById("buyer-email");
+      var email = emailEl ? emailEl.value.trim().toLowerCase() : "";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        if (emailBox) emailBox.classList.add("is-invalid");
+        var help = document.getElementById("buyer-email-help");
+        if (help) help.textContent = "Enter the email for your license key, then choose a plan.";
+        if (emailEl) { emailEl.scrollIntoView({ block: "center", behavior: "smooth" }); emailEl.focus(); }
+        return;
+      }
+      if (emailBox) emailBox.classList.remove("is-invalid");
       var gate = plan === "lifetime" ? fetchStatus() : Promise.resolve(lastStatus);
       gate.then(function (st) {
         if (plan === "lifetime" && (Date.now() >= CFG.endsAt || (st && st.open === false))) { setOpen(false); return; }
         return loadPaddle().then(function (P) {
           P.Checkout.open({
             items: [{ priceId: priceId, quantity: 1 }],
+            customer: { email: email },
             settings: { displayMode: "overlay", theme: root.getAttribute("data-theme") === "light" ? "light" : "dark", successUrl: CFG.successUrl },
-            customData: { source: "bridgistic.app", product: "bridgistic", offer: plan === "lifetime" ? "welcome-lifetime" : plan }
+            customData: { customer_email: email, source: "bridgistic.app", product: "bridgistic", offer: plan === "lifetime" ? "welcome-lifetime" : plan }
           });
         });
       }).catch(function () { window.open(a.href, "_blank", "noopener"); });
