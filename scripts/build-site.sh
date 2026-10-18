@@ -7,6 +7,11 @@
 #   BRIDGISTIC_RELEASE_TAG  optional tag to pin (e.g. v1.5.2); blank = newest
 #   SITE_COMMIT             commit to stamp (default: git HEAD)
 #   GH_TOKEN                optional, raises the GitHub API rate limit
+#   PADDLE_CLIENT_TOKEN     optional Paddle.js client-side token (live_... or test_...).
+#                           Public by design, but kept out of git. Blank = checkout
+#                           buttons fall back to https://pay.bridgistic.app/.
+#   PADDLE_ENV              optional, "sandbox" or "production" (default)
+#   OFFER_STATUS_URL        optional, default /api/offer-status (Pages Function)
 #
 # The plugin has been released from two repositories (this one and
 # wordpressistic/bridgistic-claude-marketplace). The page must advertise the
@@ -19,6 +24,14 @@ REPOS="${BRIDGISTIC_RELEASE_REPOS:-Wordpressistic/bridgistic wordpressistic/brid
 PIN="${BRIDGISTIC_RELEASE_TAG:-}"
 SITE_COMMIT="${SITE_COMMIT:-$(git rev-parse HEAD)}"
 ASSET="bridgistic-wordpress-plugin.zip"
+PADDLE_CLIENT_TOKEN="${PADDLE_CLIENT_TOKEN:-}"
+PADDLE_ENV="${PADDLE_ENV:-production}"
+OFFER_STATUS_URL="${OFFER_STATUS_URL:-/api/offer-status}"
+if [ -n "$PADDLE_CLIENT_TOKEN" ] && ! printf '%s' "$PADDLE_CLIENT_TOKEN" | grep -Eq '^(live|test)_[A-Za-z0-9]+$'; then
+  echo "::error::PADDLE_CLIENT_TOKEN does not look like a Paddle client-side token (live_/test_)" >&2
+  exit 1
+fi
+case "$PADDLE_ENV" in production|sandbox) ;; *) echo "::error::PADDLE_ENV must be production or sandbox" >&2; exit 1;; esac
 
 api() {
   local auth=()
@@ -61,6 +74,9 @@ sed -e "s#__BRIDGISTIC_RELEASE_VERSION__#$VERSION#g" \
     -e "s#__BRIDGISTIC_RELEASE_PAGE__#$PAGE#g" \
     -e "s#__BRIDGISTIC_RELEASE_REPO__#$best_repo#g" \
     -e "s#__BRIDGISTIC_SITE_COMMIT__#$SITE_COMMIT#g" \
+    -e "s#__BRIDGISTIC_PADDLE_CLIENT_TOKEN__#$PADDLE_CLIENT_TOKEN#g" \
+    -e "s#__BRIDGISTIC_PADDLE_ENV__#$PADDLE_ENV#g" \
+    -e "s#__BRIDGISTIC_OFFER_STATUS_URL__#$OFFER_STATUS_URL#g" \
     index.html > "$OUT/index.html"
 if grep -Eq '__BRIDGISTIC_[A-Z_]+__' "$OUT/index.html"; then
   echo "::error::A site build marker was not replaced" >&2
