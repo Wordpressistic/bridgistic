@@ -38,7 +38,8 @@ td{color:var(--muted)}
 tr:last-child td{border-bottom:0}
 .steps{padding-left:20px}.steps li{margin:10px 0}
 .company{font-style:normal;color:var(--muted);line-height:1.7}
-.pending{display:inline-block;margin:0 2px;padding:1px 9px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.02em;color:#0B1F3A;background:#C6A15B;vertical-align:1px;white-space:nowrap}
+.verified{display:inline-block;padding:1px 9px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em;color:#F4F1EA;background:#1F8A70;white-space:nowrap}
+.doc h3{margin:18px 0 6px;font-size:16px}
 .foot{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:13px}
 .foot-in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .foot nav{display:flex;gap:16px;flex-wrap:wrap}.foot a{color:var(--muted);text-decoration:none}.foot a:hover{color:var(--text)}
