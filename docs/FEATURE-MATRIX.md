@@ -40,6 +40,19 @@ verified.
 | Usage billing | ❌ | ✅ (SaaS layer) — **verify** (docs/FREE_VS_PAID.md lists it; no gate found in plugin code — lives in SaaS) |
 | Remote MCP connector (Bridgistic Cloud, mcp.bridgistic.app) | ✅ **free public beta** — no independent security review yet (docs/CLOUD_CONNECTOR.md) | ✅ same connector + SaaS management on top |
 
+## Control plane (SaaS, not in the free plugin)
+
+These live on the account dashboard and the platform admin. They are not
+unlocked by the GPL plugin zip. See [CONTROL-PLANE.md](CONTROL-PLANE.md).
+
+| Surface | What it is |
+|---|---|
+| Account dashboard | One workspace: sites, keys, approvals, agents, skills, connectors |
+| Platform admin | Every organization: users, licenses, plans, sites, billing notes, team, AI routing |
+| Website agents | SEO, content, updates, audit, social drafts, operations. Writes wait for approval |
+| Skills directory | Public free skills. Member pack stays inside the app |
+| Model routing | OpenAI-compatible, custom model, OpenRouter, local RAGBrain. Keys stay in the environment |
+
 ## Honest notes
 
 1. **The free plugin never unlocks.** There is no license activation path, billing code, or
