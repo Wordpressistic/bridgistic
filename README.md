@@ -145,6 +145,7 @@ Prices are in USD and taxes are calculated at checkout. Every purchase has a 7-d
 | Bridgistic Cloud (beta) | [docs/CLOUD_CONNECTOR.md](docs/CLOUD_CONNECTOR.md) |
 | Security model | [docs/SECURITY.md](docs/SECURITY.md) |
 | Free vs Pro, from the code | [docs/FEATURE-MATRIX.md](docs/FEATURE-MATRIX.md) |
+| Account dashboard and platform admin | [docs/CONTROL-PLANE.md](docs/CONTROL-PLANE.md) |
 | Privacy | [docs/PRIVACY.md](docs/PRIVACY.md) |
 | Testing | [docs/TESTING.md](docs/TESTING.md) |
 | Releasing | [docs/RELEASING.md](docs/RELEASING.md) |
