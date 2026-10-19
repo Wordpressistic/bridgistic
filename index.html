@@ -1878,6 +1878,16 @@ Bridgistic Cloud is currently a public beta.</pre>
     }
     fetchStatus();
     var paddleReady = null;
+    var openPriceId = null;
+    // One purchase = one license. Paddle Billing has no allowQuantity setting, so if the
+    // buyer changes the quantity (or the item list), put the checkout back to 1 x the plan.
+    function lockQuantity(ev) {
+      if (!ev || !openPriceId || !ev.data || !ev.data.items) return;
+      if (ev.name !== "checkout.items.updated" && ev.name !== "checkout.updated" && ev.name !== "checkout.loaded") return;
+      var items = ev.data.items;
+      var ok = items.length === 1 && items[0].quantity === 1 && (items[0].price_id || (items[0].price && items[0].price.id)) === openPriceId;
+      if (!ok) { try { window.Paddle.Checkout.updateItems([{ priceId: openPriceId, quantity: 1 }]); } catch (e) {} }
+    }
     function loadPaddle() {
       if (paddleReady) return paddleReady;
       paddleReady = new Promise(function (resolve, reject) {
@@ -1887,7 +1897,7 @@ Bridgistic Cloud is currently a public beta.</pre>
         s.onload = function () {
           try {
             if (CFG.env === "sandbox") window.Paddle.Environment.set("sandbox");
-            window.Paddle.Initialize({ token: CFG.token });
+            window.Paddle.Initialize({ token: CFG.token, eventCallback: lockQuantity });
             resolve(window.Paddle);
           } catch (e) { reject(e); }
         };
@@ -1918,6 +1928,7 @@ Bridgistic Cloud is currently a public beta.</pre>
       gate.then(function (st) {
         if (plan === "lifetime" && (Date.now() >= CFG.endsAt || (st && st.open === false))) { setOpen(false); return; }
         return loadPaddle().then(function (P) {
+          openPriceId = priceId;
           P.Checkout.open({
             items: [{ priceId: priceId, quantity: 1 }],
             customer: { email: email },
