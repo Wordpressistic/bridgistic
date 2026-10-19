@@ -5,15 +5,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 ## [Unreleased]
 
-### Fixed
-- License link: `validate` now sends the domain and environment the license server bound at activation. The server re-classifies the environment from the domain (`.test`/`.local`/`localhost`/private IPs → local; `staging.*`, `dev.*`, `*.wpengine.com`, `*.kinsta.cloud`, `*.pantheonsite.io` → staging) and hard-rejects a mismatch, so licenses on those sites failed every re-check with 403.
-- License link: activation uses a fresh idempotency key per attempt. A fixed key made the server replay the cached response after a deactivate, handing back a revoked token (validate then failed with 401).
-- Browser live mode from the hosted dashboard: the plugin now sends `Access-Control-Allow-Origin` itself for `https://dashboard.bridgistic.app` (main address) and `https://app.bridgistic.app` (legacy, redirects) on the `bridgistic/v1` namespace only, without credentials. Some sites strip the header WordPress core normally echoes, which broke the dashboard (seen on dev-test.wordpressistic.com). Filter: `bridgistic_dashboard_origins`.
-- `GET /bridgistic/v1/approvals/status?approval_id=...` was rejected with `bridgistic_unsigned_param` on 1.5.3, so approval polling (dashboard and the `bridgistic_approval_status` MCP tool) could not work. `approval_id` is now allowed in the query string for that read-only route only; every other signed-only param stays blocked. `POST /approvals/status` with `approval_id` in the signed body is also accepted.
+## [1.5.3] — 2026-10-19
 
-## [1.5.3] — Unreleased (PR fix/audit-2026-10)
-
-Security release addressing the October 2026 baseline audit (S1–S5).
+Security release addressing the October 2026 baseline audit (S1–S5), plus the plugin endpoints used by the hosted Bridgistic dashboard.
 
 ### Security
 
@@ -23,6 +17,19 @@ Security release addressing the October 2026 baseline audit (S1–S5).
 - **PHP execution goes through the Guard.** `php:execute` now honours `dry_run` (never evaluates) and per-key `require_approval`, with the approval bound to the SHA-256 of the exact code. MCP tool `bridgistic_execute_php` gained `dry_run` / `approval_id`.
 - **Unsigned query-string parameters rejected.** The HMAC does not cover the query string, so `dry_run`, `force`, `approval_id`, `__ctx` and `__internal_token` are refused there, and POST/DELETE requests accept no query parameters (`rest_route` excepted). Official clients already send these in the signed body.
 
+### Added
+
+- Dashboard routes on the `bridgistic/v1` namespace: `GET audit` (new scope `audit:read`) and `GET approvals` (the calling key's own approvals; decisions stay in WP Admin).
+- License link to the WPistic license server (`api.wpistic.com/api/v1/licenses`): `GET license`, `POST license/activate|validate|deactivate` (new scope `license:manage`). Responses are HMAC-verified; the raw license key is never stored and the activation token / verification key are never returned over REST. No plugin capability is gated on a license — the free feature policy is unchanged.
+- `rest_allowed_cors_headers` includes the `X-Bridgistic-*` headers so a browser dashboard can call the bridge.
+
+### Fixed
+
+- License link: `validate` now sends the domain and environment the license server bound at activation. The server re-classifies the environment from the domain (`.test`/`.local`/`localhost`/private IPs → local; `staging.*`, `dev.*`, `*.wpengine.com`, `*.kinsta.cloud`, `*.pantheonsite.io` → staging) and hard-rejects a mismatch, so licenses on those sites failed every re-check with 403.
+- License link: activation uses a fresh idempotency key per attempt. A fixed key made the server replay the cached response after a deactivate, handing back a revoked token (validate then failed with 401).
+- Browser live mode from the hosted dashboard: the plugin now sends `Access-Control-Allow-Origin` itself for `https://dashboard.bridgistic.app` (main address) and `https://app.bridgistic.app` (legacy, redirects) on the `bridgistic/v1` namespace only, without credentials. Some sites strip the header WordPress core normally echoes, which broke the dashboard (seen on dev-test.wordpressistic.com). Filter: `bridgistic_dashboard_origins`.
+- `GET /bridgistic/v1/approvals/status?approval_id=...` was rejected with `bridgistic_unsigned_param` by the new unsigned-parameter check (S5), so approval polling (dashboard and the `bridgistic_approval_status` MCP tool) could not work. `approval_id` is now allowed in the query string for that read-only route only; every other signed-only param stays blocked. `POST /approvals/status` with `approval_id` in the signed body is also accepted.
+
 ### Dependencies
 
 - `@modelcontextprotocol/sdk` 1.30 → 1.32.1 (GHSA-6qxp-vccf-f47h) in `mcp-server` and `cloud`; `agents` 0.22 → 0.28.1 and `wrangler` → 4.151 in `cloud` (required to move off the vulnerable SDK pin). `npm audit`: 0 vulnerabilities in both lockfiles.
@@ -31,7 +38,7 @@ Security release addressing the October 2026 baseline audit (S1–S5).
 
 - `Tested up to: 7.1` (WordPress 7.1.3 is current per api.wordpress.org; CI's `latest` activation job covers it).
 - Package metadata (`repository`, `homepage`, `bugs`) now points at the canonical `Wordpressistic/bridgistic` repo; `server.json` moves to the 2025-12-11 schema and adds `title`, `icons`, `websiteUrl` and the `mcp.bridgistic.app` streamable-HTTP remote.
-- Release workflow ignores `-site` tags and only publishes from the canonical repo; the site deploy cron drops from every 15 minutes to daily plus `release: published`.
+- Release workflow ignores `-site` tags and only publishes from the canonical repo. Every GitHub Actions workflow (CI, Release, Pages, cloud deploy) is now manual-only (`workflow_dispatch`); releases and deploys are run by hand.
 - Root `SECURITY.md`, `glama.json`; fixed broken README links into `docs/`.
 
 ## [1.5.2] — 2026-10-05
