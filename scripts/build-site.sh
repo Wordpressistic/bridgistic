@@ -17,10 +17,13 @@
 # wordpressistic/bridgistic-claude-marketplace). The page must advertise the
 # newest published release that actually ships the plugin zip, wherever it
 # lives, so the download links never point at an older build.
+# The marketplace listing repo is listed first on purpose: when both repos carry
+# the same version (v1.5.3+ is released in both), the site links to the
+# marketplace release, which is the official listing.
 set -euo pipefail
 
 OUT="${1:-dist/pages-site}"
-REPOS="${BRIDGISTIC_RELEASE_REPOS:-Wordpressistic/bridgistic wordpressistic/bridgistic-claude-marketplace}"
+REPOS="${BRIDGISTIC_RELEASE_REPOS:-wordpressistic/bridgistic-claude-marketplace Wordpressistic/bridgistic}"
 PIN="${BRIDGISTIC_RELEASE_TAG:-}"
 SITE_COMMIT="${SITE_COMMIT:-$(git rev-parse HEAD)}"
 ASSET="bridgistic-wordpress-plugin.zip"
