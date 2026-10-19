@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/Wordpressistic/bridgistic/blob/main/SECURITY.md
+    about: Please report vulnerabilities privately (hello@insightistic.com), not as a public issue.
+  - name: Connection guide and troubleshooting
+    url: https://github.com/Wordpressistic/bridgistic/blob/main/docs/CONNECT_BRIDGISTIC.md
+    about: Step-by-step setup for every supported AI client, with a troubleshooting table.
+  - name: Purchases, licenses and refunds
+    url: https://bridgistic.app/how-purchases-work
+    about: Billing questions go to support@wpistic.com rather than GitHub issues.

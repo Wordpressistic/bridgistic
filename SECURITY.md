@@ -1,7 +1,7 @@
 # Security policy
 
-Bridgistic lets AI clients operate WordPress sites, so we treat security
-reports as the highest-priority work we have.
+Bridgistic lets AI clients operate WordPress sites, so security reports are
+our highest-priority work. Bridgistic is maintained by WordPressistic LLC.
 
 ## Supported versions
 
@@ -18,7 +18,7 @@ Older versions do not receive fixes; please upgrade first and re-test.
 **Please do not open a public issue, pull request or discussion for a
 security problem.**
 
-- Email **support@wordpressistic.com** with the subject `SECURITY: <short summary>`.
+- Email **hello@insightistic.com** with the subject `SECURITY: <short summary>`.
 - Or, where enabled, use GitHub's **Report a vulnerability** button on the
   repository's *Security* tab (private vulnerability reporting).
 
@@ -34,7 +34,8 @@ and agree a disclosure date with you; please give us a reasonable window
 ## Scope
 
 In scope: the WordPress plugin, the MCP server, the Claude Desktop extension,
-the Claude Code plugin, the OpenAI plugin manifest, and the hosted relay.
+the Claude Code plugin, the OpenAI plugin manifest, the hosted relay
+(`mcp.bridgistic.app`), and the website at `bridgistic.app`.
 Out of scope: social engineering, volumetric DoS, findings that need a
 compromised WordPress administrator account or a leaked key secret, and
 issues in third-party dependencies that are already publicly tracked

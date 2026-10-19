@@ -1,0 +1,67 @@
+name: Bug report
+description: Something in the plugin, MCP server, Claude extension or Bridgistic Cloud doesn't work as documented.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug.
+        **Security issue?** Please don't file it here. Email hello@insightistic.com instead (see SECURITY.md).
+        **Never paste a key secret (`wps_…`), license key or token into an issue.**
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - WordPress plugin
+        - MCP server (npm / npx)
+        - Claude Desktop extension (.mcpb)
+        - Claude Code plugin
+        - Bridgistic Cloud (mcp.bridgistic.app)
+        - Website (bridgistic.app)
+        - Other / not sure
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Bridgistic version
+      placeholder: "1.5.3"
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: AI client and version
+      placeholder: "Claude Desktop 1.x, Codex CLI, ChatGPT, ..."
+  - type: input
+    id: environment
+    attributes:
+      label: WordPress / PHP / hosting
+      placeholder: "WordPress 7.1, PHP 8.3, nginx on ..."
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Include the exact error message and the tool or screen involved.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+  - type: textarea
+    id: health
+    attributes:
+      label: Health Check debug report (optional)
+      description: The report from **Bridgistic → Health Check** contains no secrets. Paste it here.
+      render: text

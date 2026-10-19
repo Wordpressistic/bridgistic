@@ -1,6 +1,6 @@
 === Bridgistic ===
 Contributors: shuvoskr
-Tags: mcp, ai, claude, chatgpt, gemini, automation, rest-api
+Tags: mcp, ai, claude, chatgpt, automation
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
@@ -8,26 +8,26 @@ Stable tag: 1.5.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Connect your WordPress site to any AI model — Claude, ChatGPT, OpenAI Codex, Gemini, Cursor, or any MCP client — with signed requests, scoped keys, approvals, audit logs, and snapshots. The public plugin is free-only; paid WPistic/SaaS features are display-only and are not activated from this package.
+Connect Claude, ChatGPT, Codex, Gemini or any MCP client to WordPress with signed requests, scoped keys, approvals, audit logs and snapshots.
 
 == Description ==
 
-Bridgistic is the WordPress side of an MCP (Model Context Protocol) bridge. It lets an AI agent — Claude, Claude Cowork, OpenAI Codex, Gemini CLI, or any other MCP client — operate a real WordPress site safely, instead of handing over a full-admin Application Password and hoping for the best.
+Bridgistic is the WordPress side of an MCP (Model Context Protocol) bridge. It lets an AI agent work on a real WordPress site safely, without being handed a full-admin Application Password. The agent can be Claude, ChatGPT, OpenAI Codex, Gemini CLI, Cursor or any other MCP client.
 
 Every request is HMAC-signed and tied to a least-privilege key. Destructive actions can be previewed (dry-run), held for human approval, and are snapshotted first so any change is one call away from a rollback. Usage is metered per key, and playbooks can run unattended on a schedule.
 
-**Free edition, forever:** the complete secure bridge — connect Claude, ChatGPT, Codex, Gemini, Cursor or any MCP client, with every security feature included. Bridgistic SaaS may provide unlimited scheduled playbooks, advanced snapshots, audit export, an AI skills marketplace, an agency dashboard, team permissions and white-label options, but those features are not shipped or unlockable in this public plugin.
+**Free, with every security feature included.** The plugin is the complete secure bridge, and no bridge or security feature is ever gated on a license. Bridgistic Pro (https://bridgistic.app) adds a WPistic license and the hosted Bridgistic dashboard at dashboard.bridgistic.app. Unlimited schedules, advanced snapshots, audit export and a skills marketplace are planned for Pro and are not part of this plugin.
 
 = What you get =
 
 * HMAC-signed REST API with scoped, least-privilege keys (no Application Password).
-* Structured tools: posts, media, users, options (allowlisted), plugins, files.
+* 54 MCP tools: posts, media, users, options (allowlisted), plugins, files, database, WooCommerce, memory, playbooks, schedules, snapshots and approvals.
 * Dry-run + human approval queue for destructive operations.
 * Automatic snapshot before every destructive write, with one-call rollback.
 * Full audit log of every request.
 * Per-key rate limiting and basic usage metering.
 * Per-site memory and reusable, parameterised playbooks.
-* Scheduled playbooks that run unattended via cron.
+* Scheduled playbooks that run unattended via cron (up to 3 active schedules).
 * A server-side PHP sandbox: executable PHP can only be written to one quarantined directory.
 
 = Part of the WordPressistic Galaxy =
@@ -38,7 +38,7 @@ Bridgistic is one of the WordPressistic ecosystem products. It works standalone 
 
 1. Upload the `bridgistic` folder to `/wp-content/plugins/`, or install the zip via Plugins → Add New → Upload.
 2. Activate the plugin.
-3. Go to **Bridgistic → Claude Setup** and follow the 5-step wizard to mint a scoped key. Copy the secret — it is shown once.
+3. Go to **Bridgistic → AI / MCP Connections** and follow the 5-step wizard to create a scoped key. Copy the secret, because it is shown only once.
 4. Connect an MCP client to the key. Two paths, pick one:
    * **Claude Desktop, no install needed:** download the `bridgistic.mcpb` extension from the wizard, double-click it, and paste in the site URL, key id, and secret when prompted. No terminal, no Node.js.
    * **Claude Code, or a manual setup:** requires Node.js 20+ to build/run the MCP server, plus editing your client's MCP config with the site URL, key id, and secret. The wizard generates the exact config and commands for you.
@@ -58,6 +58,16 @@ No. Bridgistic uses its own HMAC-signed, scoped keys instead of a full-admin App
 = Where can the agent write PHP? =
 
 Only inside a single quarantined sandbox directory under uploads, with direct web execution blocked. PHP cannot be written anywhere WordPress autoloads from.
+
+== External services ==
+
+The plugin makes no outbound requests on its own. It contacts the external services below only when a site administrator or a connected key uses the related feature.
+
+* **WPistic license server** (`https://api.wpistic.com/api/v1/licenses`). This is used only when a key with the `license:manage` scope calls the license activate, validate or deactivate endpoints, for example from the Bridgistic dashboard. The request contains the license key (on activation only; it is never stored), the site domain, site and home URLs, the WordPress environment type, an installation ID, and the plugin, WordPress and PHP versions. Terms: https://bridgistic.app/terms. Privacy: https://bridgistic.app/privacy.
+* **Bridgistic Cloud** (`https://mcp.bridgistic.app`). This is used only when an administrator connects a remote MCP client through **Bridgistic → Bridgistic Cloud** and approves the consent screen. The relay then calls this site's Bridgistic REST API with a scoped key, and every call goes through the same scopes, approvals and audit log as a local connection. Terms: https://bridgistic.app/terms. Privacy: https://bridgistic.app/privacy.
+* **Bridgistic dashboard** (`https://dashboard.bridgistic.app`). The plugin sends no data to the dashboard. It only allows that origin to call the `bridgistic/v1` REST namespace from a browser with a signed key (CORS). The origin list can be changed with the `bridgistic_dashboard_origins` filter.
+
+The local MCP server and the Claude Desktop extension run on your own computer and talk directly to your site.
 
 == Changelog ==
 
@@ -120,6 +130,9 @@ Only inside a single quarantined sandbox directory under uploads, with direct we
 * Initial public release.
 
 == Upgrade Notice ==
+
+= 1.5.3 =
+Security release that fixes five audit findings. Update the plugin and your MCP client together. Custom integrations must now send `dry_run`, `force` and `approval_id` in the signed request body, not in the query string.
 
 = 1.2.0 =
 Safe in-place upgrade. Existing keys, scopes, logs, snapshots, playbooks, and schedules are preserved; no credential reset is required. New WooCommerce scopes are opt-in — existing keys keep exactly the scopes they already had. Bridgistic Cloud remains a clearly-labelled public beta.

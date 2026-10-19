@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 ## [Unreleased]
 
+### Documentation
+
+- New product README. Added CONTRIBUTING.md, CODE_OF_CONDUCT.md, issue and pull-request templates, and docs/RELEASING.md.
+- SECURITY.md: reports now go to hello@insightistic.com.
+- docs/REPO-STRUCTURE.md describes `bridgistic-claude-marketplace` as the official marketplace listing repo. docs/PAGES_RELEASES.md documents the Cloudflare Pages deploy.
+- readme.txt: shorter summary, five tags, an External services section and a 1.5.3 upgrade notice.
+
 ## [1.5.3] — 2026-10-19
 
 Security release addressing the October 2026 baseline audit (S1–S5), plus the plugin endpoints used by the hosted Bridgistic dashboard.
