@@ -14,7 +14,7 @@
   <link rel="canonical" href="https://bridgistic.app/" />
   <!-- Build metadata is injected from this repository and the latest plugin release. -->
   <!-- site-commit=__BRIDGISTIC_SITE_COMMIT__; release=__BRIDGISTIC_RELEASE_VERSION__; release-repo=__BRIDGISTIC_RELEASE_REPO__ -->
-  <!-- PENDING SHUVO: Privacy Policy, Terms of Service and Refund Policy text. Footer entries are placeholders, not links, until the text is approved. -->
+  <!-- Legal pages: terms.html, privacy.html, refund-policy.html, how-purchases-work.html (Shuvo's answers of 19 Oct 2026, 08:07 Asia/Dhaka). -->
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Bridgistic" />
@@ -56,7 +56,22 @@
             "name": "Bridgistic Lifetime Deal",
             "price": "29.99",
             "priceCurrency": "USD",
+            "priceValidUntil": "2026-12-31",
             "url": "https://pay.bridgistic.app/"
+          },
+          {
+            "@type": "Offer",
+            "name": "Bridgistic Pro Monthly",
+            "price": "12.00",
+            "priceCurrency": "USD",
+            "url": "https://bridgistic.app/#pricing"
+          },
+          {
+            "@type": "Offer",
+            "name": "Bridgistic Pro Yearly",
+            "price": "99.00",
+            "priceCurrency": "USD",
+            "url": "https://bridgistic.app/#pricing"
           }
         ],
         "publisher": { "@id": "https://bridgistic.app/#organization" }
@@ -855,8 +870,39 @@
     .price-list li { display:flex; align-items:flex-start; gap:10px; color:var(--muted); font-size:13.5px; }
     .price-list svg { width:15px; height:15px; color:var(--green); flex:0 0 auto; margin-top:3px; }
     .price-list strong { color:var(--text); font-weight:700; }
+    .price-list li.license-line { color:var(--text); font-size:14.5px; padding-bottom:8px; border-bottom:1px solid var(--line); }
+    .price-list li.is-soon { color:var(--muted-2); }
+    .price-list svg.soon-ic { color:var(--muted-2); }
+    .price-list .soon { margin-left:6px; padding:1px 7px; border:1px solid var(--line-strong); border-radius:999px; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); white-space:nowrap; }
     .price-card .btn { width:100%; min-height:48px; }
     .price-fine { margin-top:18px; color:var(--muted-2); font-size:11.5px; }
+    .buyer-email { max-width:520px; margin:0 auto 22px; display:grid; gap:6px; text-align:left; }
+    .buyer-email label { font-size:12px; font-weight:750; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+    .buyer-email input { min-height:46px; padding:0 14px; border:1px solid var(--line-strong); border-radius:12px; background:var(--panel); color:var(--text); font:inherit; font-size:15px; }
+    .buyer-email input:focus { outline:2px solid #C6A15B; outline-offset:2px; }
+    .buyer-email.is-invalid input { border-color:#C6A15B; }
+    .buyer-email-help { font-size:12px; color:var(--muted-2); }
+    .pricing-grid.three { grid-template-columns:repeat(3,1fr); max-width:1120px; }
+    .plans-label { max-width:1120px; margin:34px auto 14px; color:var(--muted); font-size:12px; font-weight:750; letter-spacing:.12em; text-transform:uppercase; text-align:center; }
+    .offer-card { display:grid; grid-template-columns:1.35fr 1fr; gap:34px; max-width:1120px; margin:0 auto; padding:38px; border:1px solid color-mix(in srgb,#C6A15B 55%,transparent); border-radius:28px; background:linear-gradient(135deg, rgba(198,161,91,.14), transparent 55%), var(--panel); box-shadow:var(--shadow-soft); }
+    .offer-card h3 { margin:16px 0 10px; font-size:30px; line-height:1.12; letter-spacing:-.035em; }
+    .offer-hook { margin:0; color:var(--muted); font-size:15px; }
+    .offer-terms { margin:22px 0 0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:10px; }
+    .offer-terms li { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border:1px solid color-mix(in srgb,#C6A15B 45%,transparent); border-radius:999px; color:var(--text); font-size:13px; font-weight:700; background:color-mix(in srgb,#C6A15B 9%,transparent); }
+    .offer-terms li[hidden] { display:none; }
+    .offer-terms svg { width:15px; height:15px; color:#C6A15B; }
+    .offer-card .price-list { margin:22px 0 0; }
+    .offer-side { display:flex; flex-direction:column; justify-content:center; gap:14px; padding:28px; border-radius:22px; background:color-mix(in srgb,var(--bg) 55%,transparent); border:1px solid var(--line); }
+    .offer-side .price { font-size:52px; line-height:1; font-weight:820; letter-spacing:-.045em; }
+    .offer-side .price small { color:var(--muted); font-size:14px; font-weight:650; letter-spacing:0; }
+    .offer-was { color:var(--muted); font-size:13px; font-weight:650; }
+    .offer-side .btn { width:100%; min-height:52px; }
+    .badge.offer { color:#C6A15B; border-color:color-mix(in srgb,#C6A15B 45%,transparent); background:color-mix(in srgb,#C6A15B 10%,transparent); }
+    .offer-ended { max-width:1120px; margin:0 auto; padding:14px 18px; border:1px solid color-mix(in srgb,#1F8A70 40%,transparent); border-radius:14px; color:var(--text); background:color-mix(in srgb,#1F8A70 8%,transparent); font-size:14px; text-align:center; }
+    .btn-disabled { width:100%; min-height:48px; color:var(--muted-2); border-color:var(--line); background:transparent; cursor:not-allowed; }
+    .price-fine.center { text-align:center; margin-top:22px; }
+    html[data-offer="closed"] .offer-only { display:none; }
+    html:not([data-offer="closed"]) .closed-only { display:none; }
 
     .faq { max-width:880px; margin:0 auto; display:grid; gap:10px; }
     details { border:1px solid var(--line); border-radius:16px; background:var(--panel); overflow:hidden; }
@@ -934,7 +980,7 @@
       .nav-links a { padding:12px 13px; }
       .nav-actions .btn { display:none; }
       .menu-btn { display:grid; }
-      .problem-grid, .mode-grid, .pricing-grid, .plan-strip { grid-template-columns:1fr; }
+      .problem-grid, .mode-grid, .pricing-grid, .pricing-grid.three, .plan-strip, .offer-card { grid-template-columns:1fr; }
       .steps { grid-template-columns:1fr; }
       .step { min-height:auto; }
       .footer-main { grid-template-columns:1fr 1fr; }
@@ -981,7 +1027,9 @@
       .section-head { margin-bottom:38px; }
       .section-head h2 { font-size:38px; }
       .section-head p { font-size:16px; }
-      .problem-card, .mode-card, .price-card { padding:26px; }
+      .problem-card, .mode-card, .price-card, .offer-card { padding:26px; }
+      .offer-card h3 { font-size:25px; }
+      .offer-side .price { font-size:44px; }
       .features { grid-template-columns:1fr; }
       .feature { min-height:auto; }
       .security-step { grid-template-columns:46px 1fr; }
@@ -1023,7 +1071,7 @@
         <a href="#features">Features</a>
         <a href="#pricing">Pricing</a>
         <a href="#faq">FAQ</a>
-        <a href="https://app.bridgistic.app/">Dashboard</a>
+        <a href="https://dashboard.bridgistic.app/">Dashboard</a>
       </nav>
 
       <div class="nav-actions">
@@ -1174,15 +1222,20 @@
 
         <p class="connect-note reveal">One-click (.mcpb) install currently works in <strong>Claude Desktop</strong>; Claude Code, Codex CLI and Gemini CLI use the generated config or npx, and remote-only clients (ChatGPT) connect through Bridgistic Cloud (public beta).</p>
 
-        <div class="plan-strip reveal" aria-label="Free and Lifetime Deal summary">
+        <div class="plan-strip reveal" aria-label="Plan summary">
           <div class="plan-chip">
             <strong>Bridgistic Free</strong>
             <span>Full local bridge · HMAC keys, scopes, approvals, audit log, snapshots · up to 3 scheduled playbooks · community support</span>
             <a class="plan-link" href="#pricing">Details ↓</a>
           </div>
-          <div class="plan-chip">
-            <strong>Bridgistic Lifetime Deal — $29.99 one time</strong>
-            <span>Lifetime use of Bridgistic · all future updates included · no subscription and no renewal · license managed through your WPistic account</span>
+          <div class="plan-chip offer-only">
+            <strong>Welcome offer: Lifetime Deal, $29.99 one time</strong>
+            <span>Until 31 December 2026 · 100 licenses only · all future updates included · no subscription and no renewal</span>
+            <a class="plan-link" href="#pricing">Details ↓</a>
+          </div>
+          <div class="plan-chip closed-only">
+            <strong>Bridgistic Pro: $12 per month or $99 per year</strong>
+            <span>Pro license · updates while your plan is active · billing through Paddle</span>
             <a class="plan-link" href="#pricing">Details ↓</a>
           </div>
         </div>
@@ -1526,13 +1579,54 @@ Bridgistic Cloud is currently a public beta.</pre>
     <section class="section" id="pricing">
       <div class="wrap">
         <div class="section-head reveal">
-          <span class="eyebrow"><span class="dot"></span> Free core. One lifetime price.</span>
-          <h2>Start free. Pay once when you want a license.</h2>
-          <p>The plugin download is free and open source: the full local bridge. The Bridgistic Lifetime Deal is a single payment of $29.99 that includes every future update, with no subscription.</p>
+          <span class="eyebrow"><span class="dot"></span> <span class="offer-only">Welcome offer</span><span class="closed-only">Pricing</span></span>
+          <h2 class="offer-only">Pay once for Bridgistic Pro, and never pay again.</h2>
+          <h2 class="closed-only">Start free. Upgrade to Pro when you need it.</h2>
+          <p>The plugin download is free and open source: the full local bridge. Bridgistic Pro is billed through Paddle.</p>
         </div>
 
+        <div class="buyer-email reveal">
+          <label for="buyer-email">Email for your license key</label>
+          <input id="buyer-email" type="email" autocomplete="email" placeholder="you@example.com" />
+          <span class="buyer-email-help" id="buyer-email-help">Your WPistic license is issued to this email after payment.</span>
+        </div>
 
-        <div class="pricing-grid" id="pricing-cards">
+        <article class="offer-card offer-only reveal" id="welcome-offer" aria-labelledby="offer-title">
+          <div class="offer-main">
+            <span class="badge offer">Welcome offer: Lifetime Deal</span>
+            <h3 id="offer-title">Bridgistic Pro for life, for one payment of $29.99</h3>
+            <p class="offer-hook">One payment of $29.99 costs less than a third of a single year on the yearly plan, and it keeps Bridgistic Pro with every future update. No subscription and no renewal.</p>
+            <ul class="offer-terms" aria-label="Offer terms">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>Available until 31 December 2026</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 8 9 9 5-1 9-4 9-9V7z"/></svg>100 licenses only</li>
+              <li id="offer-remaining" hidden></li>
+            </ul>
+            <ul class="price-list">
+              <li class="license-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>1 license · 1 site</strong></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Everything in Free: scoped, signed keys, approvals, snapshots with restore and an audit log</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>54 MCP tools for posts, media, users, plugins, options, files, database and WooCommerce</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Playbooks and schedules</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>The Bridgistic dashboard at dashboard.bridgistic.app</li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Unlimited scheduled playbooks <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Advanced snapshots <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Audit log export <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Skills marketplace <span class="soon">Coming soon</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>All future paid features</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>No subscription and no renewal</li>
+            </ul>
+          </div>
+          <div class="offer-side">
+            <div class="offer-was">After the offer: $12 per month or $99 per year</div>
+            <div class="price">$29.99 <small>USD, one time</small></div>
+            <a class="btn btn-primary" data-checkout="lifetime" href="https://pay.bridgistic.app/" target="_blank" rel="noopener">Claim the Lifetime Deal</a>
+            <div class="price-fine">The offer closes on 31 December 2026 or when 100 licenses are sold, whichever comes first. Your license key arrives by email; activate it on the License screen in the <a href="https://dashboard.bridgistic.app/license">Bridgistic dashboard</a>. Every purchase has a 7-day refund guarantee.</div>
+          </div>
+        </article>
+
+        <div class="offer-ended closed-only" role="status">The Lifetime Deal welcome offer has ended. Bridgistic Pro is available monthly or yearly.</div>
+
+        <p class="plans-label reveal"><span class="offer-only">Regular pricing after the welcome offer ends</span><span class="closed-only">Bridgistic plans</span></p>
+        <div class="pricing-grid three" id="pricing-cards">
           <article class="price-card reveal">
             <span class="badge free">Open source</span>
             <h3>Bridgistic Free</h3>
@@ -1545,24 +1639,52 @@ Bridgistic Cloud is currently a public beta.</pre>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Manual playbooks, plus up to 3 scheduled playbooks</li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Latest GitHub release zip</li>
             </ul>
-            <a class="btn btn-primary" href="__BRIDGISTIC_RELEASE_DOWNLOAD__/bridgistic-wordpress-plugin.zip">Download free (latest release)</a>
+            <a class="btn btn-secondary" href="__BRIDGISTIC_RELEASE_DOWNLOAD__/bridgistic-wordpress-plugin.zip">Download free (latest release)</a>
           </article>
 
-          <article class="price-card pro reveal">
-            <span class="badge">Lifetime Deal</span>
-            <h3>Bridgistic Lifetime Deal</h3>
-            <div class="price">$29.99 <small>USD, one time</small></div>
-            <p>Pay once. Your license key arrives by email; activate it on the License screen in the <a href="https://app.bridgistic.app/license">Bridgistic dashboard</a>.</p>
+          <article class="price-card plan reveal">
+            <span class="badge">Pro Monthly</span>
+            <h3>Bridgistic Pro</h3>
+            <div class="price">$12 <small>USD per month</small></div>
+            <p>Billed every month by Paddle.</p>
             <ul class="price-list">
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>Lifetime use</strong> of Bridgistic</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>All future updates included</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>No subscription and no renewal</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>License issued and managed through your WPistic account</li>
+              <li class="license-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>1 license · 5 sites</strong></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Everything in Free: scoped, signed keys, approvals, snapshots with restore and an audit log</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>54 MCP tools for posts, media, users, plugins, options, files, database and WooCommerce</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Playbooks and schedules</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>The Bridgistic dashboard at dashboard.bridgistic.app</li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Unlimited scheduled playbooks <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Advanced snapshots <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Audit log export <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Skills marketplace <span class="soon">Coming soon</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Billing managed in the Paddle customer portal</li>
             </ul>
-            <a class="btn btn-primary" href="https://pay.bridgistic.app/" target="_blank" rel="noopener">Get the Lifetime Deal</a>
-            <div class="price-fine">Price in USD. Payment is processed by Paddle, our reseller and Merchant of Record. Taxes are calculated at checkout.</div>
+            <a class="btn btn-secondary closed-only" data-checkout="monthly" href="https://pay.bridgistic.app/" target="_blank" rel="noopener">Choose monthly</a>
+            <span class="btn btn-disabled offer-only" aria-disabled="true">Opens when the welcome offer ends</span>
+          </article>
+
+          <article class="price-card plan pro reveal">
+            <span class="badge">Pro Yearly</span>
+            <h3>Bridgistic Pro</h3>
+            <div class="price">$99 <small>USD per year</small></div>
+            <p>Billed once a year by Paddle: $45 less than 12 months on the monthly plan.</p>
+            <ul class="price-list">
+              <li class="license-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>1 license · 5 sites</strong></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Everything in Free: scoped, signed keys, approvals, snapshots with restore and an audit log</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>54 MCP tools for posts, media, users, plugins, options, files, database and WooCommerce</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Playbooks and schedules</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>The Bridgistic dashboard at dashboard.bridgistic.app</li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Unlimited scheduled playbooks <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Advanced snapshots <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Audit log export <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Skills marketplace <span class="soon">Coming soon</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Billing managed in the Paddle customer portal</li>
+            </ul>
+            <a class="btn btn-primary closed-only" data-checkout="yearly" href="https://pay.bridgistic.app/" target="_blank" rel="noopener">Choose yearly</a>
+            <span class="btn btn-disabled offer-only" aria-disabled="true">Opens when the welcome offer ends</span>
           </article>
         </div>
+        <div class="price-fine center">Prices in USD. Payment is processed by Paddle, our reseller and Merchant of Record. Taxes are calculated at checkout. Every purchase has a 7-day refund guarantee.</div>
       </div>
     </section>
 
@@ -1614,10 +1736,10 @@ Bridgistic Cloud is currently a public beta.</pre>
         </a>
         <p>A local-first MCP bridge for giving AI assistants controlled, auditable and reversible access to WordPress.</p>
       </div>
-      <div class="footer-col"><h3>Product</h3><a href="#how">How it works</a><a href="#security">Security</a><a href="#clients">AI clients</a><a href="#pricing">Pricing</a><a href="https://app.bridgistic.app/">Dashboard</a></div>
+      <div class="footer-col"><h3>Product</h3><a href="#how">How it works</a><a href="#security">Security</a><a href="#clients">AI clients</a><a href="#pricing">Pricing</a><a href="https://dashboard.bridgistic.app/">Dashboard</a></div>
       <div class="footer-col"><h3>Resources</h3><a href="https://github.com/Wordpressistic/bridgistic" target="_blank" rel="noopener">GitHub</a><a href="__BRIDGISTIC_RELEASE_PAGE__" target="_blank" rel="noopener">Releases</a><a href="https://github.com/Wordpressistic/bridgistic/issues" target="_blank" rel="noopener">Support</a><a href="https://github.com/Wordpressistic/bridgistic/blob/main/docs/SECURITY.md" target="_blank" rel="noopener">Security</a><a href="https://github.com/Wordpressistic/bridgistic/blob/main/docs/REPO-STRUCTURE.md" target="_blank" rel="noopener">Repo structure</a></div>
       <div class="footer-col"><h3>Ecosystem</h3><a href="https://wpistic.com/" target="_blank" rel="noopener">WPistic</a><a href="https://wordpressistic.com/" target="_blank" rel="noopener">WordPressistic</a><a href="https://wpistic.com/pricing" target="_blank" rel="noopener">Plans</a></div>
-      <div class="footer-col footer-legal"><h3>Legal</h3><span>Privacy Policy</span><span>Terms of Service</span><span>Refund Policy</span><small>Publishing soon</small></div>
+      <div class="footer-col footer-legal"><h3>Legal</h3><a href="/terms">Terms of Service</a><a href="/privacy">Privacy Policy</a><a href="/refund-policy">Refund Policy</a><a href="/how-purchases-work">How purchases work</a></div>
     </div>
     <div class="wrap footer-bottom">
       <span>© 2026 WordPressistic LLC. Bridgistic is licensed GPL-2.0-or-later.</span>
@@ -1710,5 +1832,113 @@ Bridgistic Cloud is currently a public beta.</pre>
   </script>
 
 
+  <script>
+  /* Welcome offer + Paddle checkout. Terms set by Shuvo: the Lifetime Deal ends
+     31 Dec 2026 23:59:59 (Asia/Dhaka, UTC+6, assumed) or at 100 licenses sold.
+     The sold count only ever comes from the server-side offer-status endpoint
+     (Paddle, read-only key held server-side); no number is shown without it. */
+  (function () {
+    var CFG = {
+      token: "__BRIDGISTIC_PADDLE_CLIENT_TOKEN__",
+      env: "__BRIDGISTIC_PADDLE_ENV__",
+      statusUrl: "__BRIDGISTIC_OFFER_STATUS_URL__",
+      endsAt: Date.parse("2026-12-31T23:59:59+06:00"),
+      cap: 100,
+      successUrl: "https://bridgistic.app/?checkout=success",
+      prices: { lifetime: "pri_01m58k6epsqzbr3qbab84t6p90", monthly: "pri_01m1ykar8aq033865h68a4b9hh", yearly: "pri_01m1ykaqyaaeewsbah07akmpka" }
+    };
+    var root = document.documentElement;
+    var tokenOk = /^(live|test)_[A-Za-z0-9]+$/.test(CFG.token);
+    function setOpen(open) { root.setAttribute("data-offer", open ? "open" : "closed"); }
+    function showRemaining(n) {
+      var el = document.getElementById("offer-remaining");
+      if (!el) return;
+      if (typeof n === "number" && isFinite(n) && n > 0 && n <= CFG.cap) {
+        el.textContent = n + " of " + CFG.cap + " licenses left";
+        el.hidden = false;
+      } else { el.hidden = true; }
+    }
+    setOpen(Date.now() < CFG.endsAt);
+    var lastStatus = null;
+    function fetchStatus() {
+      if (!/^(\/|https:\/\/)/.test(CFG.statusUrl)) return Promise.resolve(null);
+      var ctl = window.AbortController ? new AbortController() : null;
+      var t = ctl && setTimeout(function () { ctl.abort(); }, 5000);
+      return fetch(CFG.statusUrl, { cache: "no-store", signal: ctl ? ctl.signal : undefined })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { return null; })
+        .then(function (j) {
+          if (t) clearTimeout(t);
+          if (!j || typeof j.open !== "boolean") return null;
+          lastStatus = j;
+          setOpen(j.open && Date.now() < CFG.endsAt);
+          showRemaining(j.source === "paddle" ? j.remaining : null);
+          return j;
+        });
+    }
+    fetchStatus();
+    var paddleReady = null;
+    var openPriceId = null;
+    // One purchase = one license. Paddle Billing has no allowQuantity setting, so if the
+    // buyer changes the quantity (or the item list), put the checkout back to 1 x the plan.
+    function lockQuantity(ev) {
+      if (!ev || !openPriceId || !ev.data || !ev.data.items) return;
+      if (ev.name !== "checkout.items.updated" && ev.name !== "checkout.updated" && ev.name !== "checkout.loaded") return;
+      var items = ev.data.items;
+      var ok = items.length === 1 && items[0].quantity === 1 && (items[0].price_id || (items[0].price && items[0].price.id)) === openPriceId;
+      if (!ok) { try { window.Paddle.Checkout.updateItems([{ priceId: openPriceId, quantity: 1 }]); } catch (e) {} }
+    }
+    function loadPaddle() {
+      if (paddleReady) return paddleReady;
+      paddleReady = new Promise(function (resolve, reject) {
+        var s = document.createElement("script");
+        s.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
+        s.async = true;
+        s.onload = function () {
+          try {
+            if (CFG.env === "sandbox") window.Paddle.Environment.set("sandbox");
+            window.Paddle.Initialize({ token: CFG.token, eventCallback: lockQuantity });
+            resolve(window.Paddle);
+          } catch (e) { reject(e); }
+        };
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+      return paddleReady;
+    }
+    document.addEventListener("click", function (ev) {
+      var a = ev.target.closest && ev.target.closest("[data-checkout]");
+      if (!a || !tokenOk) return; // no client token configured: fall back to the pay page link
+      var plan = a.getAttribute("data-checkout");
+      var priceId = CFG.prices[plan];
+      if (!/^pri_[a-z0-9]{26}$/.test(priceId || "")) return;
+      ev.preventDefault();
+      var emailBox = document.querySelector(".buyer-email");
+      var emailEl = document.getElementById("buyer-email");
+      var email = emailEl ? emailEl.value.trim().toLowerCase() : "";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        if (emailBox) emailBox.classList.add("is-invalid");
+        var help = document.getElementById("buyer-email-help");
+        if (help) help.textContent = "Enter the email for your license key, then choose a plan.";
+        if (emailEl) { emailEl.scrollIntoView({ block: "center", behavior: "smooth" }); emailEl.focus(); }
+        return;
+      }
+      if (emailBox) emailBox.classList.remove("is-invalid");
+      var gate = plan === "lifetime" ? fetchStatus() : Promise.resolve(lastStatus);
+      gate.then(function (st) {
+        if (plan === "lifetime" && (Date.now() >= CFG.endsAt || (st && st.open === false))) { setOpen(false); return; }
+        return loadPaddle().then(function (P) {
+          openPriceId = priceId;
+          P.Checkout.open({
+            items: [{ priceId: priceId, quantity: 1 }],
+            customer: { email: email },
+            settings: { displayMode: "overlay", theme: root.getAttribute("data-theme") === "light" ? "light" : "dark", successUrl: CFG.successUrl },
+            customData: { customer_email: email, source: "bridgistic.app", product: "bridgistic", offer: plan === "lifetime" ? "welcome-lifetime" : plan }
+          });
+        });
+      }).catch(function () { window.open(a.href, "_blank", "noopener"); });
+    });
+  })();
+  </script>
 </body>
 </html>

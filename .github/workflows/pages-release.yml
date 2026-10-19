@@ -16,8 +16,15 @@
 #       - index.html
 #       - assets/bridgistic-icon.png
 #       - assets/bridgistic-logo.png
+#       - assets/legal.css
+#       - terms.html
+#       - privacy.html
+#       - refund-policy.html
+#       - how-purchases-work.html
 #       - .github/workflows/pages-release.yml
 #       - scripts/build-site.sh
+#       - functions/**
+#       - tests/site/**
 #   # A release published from the Release workflow uses GITHUB_TOKEN and does
 #   # not trigger other workflows, so a daily safety-net run remains; the old
 #   # 15-minute cron produced ~96 redundant deploys a day.
@@ -63,6 +70,9 @@ jobs:
     steps:
       - name: Check out the Bridgistic site source
         uses: actions/checkout@v4
+
+      - name: Test the site (offer logic, prices, copy rules)
+        run: node --test tests/site/*.test.mjs
 
       - name: Build the site against the newest plugin release
         id: release
