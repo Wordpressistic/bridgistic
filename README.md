@@ -146,6 +146,7 @@ Prices are in USD and taxes are calculated at checkout. Every purchase has a 7-d
 | Security model | [docs/SECURITY.md](docs/SECURITY.md) |
 | Free vs Pro, from the code | [docs/FEATURE-MATRIX.md](docs/FEATURE-MATRIX.md) |
 | Account dashboard and platform admin | [docs/CONTROL-PLANE.md](docs/CONTROL-PLANE.md) |
+| Public site SEO, sitemap and llms.txt | [docs/SEO.md](docs/SEO.md) |
 | Privacy | [docs/PRIVACY.md](docs/PRIVACY.md) |
 | Testing | [docs/TESTING.md](docs/TESTING.md) |
 | Releasing | [docs/RELEASING.md](docs/RELEASING.md) |

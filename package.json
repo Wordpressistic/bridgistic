@@ -9,6 +9,7 @@
     "build": "npm --prefix mcp-server install --no-audit --no-fund && npm --prefix mcp-server run build && npm --prefix mcp-server run bundle",
     "build:ci": "npm --prefix mcp-server run build && npm --prefix mcp-server run bundle",
     "validate": "node scripts/validate-marketplace.js",
+    "seo": "node scripts/build-seo.mjs",
     "check:cloud-drift": "node scripts/check-cloud-tools-drift.js",
     "package": "node scripts/build-package.js",
     "desktop:package": "node scripts/create-desktop-package.js",

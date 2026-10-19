@@ -12,6 +12,11 @@
   <title>Bridgistic — Safe AI Control for WordPress via MCP</title>
   <meta name="description" content="Connect Claude, ChatGPT, Codex, Gemini, Cursor and other MCP clients to WordPress with signed requests, scoped access, approvals, snapshots, rollback and audit logs." />
   <link rel="canonical" href="https://bridgistic.app/" />
+  <meta name="author" content="WordPressistic LLC" />
+  <meta name="publisher" content="WordPressistic LLC" />
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="https://bridgistic.app/sitemap.xml" />
+  <link rel="describedby" type="text/plain" href="https://bridgistic.app/llms.txt" title="LLM-readable summary" />
+  <link rel="alternate" type="text/plain" href="https://bridgistic.app/llms-full.txt" title="Full LLM-readable context" />
   <!-- Build metadata is injected from this repository and the latest plugin release. -->
   <!-- site-commit=__BRIDGISTIC_SITE_COMMIT__; release=__BRIDGISTIC_RELEASE_VERSION__; release-repo=__BRIDGISTIC_RELEASE_REPO__ -->
   <!-- Legal pages: terms.html, privacy.html, refund-policy.html, how-purchases-work.html (Shuvo's answers of 19 Oct 2026, 08:07 Asia/Dhaka). -->
@@ -80,11 +85,40 @@
         "@type": "Organization",
         "@id": "https://bridgistic.app/#organization",
         "name": "WordPressistic LLC",
-        "url": "https://wpistic.com/"
+        "legalName": "WordPressistic LLC",
+        "alternateName": ["WPistic", "WordPressistic", "Bridgistic"],
+        "url": "https://wpistic.com/",
+        "logo": "https://bridgistic.app/assets/bridgistic-logo.png",
+        "email": "support@wpistic.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "1209 Mountain Road PL NE, STE N",
+          "addressLocality": "Albuquerque",
+          "addressRegion": "NM",
+          "postalCode": "87110",
+          "addressCountry": "US"
+        },
+        "sameAs": [
+          "https://github.com/Wordpressistic/bridgistic",
+          "https://wpistic.com/",
+          "https://wordpressistic.com/"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://bridgistic.app/#website",
+        "url": "https://bridgistic.app/",
+        "name": "Bridgistic",
+        "inLanguage": "en",
+        "publisher": { "@id": "https://bridgistic.app/#organization" }
       },
       {
         "@type": "FAQPage",
         "@id": "https://bridgistic.app/#faq",
+        "speakable": {
+          "@type": "SpeakableSpecification",
+          "cssSelector": [".faq", "#publisher"]
+        },
         "mainEntity": [
           {
             "@type": "Question",
@@ -1712,6 +1746,19 @@ Bridgistic Cloud is currently a public beta.</pre>
       </div>
     </section>
 
+    </section>
+
+    <section class="section-sm" id="publisher">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow"><span class="dot"></span> Publisher</span>
+          <h2>Who publishes Bridgistic.</h2>
+        </div>
+        <p>Bridgistic is published by WordPressistic LLC, doing business as WPistic, at 1209 Mountain Road PL NE, STE N, Albuquerque, NM 87110, United States. The free WordPress plugin is licensed GPL-2.0-or-later and the source is public on GitHub. Support and refunds go to support@wpistic.com.</p>
+        <p>Paid plans are sold by Paddle as merchant of record. The security model on this site describes the controls in the current release: signed requests, scoped keys, approvals, snapshots and an audit log. It is not a claim that an independent third-party audit is complete. Bridgistic Cloud is a public beta. Local mode is the recommended default where the client supports it.</p>
+      </div>
+    </section>
+
     <section class="final-cta">
       <div class="wrap">
         <div class="cta-shell reveal">
@@ -1741,13 +1788,13 @@ Bridgistic Cloud is currently a public beta.</pre>
         <p>A local-first MCP bridge for giving AI assistants controlled, auditable and reversible access to WordPress.</p>
       </div>
       <div class="footer-col"><h3>Product</h3><a href="#how">How it works</a><a href="#security">Security</a><a href="#clients">AI clients</a><a href="#pricing">Pricing</a><a href="https://dashboard.bridgistic.app/">Dashboard</a></div>
-      <div class="footer-col"><h3>Resources</h3><a href="https://github.com/Wordpressistic/bridgistic" target="_blank" rel="noopener">GitHub</a><a href="__BRIDGISTIC_RELEASE_PAGE__" target="_blank" rel="noopener">Releases</a><a href="https://github.com/Wordpressistic/bridgistic/issues" target="_blank" rel="noopener">Support</a><a href="https://github.com/Wordpressistic/bridgistic/blob/main/docs/SECURITY.md" target="_blank" rel="noopener">Security</a><a href="https://github.com/Wordpressistic/bridgistic/blob/main/docs/REPO-STRUCTURE.md" target="_blank" rel="noopener">Repo structure</a></div>
+      <div class="footer-col"><h3>Resources</h3><a href="https://github.com/Wordpressistic/bridgistic" target="_blank" rel="noopener">GitHub</a><a href="__BRIDGISTIC_RELEASE_PAGE__" target="_blank" rel="noopener">Releases</a><a href="https://github.com/Wordpressistic/bridgistic/issues" target="_blank" rel="noopener">Support</a><a href="https://github.com/Wordpressistic/bridgistic/blob/main/docs/SECURITY.md" target="_blank" rel="noopener">Security</a><a href="https://github.com/Wordpressistic/bridgistic/blob/main/docs/REPO-STRUCTURE.md" target="_blank" rel="noopener">Repo structure</a><a href="/sitemap.html">Sitemap</a></div>
       <div class="footer-col"><h3>Ecosystem</h3><a href="https://wpistic.com/" target="_blank" rel="noopener">WPistic</a><a href="https://wordpressistic.com/" target="_blank" rel="noopener">WordPressistic</a><a href="https://wpistic.com/pricing" target="_blank" rel="noopener">Plans</a></div>
       <div class="footer-col footer-legal"><h3>Legal</h3><a href="/terms">Terms of Service</a><a href="/privacy">Privacy Policy</a><a href="/refund-policy">Refund Policy</a><a href="/how-purchases-work">How purchases work</a></div>
     </div>
     <div class="wrap footer-bottom">
       <span>© 2026 WordPressistic LLC. Bridgistic is licensed GPL-2.0-or-later.</span>
-      <span>Built for WordPress. Designed for MCP.</span>
+      <span><a href="/sitemap.html">Sitemap</a> · Built for WordPress. Designed for MCP.</span>
     </div>
   </footer>
 
