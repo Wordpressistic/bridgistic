@@ -1,3 +1,24 @@
+# ---------------------------------------------------------------------------
+# MANUAL-ONLY since 2026-10-19 (per Shuvo).
+# GitHub Actions on this repo is billing-locked, so every automatic run ended
+# in startup_failure and turned every push/PR red. Automatic triggers are
+# removed; the file is kept so it can be re-enabled. Releases, deploys and
+# updates are done manually (wrangler / VPS from Shuvo's PC) until then.
+#
+# Run it by hand: Actions -> this workflow -> "Run workflow"
+#   (or: gh workflow run deploy-cloud.yml -R Wordpressistic/bridgistic)
+#
+# To re-enable automatic runs once billing is fixed, restore these triggers
+# under `on:` (alongside workflow_dispatch):
+#   release:
+#     types: [published]
+#   push:
+#     tags: ["cloud-v*"]
+#
+# Note: a manual run DEPLOYS the Worker when the Cloudflare secrets exist.
+# Today the Worker is deployed with `wrangler deploy` from Shuvo's PC.
+# ---------------------------------------------------------------------------
+
 name: Deploy Cloud Worker
 
 # Deploys the cloud/ Cloudflare Worker (mcp.bridgistic.app) - the hosted,
@@ -27,10 +48,10 @@ name: Deploy Cloud Worker
 # suite (if one exists yet), but the actual deploy step is skipped with a
 # ::notice:: instead of failing the run.
 #
-# This deployment does not run on every push to main. It runs automatically
-# when a GitHub release is published, or can be run manually via Actions ->
-# Deploy Cloud Worker -> "Run workflow" or by pushing a cloud-v* tag, e.g.:
-#   git tag cloud-v0.1.0 && git push origin cloud-v0.1.0
+# This deployment does not run on every push to main. While Actions is
+# manual-only (see the header above) it runs only via Actions ->
+# Deploy Cloud Worker -> "Run workflow". Published releases and cloud-v* tags
+# no longer start it.
 #
 # Deliberately independent of ci.yml and release.yml: it is not `needs:`-ed
 # by either, and neither depends on it, so it can never block normal PR/CI
@@ -38,10 +59,6 @@ name: Deploy Cloud Worker
 
 on:
   workflow_dispatch:
-  release:
-    types: [published]
-  push:
-    tags: ["cloud-v*"]
 
 jobs:
   deploy-cloud:

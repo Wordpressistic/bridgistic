@@ -1,3 +1,39 @@
+# ---------------------------------------------------------------------------
+# MANUAL-ONLY since 2026-10-19 (per Shuvo).
+# GitHub Actions on this repo is billing-locked, so every automatic run ended
+# in startup_failure and turned every push/PR red. Automatic triggers are
+# removed; the file is kept so it can be re-enabled. Releases, deploys and
+# updates are done manually (wrangler / VPS from Shuvo's PC) until then.
+#
+# Run it by hand: Actions -> this workflow -> "Run workflow"
+#   (or: gh workflow run pages-release.yml -R Wordpressistic/bridgistic)
+#
+# To re-enable automatic runs once billing is fixed, restore these triggers
+# under `on:` (alongside workflow_dispatch):
+#   push:
+#     branches: [main]
+#     paths:
+#       - index.html
+#       - assets/bridgistic-icon.png
+#       - assets/bridgistic-logo.png
+#       - assets/legal.css
+#       - terms.html
+#       - privacy.html
+#       - refund-policy.html
+#       - how-purchases-work.html
+#       - .github/workflows/pages-release.yml
+#       - scripts/build-site.sh
+#       - functions/**
+#       - tests/site/**
+#   # A release published from the Release workflow uses GITHUB_TOKEN and does
+#   # not trigger other workflows, so a daily safety-net run remains; the old
+#   # 15-minute cron produced ~96 redundant deploys a day.
+#   release:
+#     types: [published]
+#   schedule:
+#     - cron: "17 3 * * *"
+# ---------------------------------------------------------------------------
+
 name: Deploy Bridgistic site
 
 # The linked Bridgistic repository owns both the landing-page source and the
@@ -7,28 +43,6 @@ name: Deploy Bridgistic site
 # to "GitHub Actions" once before this workflow can deploy.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - index.html
-      - assets/bridgistic-icon.png
-      - assets/bridgistic-logo.png
-      - assets/legal.css
-      - terms.html
-      - privacy.html
-      - refund-policy.html
-      - how-purchases-work.html
-      - .github/workflows/pages-release.yml
-      - scripts/build-site.sh
-      - functions/**
-      - tests/site/**
-  # A release published from the Release workflow uses GITHUB_TOKEN and does
-  # not trigger other workflows, so a daily safety-net run remains; the old
-  # 15-minute cron produced ~96 redundant deploys a day.
-  release:
-    types: [published]
-  schedule:
-    - cron: "17 3 * * *"
   workflow_dispatch:
     inputs:
       tag:
