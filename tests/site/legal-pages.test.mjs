@@ -42,8 +42,8 @@ test("legal terms match Shuvo's answers (19 Oct 2026)", () => {
   assert.ok(read("terms.html").includes('href="https://www.paddle.com/legal/invoiced-consumer-terms"'), "links Paddle Buyer Terms");
   assert.match(terms, /Lifetime Deal: 1 license · 1 site\. Monthly and Yearly: 1 license · 5 sites\./);
   assert.match(terms, /available on GitHub/);
-  assert.match(refund, /14-day refund guarantee/);
-  assert.match(refund, /within 14 days of your purchase/);
+  assert.match(refund, /7-day refund guarantee/);
+  assert.match(refund, /within 7 days of your purchase/);
   assert.match(refund, /not always immediate/, "revocation is not promised as instant");
   assert.ok(!/instant(ly)? revo/i.test(all));
   assert.match(all, /30 days of a new annual billing cycle/, "annual window from the WPistic policy kept");
@@ -65,6 +65,16 @@ test("license lines are word for word the same on pricing, terms and how-purchas
   const ltd = index.slice(index.indexOf('id="welcome-offer"'), index.indexOf('class="offer-side"'));
   assert.match(ltd, /All future paid features/);
   assert.equal((index.match(/class="soon">Coming soon</g) || []).length, 12, "4 coming-soon items on each of 3 paid cards");
-  assert.match(visible(index), /14-day refund guarantee/);
+  assert.match(visible(index), /7-day refund guarantee/);
   assert.ok(!/website connection/.test(visible(index)), "old wording removed");
+});
+
+test("refund guarantee is 7 days everywhere (Shuvo, 19 Oct 2026 09:07 Asia/Dhaka)", () => {
+  for (const f of ["index.html", ...PAGES]) {
+    const t = visible(read(f));
+    assert.ok(!/14[- ]day|14 days|fourteen/i.test(t), `${f}: no 14-day wording`);
+  }
+  assert.match(visible(read("index.html")), /Every purchase has a 7-day refund guarantee\./);
+  assert.match(visible(read("how-purchases-work.html")), /Every purchase has a 7-day refund guarantee\./);
+  assert.match(visible(read("refund-policy.html")), /within 7 days of your purchase/);
 });
