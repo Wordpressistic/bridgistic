@@ -68,6 +68,10 @@ Only inside a single quarantined sandbox directory under uploads, with direct we
 * Security: PHP execute now goes through the Guard (dry run, per-key approval bound to the exact code).
 * Security: control parameters (dry_run, force, approval_id) are rejected from the unsigned query string, and mutating requests accept no query parameters.
 * Updated MCP SDK to 1.32.1 and patched vulnerable npm dependencies.
+* Fixed: approval polling (GET approvals/status?approval_id=...) was rejected by the unsigned-parameter check; approval_id is now allowed in the query string for that read-only route only.
+* Fixed: the plugin sends Access-Control-Allow-Origin itself for https://dashboard.bridgistic.app on the bridgistic/v1 namespace (filter: bridgistic_dashboard_origins), so the hosted dashboard works on hosts that strip the header.
+* Fixed: license validate sends the domain and environment bound at activation; activation uses a fresh idempotency key per attempt.
+* Added: read-only dashboard routes (audit log with the new audit:read scope, the key's own approvals) and an optional license link to the WPistic license server (license:manage scope). No feature is gated on a license.
 
 = 1.5.2 =
 * Hardened hosted OAuth authorization against the short dynamic-client KV propagation window.
