@@ -60,7 +60,7 @@
 <li>Usage counters, memory notes, playbooks and schedules.</li>
 <li>If you activate a license, the activation token and the license status.</li>
 </ul>
-<p>The only outside service the plugin contacts is the WPistic license server, and only when a license is activated, re-checked or deactivated. It then sends the key (on activation), the domain, the site and home URLs, an installation ID, the environment, and the WordPress, PHP and plugin versions. Uninstalling the plugin drops its tables and deletes its options.</p></section>
+<p>The only outside service the plugin contacts is the WPistic license server, and only when a license is activated, re-checked or deactivated. It then sends the key (on activation), the domain, the site and home URLs, an installation ID, the environment, and the WordPress, PHP and plugin versions. Uninstalling the plugin drops its tables and deletes its settings. Two items stay in WordPress after an uninstall: the stored license activation, and the WPistic installation ID, which other WPistic plugins share. <!-- PENDING SHUVO REVIEW: whether uninstall should also remove the stored license activation (option bridgistic_license_link) --><span class="pending" title="Pending Shuvo review">Pending Shuvo review</span></p></section>
 
 <section><h2>5. Dashboard (dashboard.bridgistic.app)</h2>
 <p>The dashboard runs in your browser. The site connections you add, including the key secret, are kept in your browser's session storage and cleared when you sign out or close the session. Requests are signed in your browser and sent directly to your WordPress site. The dashboard has no server that stores your keys.</p></section>
