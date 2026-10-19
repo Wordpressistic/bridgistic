@@ -13,6 +13,11 @@ on:
       - index.html
       - assets/bridgistic-icon.png
       - assets/bridgistic-logo.png
+      - assets/legal.css
+      - terms.html
+      - privacy.html
+      - refund-policy.html
+      - how-purchases-work.html
       - .github/workflows/pages-release.yml
       - scripts/build-site.sh
       - functions/**

@@ -84,6 +84,9 @@ if grep -Eq '__BRIDGISTIC_[A-Z_]+__' "$OUT/index.html"; then
 fi
 printf 'bridgistic.app\n' > "$OUT/CNAME"
 cp assets/bridgistic-icon.png assets/bridgistic-logo.png "$OUT/assets/"
+# Legal and ecosystem pages (static; served at /terms, /privacy, /refund-policy, /how-purchases-work).
+cp terms.html privacy.html refund-policy.html how-purchases-work.html "$OUT/"
+cp assets/legal.css "$OUT/assets/"
 
 if [ -n "${GITHUB_OUTPUT:-}" ]; then
   { echo "tag=$best_tag"; echo "version=$VERSION"; echo "repo=$best_repo"; } >> "$GITHUB_OUTPUT"
