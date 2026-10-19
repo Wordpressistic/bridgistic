@@ -40,8 +40,7 @@ test("legal terms match Shuvo's answers (19 Oct 2026)", () => {
   assert.ok(!/arbitrat|venue|exclusive jurisdiction|courts of/i.test(all), "no venue or arbitration clause");
   assert.match(terms, /WPistic Terms prevail/);
   assert.ok(read("terms.html").includes('href="https://www.paddle.com/legal/invoiced-consumer-terms"'), "links Paddle Buyer Terms");
-  assert.match(terms, /Lifetime Deal license covers 1 website connection/);
-  assert.match(terms, /monthly or yearly plan covers 5 website connections/);
+  assert.match(terms, /Lifetime Deal: 1 license · 1 site\. Monthly and Yearly: 1 license · 5 sites\./);
   assert.match(terms, /available on GitHub/);
   assert.match(refund, /14-day refund guarantee/);
   assert.match(refund, /within 14 days of your purchase/);
@@ -54,9 +53,18 @@ test("legal terms match Shuvo's answers (19 Oct 2026)", () => {
   assert.ok((read("privacy.html").match(/class="verified"/g) || []).length >= 3, "providers marked verified");
 });
 
-test("pricing copy states the website allowance", () => {
-  const index = visible(read("index.html"));
-  assert.match(index, /1 website connection/);
-  assert.equal((index.match(/5 website connections/g) || []).length, 2, "monthly and yearly cards");
-  assert.match(index, /14-day refund guarantee/);
+test("license lines are word for word the same on pricing, terms and how-purchases-work", () => {
+  const index = read("index.html");
+  assert.equal((index.match(/<strong>1 license · 1 site<\/strong>/g) || []).length, 1, "LTD card");
+  assert.equal((index.match(/<strong>1 license · 5 sites<\/strong>/g) || []).length, 2, "monthly and yearly cards");
+  for (const f of ["terms.html", "how-purchases-work.html"]) {
+    const t = visible(read(f));
+    assert.match(t, /1 license · 1 site/, f);
+    assert.match(t, /1 license · 5 sites/, f);
+  }
+  const ltd = index.slice(index.indexOf('id="welcome-offer"'), index.indexOf('class="offer-side"'));
+  assert.match(ltd, /All future paid features/);
+  assert.equal((index.match(/class="soon">Coming soon</g) || []).length, 12, "4 coming-soon items on each of 3 paid cards");
+  assert.match(visible(index), /14-day refund guarantee/);
+  assert.ok(!/website connection/.test(visible(index)), "old wording removed");
 });

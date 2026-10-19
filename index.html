@@ -870,6 +870,10 @@
     .price-list li { display:flex; align-items:flex-start; gap:10px; color:var(--muted); font-size:13.5px; }
     .price-list svg { width:15px; height:15px; color:var(--green); flex:0 0 auto; margin-top:3px; }
     .price-list strong { color:var(--text); font-weight:700; }
+    .price-list li.license-line { color:var(--text); font-size:14.5px; padding-bottom:8px; border-bottom:1px solid var(--line); }
+    .price-list li.is-soon { color:var(--muted-2); }
+    .price-list svg.soon-ic { color:var(--muted-2); }
+    .price-list .soon { margin-left:6px; padding:1px 7px; border:1px solid var(--line-strong); border-radius:999px; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); white-space:nowrap; }
     .price-card .btn { width:100%; min-height:48px; }
     .price-fine { margin-top:18px; color:var(--muted-2); font-size:11.5px; }
     .buyer-email { max-width:520px; margin:0 auto 22px; display:grid; gap:6px; text-align:left; }
@@ -1598,12 +1602,17 @@ Bridgistic Cloud is currently a public beta.</pre>
               <li id="offer-remaining" hidden></li>
             </ul>
             <ul class="price-list">
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>Lifetime use</strong> of Bridgistic Pro</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Everything in Bridgistic's paid plans, today and in future</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>1 website connection</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>All future updates included</li>
+              <li class="license-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>1 license · 1 site</strong></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Everything in Free: scoped, signed keys, approvals, snapshots with restore and an audit log</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>54 MCP tools for posts, media, users, plugins, options, files, database and WooCommerce</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Playbooks and schedules</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>The Bridgistic dashboard at dashboard.bridgistic.app</li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Unlimited scheduled playbooks <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Advanced snapshots <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Audit log export <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Skills marketplace <span class="soon">Coming soon</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>All future paid features</li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>No subscription and no renewal</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>License issued and managed through your WPistic account</li>
             </ul>
           </div>
           <div class="offer-side">
@@ -1639,9 +1648,15 @@ Bridgistic Cloud is currently a public beta.</pre>
             <div class="price">$12 <small>USD per month</small></div>
             <p>Billed every month by Paddle.</p>
             <ul class="price-list">
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Bridgistic Pro license</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>5 website connections</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Updates while your plan is active</li>
+              <li class="license-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>1 license · 5 sites</strong></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Everything in Free: scoped, signed keys, approvals, snapshots with restore and an audit log</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>54 MCP tools for posts, media, users, plugins, options, files, database and WooCommerce</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Playbooks and schedules</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>The Bridgistic dashboard at dashboard.bridgistic.app</li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Unlimited scheduled playbooks <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Advanced snapshots <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Audit log export <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Skills marketplace <span class="soon">Coming soon</span></li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Billing managed in the Paddle customer portal</li>
             </ul>
             <a class="btn btn-secondary closed-only" data-checkout="monthly" href="https://pay.bridgistic.app/" target="_blank" rel="noopener">Choose monthly</a>
@@ -1654,9 +1669,15 @@ Bridgistic Cloud is currently a public beta.</pre>
             <div class="price">$99 <small>USD per year</small></div>
             <p>Billed once a year by Paddle: $45 less than 12 months on the monthly plan.</p>
             <ul class="price-list">
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Bridgistic Pro license</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>5 website connections</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Updates while your plan is active</li>
+              <li class="license-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>1 license · 5 sites</strong></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Everything in Free: scoped, signed keys, approvals, snapshots with restore and an audit log</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>54 MCP tools for posts, media, users, plugins, options, files, database and WooCommerce</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Playbooks and schedules</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>The Bridgistic dashboard at dashboard.bridgistic.app</li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Unlimited scheduled playbooks <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Advanced snapshots <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Audit log export <span class="soon">Coming soon</span></li>
+              <li class="is-soon"><svg class="soon-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Skills marketplace <span class="soon">Coming soon</span></li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Billing managed in the Paddle customer portal</li>
             </ul>
             <a class="btn btn-primary closed-only" data-checkout="yearly" href="https://pay.bridgistic.app/" target="_blank" rel="noopener">Choose yearly</a>
