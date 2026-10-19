@@ -5,7 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 ## [Unreleased]
 
-Nothing yet.
+### Fixed
+- License link: `validate` now sends the domain and environment the license server bound at activation. The server re-classifies the environment from the domain (`.test`/`.local`/`localhost`/private IPs → local; `staging.*`, `dev.*`, `*.wpengine.com`, `*.kinsta.cloud`, `*.pantheonsite.io` → staging) and hard-rejects a mismatch, so licenses on those sites failed every re-check with 403.
+- License link: activation uses a fresh idempotency key per attempt. A fixed key made the server replay the cached response after a deactivate, handing back a revoked token (validate then failed with 401).
+- Browser live mode from the hosted dashboard: the plugin now sends `Access-Control-Allow-Origin` itself for `https://dashboard.bridgistic.app` (main address) and `https://app.bridgistic.app` (legacy, redirects) on the `bridgistic/v1` namespace only, without credentials. Some sites strip the header WordPress core normally echoes, which broke the dashboard (seen on dev-test.wordpressistic.com). Filter: `bridgistic_dashboard_origins`.
+- `GET /bridgistic/v1/approvals/status?approval_id=...` was rejected with `bridgistic_unsigned_param` on 1.5.3, so approval polling (dashboard and the `bridgistic_approval_status` MCP tool) could not work. `approval_id` is now allowed in the query string for that read-only route only; every other signed-only param stays blocked. `POST /approvals/status` with `approval_id` in the signed body is also accepted.
 
 ## [1.5.3] — Unreleased (PR fix/audit-2026-10)
 

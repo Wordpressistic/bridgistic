@@ -95,7 +95,9 @@ final class LicenseLink {
 				'wp_version'        => get_bloginfo( 'version' ),
 				'php_version'       => PHP_VERSION,
 			),
-			array( 'X-Idempotency-Key' => self::installation_uuid() . '-' . md5( $raw_key ) )
+			// One key per attempt: the server replays a cached response for a repeated
+			// key, so a fixed key would hand back the token revoked by an earlier deactivate.
+			array( 'X-Idempotency-Key' => self::installation_uuid() . '-' . md5( $raw_key ) . '-' . ( function_exists( 'wp_generate_uuid4' ) ? wp_generate_uuid4() : bin2hex( random_bytes( 16 ) ) ) )
 		);
 		if ( is_wp_error( $resp ) ) {
 			return $resp;
@@ -128,8 +130,8 @@ final class LicenseLink {
 			'/validate',
 			array(
 				'activation_token'  => (string) $s['activation_token'],
-				'domain'            => self::domain(),
-				'environment'       => self::environment(),
+				'domain'            => self::bound( $s, 'domain', self::domain() ),
+				'environment'       => self::bound( $s, 'environment', self::environment() ),
 				'installation_uuid' => self::installation_uuid(),
 				'plugin_version'    => defined( 'BRIDGISTIC_VERSION' ) ? BRIDGISTIC_VERSION : '',
 			)
@@ -211,6 +213,18 @@ final class LicenseLink {
 	private static function json_string( string $value ): string {
 		$encoded = json_encode( $value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 		return is_string( $encoded ) ? $encoded : '""';
+	}
+
+	/**
+	 * Domain/environment the server bound the activation to. The license server
+	 * re-classifies the environment from the domain (.test/.local/localhost/private
+	 * IPs are "local"; staging.*, dev.*, *.wpengine.com, *.kinsta.cloud and
+	 * *.pantheonsite.io are "staging") and /validate hard-rejects any mismatch, so
+	 * validate must echo what activation returned, not wp_get_environment_type().
+	 */
+	public static function bound( array $s, string $field, string $fallback ): string {
+		$v = $s['response']['activation'][ $field ] ?? '';
+		return is_string( $v ) && '' !== $v ? $v : $fallback;
 	}
 
 	private static function strip( array $resp ): array {

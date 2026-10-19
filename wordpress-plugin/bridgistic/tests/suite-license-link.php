@@ -41,3 +41,11 @@ check( ! array_key_exists( 'activation_token', $st ) && ! array_key_exists( 'ver
 
 $src = (string) file_get_contents( BRIDGISTIC_DIR . 'includes/rest/class-dashboard-controller.php' );
 check( false === strpos( $src, 'Approvals::decide' ), 'the dashboard API cannot decide approvals' );
+
+// validate() echoes the server-bound activation domain/environment (server re-classifies e.g. *.wpengine.com → staging).
+$state = array( 'response' => array( 'activation' => array( 'domain' => 'shop.wpengine.com', 'environment' => 'staging' ) ) );
+check_equals( 'staging', LicenseLink::bound( $state, 'environment', 'production' ), 'validate uses the environment the server bound at activation' );
+check_equals( 'shop.wpengine.com', LicenseLink::bound( $state, 'domain', 'other.example' ), 'validate uses the domain the server bound at activation' );
+check_equals( 'production', LicenseLink::bound( array(), 'environment', 'production' ), 'falls back to the local environment for state without an activation' );
+check_equals( 'production', LicenseLink::bound( array( 'response' => array( 'activation' => array( 'environment' => array( 'x' ) ) ) ), 'environment', 'production' ), 'ignores a non-string bound value' );
+
