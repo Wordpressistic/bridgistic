@@ -1,9 +1,24 @@
+# ---------------------------------------------------------------------------
+# MANUAL-ONLY since 2026-10-19 (per Shuvo).
+# GitHub Actions on this repo is billing-locked, so every automatic run ended
+# in startup_failure and turned every push/PR red. Automatic triggers are
+# removed; the file is kept so it can be re-enabled. Releases, deploys and
+# updates are done manually (wrangler / VPS from Shuvo's PC) until then.
+#
+# Run it by hand: Actions -> this workflow -> "Run workflow"
+#   (or: gh workflow run ci.yml -R Wordpressistic/bridgistic)
+#
+# To re-enable automatic runs once billing is fixed, restore these triggers
+# under `on:` (alongside workflow_dispatch):
+#   pull_request:
+#   push:
+#     branches: [main]
+# ---------------------------------------------------------------------------
+
 name: CI
 
 on:
-  pull_request:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 # A second push to the same PR makes the first run's answer irrelevant.
 concurrency:

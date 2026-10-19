@@ -1,3 +1,26 @@
+# ---------------------------------------------------------------------------
+# MANUAL-ONLY since 2026-10-19 (per Shuvo).
+# GitHub Actions on this repo is billing-locked, so every automatic run ended
+# in startup_failure and turned every push/PR red. Automatic triggers are
+# removed; the file is kept so it can be re-enabled. Releases, deploys and
+# updates are done manually (wrangler / VPS from Shuvo's PC) until then.
+#
+# Run it by hand: Actions -> this workflow -> "Run workflow"
+#   (or: gh workflow run release.yml -R Wordpressistic/bridgistic)
+#
+# To re-enable automatic runs once billing is fixed, restore these triggers
+# under `on:` (alongside workflow_dispatch):
+#   push:
+#     # Product releases only; site-only tags are excluded.
+#     tags:
+#       - "v*"
+#       - "!v*-site*"
+#
+# This workflow PUBLISHES (npm `bridgistic-mcp-server`, MCP Registry, GitHub
+# Release + plugin ZIP). Tag pushes no longer trigger it, and the manual
+# dry_run input now defaults to true.
+# ---------------------------------------------------------------------------
+
 name: Release
 
 # Staged release. The ordering exists to prevent one specific failure: publishing
@@ -14,26 +37,23 @@ name: Release
 #                          Registry, then the GitHub release. A GitHub release is
 #                          editable; an npm version is not, so npm goes first.
 #
-# Two ways to trigger:
-#   - push a tag:  git tag v1.5.0 && git push origin v1.5.0
-#   - Actions → Release → "Run workflow" with the version (e.g. 1.5.0)
+# Trigger (manual only for now, see the header above):
+#   - Actions → Release → "Run workflow" with the version (e.g. 1.5.0);
+#     untick dry_run to actually publish.
+#   - Pushing a v* tag no longer starts a release.
 
 on:
-  push:
-    # Product releases only. Site-only tags such as v1.5.2-site.3 used to start
-    # this workflow and fail the version gate on every push; they are excluded.
-    tags:
-      - "v*"
-      - "!v*-site*"
   workflow_dispatch:
     inputs:
       version:
         description: "Version to release (e.g. 1.2.0) — must match the manifests"
         required: true
       dry_run:
-        description: "Run preflight and build, publish nothing"
+        description: "Run preflight and build, publish nothing (untick to really publish to npm, the MCP Registry and GitHub Releases)"
         type: boolean
-        default: false
+        # Defaults to a dry run while releases are manual, so a stray click
+        # cannot publish. Restore `default: false` when re-enabling.
+        default: true
 
 permissions:
   contents: write # create the GitHub release + tag
