@@ -1,39 +1,36 @@
-# GitHub Pages deployment
+# Website deployment (bridgistic.app)
 
-The public site at https://bridgistic.app/ is built from this repository's
-`index.html` and `assets/` directory. This keeps the landing page, download
-links, security information, and product documentation aligned with the
-canonical Bridgistic repository.
+`https://bridgistic.app` is served by the **Cloudflare Pages** project `bridgistic-site`, which also serves `www.bridgistic.app`; the `www` address redirects to the apex domain. The site is deployed by hand. Merging to `main` deploys nothing.
 
-## Deployment behavior
+> The GitHub Pages workflow (`.github/workflows/pages-release.yml`) is legacy and manual-only. It is not how the live site is deployed.
 
-- Changes to the landing page, its brand assets, or the Pages workflow on
-  `main` trigger a deployment.
-- Each deployment runs `scripts/build-site.sh`, which picks the newest published
-  release that ships `bridgistic-wordpress-plugin.zip` across this repository and
-  `wordpressistic/bridgistic-claude-marketplace`, and injects its version,
-  download base and release page into the page. A source commit marker also ensures page edits are
-  deployed even when the release version has not changed.
-- The release workflow dispatches a Pages deployment at the immutable release
-  tag, so a newly published release can be verified against its exact source.
-- A scheduled run reconciles the public page with the current `main` source and
-  latest release. Manual dispatch can select a specific release tag.
-- The workflow stages only `index.html`, the two public brand assets, and the
-  `bridgistic.app` CNAME file.
+## What gets built
 
-The page's download buttons point at the exact release the build resolved
-(`releases/download/<tag>/...`). A plain `releases/latest` link would follow only
-this repository, which can lag behind the marketplace repository.
+`scripts/build-site.sh [out-dir]` (default `dist/pages-site`) does the following:
 
-Local preview: `SITE_COMMIT=preview scripts/build-site.sh /tmp/site` and serve
-`/tmp/site` with any static server.
+- It picks the newest published release that ships `bridgistic-wordpress-plugin.zip`, checking `wordpressistic/bridgistic-claude-marketplace` first and then `Wordpressistic/bridgistic`. When both repos have the same version, the marketplace listing release wins.
+- It injects that release's version, download base URL and release page into `index.html`, along with the site commit marker, the Paddle client-side token and environment, and the offer-status URL.
+- It copies the brand assets, the legal pages (`terms`, `privacy`, `refund-policy`, `how-purchases-work`) and `assets/legal.css`, and writes `CNAME`.
 
-## One-time repository setting
+Pages Functions in `functions/` (the `www` → apex redirect middleware and `/api/offer-status`) are bundled by wrangler from the repo root at deploy time.
 
-In repository settings, open **Pages → Build and deployment** and set Source to
-**GitHub Actions**. The current repository setting is already configured for
-GitHub Actions; this note is retained for maintainers setting up a new repo.
+## Deploy
 
-After deployment, verify the workflow environment URL and the public
-https://bridgistic.app/ page. Confirm that the page shows the expected release
-version and source commit.
+```bash
+# From a clean checkout of main. Node.js 22+ is required by wrangler.
+PADDLE_CLIENT_TOKEN=live_... PADDLE_ENV=production scripts/build-site.sh dist/pages-site
+CLOUDFLARE_API_TOKEN=<pages token> CLOUDFLARE_ACCOUNT_ID=<account id> \
+  npx wrangler pages deploy dist/pages-site --project-name bridgistic-site --branch main \
+  --commit-hash "$(git rev-parse HEAD)"
+```
+
+Before you deploy, note the current production deployment ID (Cloudflare dashboard → Pages → `bridgistic-site` → Deployments) so you can roll back with **Rollback to this deployment**.
+
+## Verify after deploying
+
+- `https://bridgistic.app/` returns 200. The HTML comment `site-commit=…; release=…` shows the expected commit and version.
+- The version pill, the "Release notes for vX.Y.Z" link and every download button point at the expected release, and the files download.
+- Pricing renders, `https://cdn.paddle.com/paddle/v2/paddle.js` loads, and `/api/offer-status` returns JSON.
+- `/terms`, `/privacy`, `/refund-policy` and `/how-purchases-work` return 200.
+
+Local preview: `SITE_COMMIT=preview scripts/build-site.sh /tmp/site`, then serve `/tmp/site` with any static server. Pages Functions need `wrangler pages dev`.

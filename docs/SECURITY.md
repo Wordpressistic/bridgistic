@@ -104,4 +104,4 @@ Every operation records: key id, action, status, source IP, timestamp, a **SHA-2
 
 ## Reporting a vulnerability
 
-Email **support@wordpressistic.com** with details. Please do not open public issues for security reports; we'll credit you in the changelog once fixed.
+Email **hello@insightistic.com** with details (see the root [SECURITY.md](../SECURITY.md)). Please do not open public issues for security reports; we'll credit you in the changelog once fixed.

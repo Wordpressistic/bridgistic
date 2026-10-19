@@ -1,0 +1,25 @@
+name: Feature request
+description: Suggest a new tool, workflow or improvement.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the task you want an AI assistant to do on WordPress, or the friction you hit.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: For example a new MCP tool, a scope, an admin screen or a client integration.
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety considerations
+      description: Which scope should this need? Should it support dry run, approval or a snapshot?
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
