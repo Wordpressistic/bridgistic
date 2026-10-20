@@ -61,7 +61,7 @@ export default {
         JSON.stringify({
           maintainers: [
             {
-              email: "shuvosarker42069@gmail.com",
+              email: "shuvo@bridgistic.app",
               name: "Shubo Chandro Sarker",
             },
           ],
@@ -80,7 +80,7 @@ export default {
 
     if (url.pathname === "/.well-known/security.txt") {
       return new Response(
-        "Contact: mailto:shuvo@wpistic.com\nExpires: 2027-12-31T23:59:59.000Z\n",
+        "Contact: mailto:shuvo@bridgistic.app\nExpires: 2027-12-31T23:59:59.000Z\n",
         {
           status: 200,
           headers: {
