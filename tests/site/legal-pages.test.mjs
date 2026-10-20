@@ -40,7 +40,7 @@ test("legal terms match Shuvo's answers (19 Oct 2026)", () => {
   assert.ok(!/arbitrat|venue|exclusive jurisdiction|courts of/i.test(all), "no venue or arbitration clause");
   assert.match(terms, /WPistic Terms prevail/);
   assert.ok(read("terms.html").includes('href="https://www.paddle.com/legal/invoiced-consumer-terms"'), "links Paddle Buyer Terms");
-  assert.match(terms, /Lifetime Deal: 1 license · 1 site\. Monthly and Yearly: 1 license · 5 sites\./);
+  assert.match(terms, /Lifetime Deal: 1 license · 1 site\. Monthly and Yearly: 1 license · 3 sites\./);
   assert.match(terms, /available on GitHub/);
   assert.match(refund, /7-day refund guarantee/);
   assert.match(refund, /within 7 days of your purchase/);
@@ -56,11 +56,11 @@ test("legal terms match Shuvo's answers (19 Oct 2026)", () => {
 test("license lines are word for word the same on pricing, terms and how-purchases-work", () => {
   const index = read("index.html");
   assert.equal((index.match(/<strong>1 license · 1 site<\/strong>/g) || []).length, 1, "LTD card");
-  assert.equal((index.match(/<strong>1 license · 5 sites<\/strong>/g) || []).length, 2, "monthly and yearly cards");
+  assert.equal((index.match(/<strong>1 license · 3 sites<\/strong>/g) || []).length, 2, "monthly and yearly cards");
   for (const f of ["terms.html", "how-purchases-work.html"]) {
     const t = visible(read(f));
     assert.match(t, /1 license · 1 site/, f);
-    assert.match(t, /1 license · 5 sites/, f);
+    assert.match(t, /1 license · 3 sites/, f);
   }
   const ltd = index.slice(index.indexOf('id="welcome-offer"'), index.indexOf('class="offer-side"'));
   assert.match(ltd, /All future paid features/);

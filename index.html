@@ -895,10 +895,12 @@
       padding:10px 18px; font:650 13px/1 var(--font,inherit); color:var(--muted);
       background:transparent;
     }
+    .billing-toggle button span { margin-left:5px; font-size:11px; font-weight:750; opacity:.72; }
     .billing-toggle button[aria-pressed="true"] {
       color:var(--bg, #0B1F3A); background:linear-gradient(135deg, #C6A15B, #1F8A70);
       box-shadow:0 8px 24px rgba(198,161,91,.22);
     }
+    .billing-toggle button:focus-visible { outline:3px solid rgba(31,138,112,.3); outline-offset:2px; }
 
     .price-card { position:relative; padding:34px; border:1px solid var(--line); border-radius:26px; background:var(--panel); box-shadow:var(--shadow-soft); }
     .price-card.pro { border-color:rgba(31,138,112,.22); background:linear-gradient(145deg, rgba(31,138,112,.055), transparent 44%), var(--panel); }
@@ -919,6 +921,7 @@
     .plan-chooser { max-width:1120px; margin:0 auto 10px; display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:12px; }
     .plan-chooser .btn { min-height:52px; width:100%; }
     .plan-chooser-note { max-width:760px; margin:0 auto 22px; text-align:center; color:var(--muted); font-size:13px; }
+    .pricing-grid.plan-switcher { grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr); max-width:1120px; align-items:start; }
     .pricing-grid.three { grid-template-columns:repeat(3,1fr); max-width:1120px; }
     .plans-label { max-width:1120px; margin:34px auto 14px; color:var(--muted); font-size:12px; font-weight:750; letter-spacing:.12em; text-transform:uppercase; text-align:center; }
     .offer-card { display:grid; grid-template-columns:1.35fr 1fr; gap:34px; max-width:1120px; margin:0 auto; padding:38px; border:1px solid color-mix(in srgb,#C6A15B 55%,transparent); border-radius:28px; background:linear-gradient(135deg, rgba(198,161,91,.14), transparent 55%), var(--panel); box-shadow:var(--shadow-soft); }
@@ -1672,8 +1675,12 @@ Bridgistic Cloud is currently a public beta.</pre>
 
         <div class="offer-ended closed-only" role="status">The Lifetime Deal welcome offer has ended. Bridgistic Pro is available monthly or yearly.</div>
 
-        <p class="plans-label reveal">Same Pro features. Pick the term.</p>
-        <div class="pricing-grid three" id="pricing-cards">
+        <p class="plans-label reveal">Same Pro features. Choose your billing term.</p>
+        <div class="billing-toggle reveal" role="group" aria-label="Choose Pro billing term">
+          <button type="button" data-billing-term="monthly" aria-pressed="true">Monthly <span>$12/mo</span></button>
+          <button type="button" data-billing-term="yearly" aria-pressed="false">Yearly <span>Save $45</span></button>
+        </div>
+        <div class="pricing-grid plan-switcher" id="pricing-cards">
           <article class="price-card reveal">
             <span class="badge free">Open source</span>
             <h3>Bridgistic Free</h3>
@@ -1689,13 +1696,13 @@ Bridgistic Cloud is currently a public beta.</pre>
             <a class="btn btn-secondary" href="__BRIDGISTIC_RELEASE_DOWNLOAD__/bridgistic-wordpress-plugin.zip">Download free (latest release)</a>
           </article>
 
-          <article class="price-card plan reveal">
+          <article class="price-card plan reveal" data-billing-card="monthly">
             <span class="badge">Pro Monthly</span>
             <h3>Bridgistic Pro</h3>
             <div class="price">$12 <small>USD per month</small></div>
             <p>Billed every month by Paddle.</p>
             <ul class="price-list">
-              <li class="license-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>1 license · 5 sites</strong></li>
+              <li class="license-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>1 license · 3 sites</strong></li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Everything in Free: scoped, signed keys, approvals, snapshots with restore and an audit log</li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>54 MCP tools for posts, media, users, plugins, options, files, database and WooCommerce</li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Playbooks and schedules</li>
@@ -1712,13 +1719,13 @@ Bridgistic Cloud is currently a public beta.</pre>
             <a class="btn btn-secondary" data-checkout="monthly" href="https://pay.bridgistic.app/" target="_blank" rel="noopener">Choose monthly · $12</a>
           </article>
 
-          <article class="price-card plan pro reveal">
+          <article class="price-card plan pro reveal" data-billing-card="yearly" hidden>
             <span class="badge">Pro Yearly</span>
             <h3>Bridgistic Pro</h3>
             <div class="price">$99 <small>USD per year</small></div>
             <p>Billed once a year by Paddle: $45 less than 12 months on the monthly plan.</p>
             <ul class="price-list">
-              <li class="license-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>1 license · 5 sites</strong></li>
+              <li class="license-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg><strong>1 license · 3 sites</strong></li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Everything in Free: scoped, signed keys, approvals, snapshots with restore and an audit log</li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>54 MCP tools for posts, media, users, plugins, options, files, database and WooCommerce</li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>Playbooks and schedules</li>
@@ -1888,6 +1895,24 @@ Bridgistic Cloud is currently a public beta.</pre>
           }
         });
       });
+
+      const billingToggle = document.querySelector('.billing-toggle');
+      if (billingToggle) {
+        const billingButtons = billingToggle.querySelectorAll('[data-billing-term]');
+        const billingCards = document.querySelectorAll('[data-billing-card]');
+        const setBillingTerm = term => {
+          billingButtons.forEach(button => {
+            const active = button.dataset.billingTerm === term;
+            button.setAttribute('aria-pressed', String(active));
+          });
+          billingCards.forEach(card => {
+            card.hidden = card.dataset.billingCard !== term;
+            if (!card.hidden) card.classList.add('visible');
+          });
+        };
+        billingButtons.forEach(button => button.addEventListener('click', () => setBillingTerm(button.dataset.billingTerm)));
+        setBillingTerm('monthly');
+      }
 
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const revealNodes = document.querySelectorAll('.reveal');
