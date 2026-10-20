@@ -320,7 +320,7 @@
       backdrop-filter:blur(18px) saturate(130%);
       box-shadow:0 12px 32px rgba(0,0,0,.08);
     }
-    .nav { height:100%; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+    .nav { position:relative; height:100%; display:flex; align-items:center; justify-content:space-between; gap:24px; }
     .brand { display:inline-flex; align-items:center; font-weight:820; letter-spacing:-.025em; font-size:19px; }
     .brand-mark {
       width:33px;
@@ -336,13 +336,14 @@
     .brand-mark img { width:100%; height:100%; display:block; object-fit:cover; }
     .brand-mark svg { width:20px; height:20px; color:var(--green); }
     .brand span { color:var(--green); }
-    .nav-links { display:flex; align-items:center; gap:5px; margin-left:auto; }
+    .nav-links { display:flex; align-items:center; justify-content:flex-end; gap:5px; min-width:0; margin-left:auto; }
     .nav-links a {
       padding:9px 11px;
       border-radius:9px;
       color:var(--muted);
       font-size:14px;
       font-weight:650;
+      white-space:nowrap;
       transition:color .18s ease, background .18s ease;
     }
     .nav-links a:hover { color:var(--text); background:var(--panel); }
@@ -1010,8 +1011,8 @@
       .footer-col:last-child { grid-column:auto; }
     }
 
-    @media (max-width:860px) {
-      .nav-links { display:none; position:absolute; top:calc(var(--header) - 1px); left:20px; right:20px; padding:10px; border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow); }
+    @media (max-width:1180px) {
+      .nav-links { display:none; position:absolute; top:calc(var(--header) - 1px); left:0; right:0; max-height:calc(100dvh - var(--header) - 24px); overflow-y:auto; overscroll-behavior:contain; padding:10px; border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow); }
       .nav-links.open { display:grid; }
       .nav-links a { padding:12px 13px; }
       .nav-actions .btn { display:none; }
@@ -1837,16 +1838,27 @@ Bridgistic Cloud is currently a public beta.</pre>
       onScroll();
       window.addEventListener('scroll', onScroll, { passive:true });
 
-      menuBtn.addEventListener('click', () => {
-        const open = navLinks.classList.toggle('open');
+      const setMenuState = (open) => {
+        navLinks.classList.toggle('open', open);
         menuBtn.setAttribute('aria-expanded', String(open));
-      });
+        menuBtn.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+        menuBtn.setAttribute('title', open ? 'Close navigation' : 'Open navigation');
+      };
+
+      menuBtn.addEventListener('click', () => setMenuState(!navLinks.classList.contains('open')));
 
       navLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          navLinks.classList.remove('open');
-          menuBtn.setAttribute('aria-expanded', 'false');
-        });
+        link.addEventListener('click', () => setMenuState(false));
+      });
+
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') setMenuState(false);
+      });
+
+      document.addEventListener('click', event => {
+        if (navLinks.classList.contains('open') && !navLinks.contains(event.target) && !menuBtn.contains(event.target)) {
+          setMenuState(false);
+        }
       });
 
       document.querySelectorAll('.tab-btn').forEach(button => {
