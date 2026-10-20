@@ -128,7 +128,8 @@ The plugin download is free and open source, and the plugin never gates its brid
 | Playbooks and schedules | ✅ (up to 3 active schedules) | ✅ | ✅ |
 | Bridgistic dashboard at `dashboard.bridgistic.app` | — | ✅ | ✅ |
 | Updates | GitHub releases | All future updates | While the plan is active |
-| Unlimited schedules, advanced snapshots, audit log export, skills marketplace | — | Coming soon | Coming soon |
+| Unlimited schedules, snapshots past 50, audit log export | — | Opens when the license is live on the site | Opens when the license is live on the site |
+| Skills marketplace, agency dashboard, team permissions, white-label, Cloud Agent credits | — | Not in this release | Not in this release |
 
 Prices are in USD and taxes are calculated at checkout. Every purchase has a 7-day refund guarantee. The current offer and terms are on [bridgistic.app](https://bridgistic.app): [Terms](https://bridgistic.app/terms), [Privacy](https://bridgistic.app/privacy), [Refund policy](https://bridgistic.app/refund-policy), [How purchases work](https://bridgistic.app/how-purchases-work).
 

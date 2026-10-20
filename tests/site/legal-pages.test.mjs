@@ -64,7 +64,7 @@ test("license lines are word for word the same on pricing, terms and how-purchas
   }
   const ltd = index.slice(index.indexOf('id="welcome-offer"'), index.indexOf('class="offer-side"'));
   assert.match(ltd, /All future paid features/);
-  assert.equal((index.match(/class="soon">Coming soon</g) || []).length, 12, "4 coming-soon items on each of 3 paid cards");
+  assert.equal((index.match(/class="soon">Coming soon</g) || []).length, 9, "3 coming-soon items on each of 3 paid cards");
   assert.match(visible(index), /7-day refund guarantee/);
   assert.ok(!/website connection/.test(visible(index)), "old wording removed");
 });

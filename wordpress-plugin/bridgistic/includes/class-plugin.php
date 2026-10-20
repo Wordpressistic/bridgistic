@@ -85,8 +85,7 @@ final class Plugin {
 		// Scheduled playbooks: register custom cron intervals + the run hook.
 		Scheduler::boot();
 
-		// Initialise the free-edition feature policy. This is intentionally a
-		// local no-op: the public plugin has no billing or license unlock path.
+		// Feature policy. Paid lines stay closed until LicenseLink reports a live key.
 		License::init();
 	}
 

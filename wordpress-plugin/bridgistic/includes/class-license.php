@@ -2,10 +2,10 @@
 /**
  * Free-edition feature policy.
  *
- * The public Bridgistic plugin is a complete local bridge, not a licensing
- * client. Paid WPistic/SaaS features are intentionally display-only here:
- * there is no remote activation, entitlement refresh, billing path, or
- * offline grace period that can unlock them.
+ * The public download stays free until a site activates a WPistic license.
+ * License::gate() then opens unlimited schedules, advanced snapshots, audit
+ * export, and the named agency lines. White-label stays closed. There is no
+ * Cloud Agent credit gate in this plugin.
  *
  * @package Bridgistic
  */
@@ -75,12 +75,27 @@ final class License {
     }
 
     /**
-     * Return whether a feature is available in the public package.
-     * Unknown features remain available because security and bridge behavior
-     * must never be disabled by the commercial feature policy.
+     * Paid lines open only when the WPistic license link has a live activation.
+     * White-label stays closed. Cloud Agent credits are not a plugin gate.
+     * With no activation, the public package behaves as the free edition.
      */
     public static function gate( string $feature ): bool {
-        return ! in_array( $feature, self::PAID_FEATURES, true );
+        if ( 'white_label' === $feature ) {
+            return false;
+        }
+        if ( ! in_array( $feature, self::PAID_FEATURES, true ) ) {
+            return true;
+        }
+        return self::has_active_license();
+    }
+
+    /** True only for a verified live license. Missing WordPress or no activation stays false. */
+    public static function has_active_license(): bool {
+        if ( ! function_exists( 'get_option' ) || ! class_exists( LicenseLink::class ) ) {
+            return false;
+        }
+        $status = strtolower( (string) ( LicenseLink::status()['status'] ?? '' ) );
+        return in_array( $status, array( 'active', 'trialing', 'grace' ), true );
     }
 
     /** Human-readable explanation for a feature that belongs to SaaS. */

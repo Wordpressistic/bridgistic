@@ -12,7 +12,7 @@ test("feature guide and docs cite the site and do not invent an unlock", () => {
   const index = read("index.html");
   assert.match(index, /href="\/features"/);
   assert.match(index, /href="\/docs"/);
-  assert.equal((index.match(/class="soon">Coming soon</g) || []).length, 12);
+  assert.equal((index.match(/class="soon">Coming soon</g) || []).length, 9);
   for (const file of ["features.html", "docs.html"]) {
     const html = read(file);
     const text = html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ");

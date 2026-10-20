@@ -71,7 +71,7 @@ final class ScheduleController extends Controller {
 		if ( ! Scheduler::check_cap() ) {
 			return $this->fail(
 				'bridgistic_sched_plan_cap',
-				Scheduler::FREE_MAX_ACTIVE . ' enabled schedules are included in the free plugin. Unlimited scheduled playbooks are available only in Bridgistic SaaS; this local build has no license activation flow.',
+				Scheduler::FREE_MAX_ACTIVE . ' enabled schedules are included until a live Bridgistic license is on this site. Activate the key from your purchase email on the License screen.',
 				402
 			);
 		}
@@ -100,7 +100,7 @@ final class ScheduleController extends Controller {
 		if ( $enabled && ! Scheduler::check_cap() ) {
 			return $this->fail(
 				'bridgistic_sched_plan_cap',
-				Scheduler::FREE_MAX_ACTIVE . ' enabled schedules are included in the free plugin. Unlimited scheduled playbooks are available only in Bridgistic SaaS; this local build has no license activation flow.',
+				Scheduler::FREE_MAX_ACTIVE . ' enabled schedules are included until a live Bridgistic license is on this site. Activate the key from your purchase email on the License screen.',
 				402
 			);
 		}

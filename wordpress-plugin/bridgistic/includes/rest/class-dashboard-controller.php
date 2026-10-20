@@ -5,6 +5,7 @@
  * other bridge route.
  *
  *   GET  audit             audit:read      recent audit entries (digests only, never arguments)
+ *   GET  audit/export      audit:read      same rows, only with a live license
  *   GET  approvals         site:read       this key's own approval requests (no decisions here)
  *   GET  license           license:manage  license status (never the token or key)
  *   POST license/activate  license:manage
@@ -23,6 +24,7 @@ namespace Bridgistic\Rest;
 
 use Bridgistic\Approvals;
 use Bridgistic\AuditLog;
+use Bridgistic\License;
 use Bridgistic\LicenseLink;
 use Bridgistic\Security\Scopes;
 use WP_REST_Request;
@@ -36,6 +38,7 @@ final class DashboardController extends Controller {
 	public function register( string $namespace ): void {
 		$routes = array(
 			array( '/audit', 'GET', 'audit' ),
+			array( '/audit/export', 'GET', 'audit_export' ),
 			array( '/approvals', 'GET', 'approvals' ),
 			array( '/license', 'GET', 'license' ),
 			array( '/license/activate', 'POST', 'license_activate' ),
@@ -64,6 +67,23 @@ final class DashboardController extends Controller {
 		$limit  = max( 1, min( 500, (int) ( $request->get_param( 'limit' ) ?: 200 ) ) );
 		$rows   = array_map( array( AuditLog::class, 'public_row' ), AuditLog::query( $filter, $limit ) );
 		return $this->ok( array( 'entries' => $rows ) );
+	}
+
+	/** Same rows as the on-screen log. Refused until the license link is live. */
+	public function audit_export( WP_REST_Request $request ) {
+		$gate = $this->require_scope( $request, Scopes::AUDIT_READ );
+		if ( is_wp_error( $gate ) ) {
+			return $gate;
+		}
+		if ( ! License::gate( 'audit_export' ) ) {
+			return new \WP_Error(
+				'bridgistic_audit_export',
+				'Audit log export opens when a live Bridgistic license is on this site. The on-screen log stays available.',
+				array( 'status' => 402 )
+			);
+		}
+		$rows = array_map( array( AuditLog::class, 'public_row' ), AuditLog::query( 'all', 1000 ) );
+		return $this->ok( array( 'format' => 'json', 'entries' => $rows ) );
 	}
 
 	public function approvals( WP_REST_Request $request ) {

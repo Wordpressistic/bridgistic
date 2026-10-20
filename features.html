@@ -33,6 +33,7 @@
     .card p { margin:0; font-size:14px; }
     .status { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
     .ship { color:#F4F1EA; background:#1F8A70; }
+    .live { color:#F4F1EA; background:#0B1F3A; }
     .wait { color:#0B1F3A; background:#C6A15B; }
     .card a { font-size:13px; }
     @media (prefers-reduced-motion: no-preference) {
@@ -68,7 +69,7 @@
       <p class="eyebrow">Feature guide</p>
       <h1>Every feature, as the code ships it</h1>
       <p class="meta">Published by <a href="https://wpistic.com/">WordPressistic LLC</a>. Source: <a href="https://github.com/Wordpressistic/bridgistic">GitHub</a>. Protocol: <a href="https://modelcontextprotocol.io/">Model Context Protocol</a>.</p>
-      <div class="lead"><p>This page is the citation for the <a href="/#pricing">pricing section</a>. A gold label means the public plugin does not unlock that line yet. Setup steps are in the <a href="/docs">docs</a>.</p></div>
+      <div class="lead"><p>This page is the citation for the <a href="/#pricing">pricing section</a>. A green label is in the free plugin. A license label opens only after the WPistic license server marks the site active. A gold label is not in this release. Setup steps are in the <a href="/docs">docs</a>.</p></div>
 
       <section id="shipping"><h2>Shipping in the free plugin</h2>
         <div class="cards">
@@ -85,28 +86,30 @@
       <section id="schedules"><h2>Scheduled playbooks</h2>
         <div class="cards">
           <article class="card"><span class="status ship">Shipping</span><h2>Up to 3 schedules</h2><p>The free plugin allows 3 enabled schedules. The cap is enforced in code before a schedule is created or enabled. The message on the REST API says 3 enabled schedules are included in the free plugin.</p></article>
-          <article class="card" id="unlimited"><span class="status wait">Coming soon</span><h2>Unlimited scheduled playbooks</h2><p>The paid name exists, and the cap is skipped only when that gate is open. The public plugin never opens it. A license key pasted into the free zip is refused. This line stays coming soon on <a href="/#pricing">pricing</a> until a paid build can turn it on.</p></article>
+          <article class="card" id="unlimited"><span class="status live">With a license</span><h2>Unlimited scheduled playbooks</h2><p>The free cap is 3 enabled schedules. When the license link reports active, trialing, or grace, that cap is skipped. The key is the one emailed after checkout, checked by the plugin and the dashboard against api.wpistic.com.</p></article>
         </div>
       </section>
 
       <section id="snapshots"><h2>Snapshots</h2>
         <div class="cards">
           <article class="card"><span class="status ship">Shipping</span><h2>Snapshots and restore</h2><p>Destructive writes can store a snapshot first. You can also take a manual snapshot of posts and post meta, and restore one. The free screen keeps up to 50 snapshots.</p></article>
-          <article class="card" id="advanced-snapshots"><span class="status wait">Coming soon</span><h2>Advanced snapshots</h2><p>The paid name lifts the 50-snapshot cap. Retention policies and rollback analytics are not a separate screen in the public plugin. Do not treat this as included with a purchase today.</p></article>
+          <article class="card" id="advanced-snapshots"><span class="status live">With a license</span><h2>Advanced snapshots</h2><p>The free screen keeps up to 50 snapshots. A live license lifts that cap. Retention policies and rollback analytics are not a separate screen.</p></article>
         </div>
       </section>
 
       <section id="audit"><h2>Audit log</h2>
         <div class="cards">
           <article class="card"><span class="status ship">Shipping</span><h2>Audit log, 90 days</h2><p>Requests are logged with the key, action, status and time. Secrets are not written into the log. Rows older than 90 days are pruned.</p></article>
-          <article class="card" id="audit-export"><span class="status wait">Coming soon</span><h2>Audit log export</h2><p>The name is reserved for a paid export of that log. The public plugin has no audit-export action. The Export Package screen downloads a setup bundle, which is a different file.</p></article>
+          <article class="card" id="audit-export"><span class="status live">With a license</span><h2>Audit log export</h2><p>The on-screen log stays free for 90 days. A live license opens <code>GET /wp-json/bridgistic/v1/audit/export</code> for the same rows. The Export Package screen is still a setup zip, not the log.</p></article>
         </div>
       </section>
 
       <section id="paid"><h2>Still marked coming soon</h2>
         <div class="cards">
           <article class="card" id="skills"><span class="status wait">Coming soon</span><h2>Skills marketplace</h2><p>The public plugin does not install a skills marketplace. The directory discussed for the product is not part of the free zip.</p><p><a href="/#pricing">Pricing</a></p></article>
-          <article class="card"><span class="status wait">Coming soon</span><h2>Agency dashboard, team permissions, white-label</h2><p>These names are in the paid list inside the plugin and are not active in the free download. The hosted dashboard at <a href="https://dashboard.bridgistic.app/">dashboard.bridgistic.app</a> is a separate surface.</p></article>
+          <article class="card"><span class="status wait">Coming soon</span><h2>Agency dashboard and team permissions</h2><p>Named in the plugin and not a working multi-user product yet. The hosted dashboard is a separate surface.</p></article>
+          <article class="card" id="white-label"><span class="status wait">Coming soon</span><h2>White-label</h2><p>Not in this release. A license does not remove the Bridgistic name.</p></article>
+          <article class="card" id="credits"><span class="status wait">Coming soon</span><h2>Cloud Agent credits</h2><p>Not part of the license. A later credit price would be billed separately from the site count.</p></article>
         </div>
       </section>
 
