@@ -74,7 +74,7 @@ test("countFromTransactions ignores unpaid", () => {
 test("landing page: real Paddle prices, offer terms, no exclamation marks, no secrets", () => {
   const html = readFileSync(new URL("../../index.html", import.meta.url), "utf8");
   for (const id of ["pri_01m58k6epsqzbr3qbab84t6p90", "pri_01m1ykar8aq033865h68a4b9hh", "pri_01m1ykaqyaaeewsbah07akmpka"]) assert.ok(html.includes(id), id);
-  for (const t of ["$29.99", "$12", "$99", "31 December 2026", "100 licenses only"]) assert.ok(html.includes(t), t);
+  for (const t of ["$49", "$12", "$99", "31 December 2026", "100 licenses only"]) assert.ok(html.includes(t), t);
   const body = html.slice(html.indexOf("<body"));
   const text = body.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<style[\s\S]*?<\/style>/g, "").replace(/<!--[\s\S]*?-->/g, "").replace(/<[^>]+>/g, " ");
   assert.equal(/!/.test(text), false, "visible text contains an exclamation mark");

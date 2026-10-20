@@ -68,7 +68,7 @@ test("site build regenerates the crawl files", () => {
   }
   assert.match(robots, /Disallow: \/api\//);
   const llms = read("llms.txt");
-  assert.match(llms, /\$29\.99/);
+  assert.match(llms, /\$49/);
   assert.match(llms, /\$12 USD per month/);
   assert.match(llms, /\$99 USD per year/);
   assert.match(llms, /7-day refund guarantee/);

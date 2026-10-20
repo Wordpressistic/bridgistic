@@ -122,7 +122,7 @@ The plugin download is free and open source, and the plugin never gates its brid
 
 | | Free | Pro: Lifetime Deal (welcome offer) | Pro: monthly / yearly |
 | --- | --- | --- | --- |
-| Price | $0 | **$29.99 one time.** Offered until 31 December 2026, 100 licenses only. | **$12 / month** or **$99 / year** |
+| Price | $0 | **$49 one time.** Offered until 31 December 2026, 100 licenses only. | **$12 / month** or **$99 / year** |
 | Licenses · sites | — | 1 license · 1 site | 1 license · 5 sites |
 | Full local bridge: scoped keys, HMAC signing, approvals, snapshots, audit log, 54 MCP tools | ✅ | ✅ | ✅ |
 | Playbooks and schedules | ✅ (up to 3 active schedules) | ✅ | ✅ |
