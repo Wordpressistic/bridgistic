@@ -1,6 +1,6 @@
 {
   "name": "bridgistic-mcp-server",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "MCP server that bridges Claude (Desktop / Code) to any WordPress site running the free Bridgistic plugin. HMAC-signed, scope-aware, local-first.",
   "type": "module",
   "main": "dist/index.js",

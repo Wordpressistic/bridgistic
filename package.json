@@ -1,6 +1,6 @@
 {
   "name": "bridgistic-claude-marketplace",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "Free public distribution of Bridgistic: Claude Code marketplace, Claude Desktop setup package, WordPress plugin, and local MCP server for safely connecting Claude to WordPress.",
   "private": true,
   "type": "module",

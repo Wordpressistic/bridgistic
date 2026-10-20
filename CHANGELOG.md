@@ -5,6 +5,22 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 ## [Unreleased]
 
+## [1.5.4] — 2026-10-20
+
+### Added
+
+- A live WPistic license on the site opens unlimited schedules, snapshots past 50 and `GET /wp-json/bridgistic/v1/audit/export`.
+- Scoped dashboard license routes for activation, validation, deactivation and status; raw license keys are never stored and responses are signature-verified.
+
+### Changed
+
+- Pricing now presents Lifetime $49, monthly $12 and yearly $99 choices without a pre-checkout email field.
+- Product copy distinguishes the three shipped license gates from the skills marketplace, agency dashboard, team permissions, white-label and Cloud Agent credits, which remain closed or outside the license.
+
+### Fixed
+
+- Feature gating no longer opens coming-soon marketplace, agency or team lines when a license is active.
+
 ### Documentation
 
 - New product README. Added CONTRIBUTING.md, CODE_OF_CONDUCT.md, issue and pull-request templates, and docs/RELEASING.md.

@@ -3,9 +3,9 @@
  * Free-edition feature policy.
  *
  * The public download stays free until a site activates a WPistic license.
- * License::gate() then opens unlimited schedules, advanced snapshots, audit
- * export, and the named agency lines. White-label stays closed. There is no
- * Cloud Agent credit gate in this plugin.
+ * License::gate() then opens unlimited schedules, advanced snapshots and
+ * audit export. The skills marketplace, agency/team lines and white-label
+ * stay closed. There is no Cloud Agent credit gate in this plugin.
  *
  * @package Bridgistic
  */
@@ -23,11 +23,15 @@ final class License {
     public const PRODUCT_SLUG = 'bridgistic';
     public const FREE_ONLY    = true;
 
-    /** Features reserved for the private WPistic/SaaS layer. */
-    private const PAID_FEATURES = array(
+    /** Features opened by a verified live WPistic license on this site. */
+    private const LICENSE_FEATURES = array(
         'scheduled_playbooks_unlimited',
         'snapshots_advanced',
         'audit_export',
+    );
+
+    /** Product lines that remain closed until their own product ships. */
+    private const CLOSED_FEATURES = array(
         'skills_marketplace',
         'agency_dashboard',
         'team_permissions',
@@ -75,15 +79,16 @@ final class License {
     }
 
     /**
-     * Paid lines open only when the WPistic license link has a live activation.
-     * White-label stays closed. Cloud Agent credits are not a plugin gate.
+     * The three shipped paid lines open only when the WPistic license link has
+     * a live activation. Product lines that are not shipped stay closed.
+     * Cloud Agent credits are not a plugin gate.
      * With no activation, the public package behaves as the free edition.
      */
     public static function gate( string $feature ): bool {
-        if ( 'white_label' === $feature ) {
+        if ( in_array( $feature, self::CLOSED_FEATURES, true ) ) {
             return false;
         }
-        if ( ! in_array( $feature, self::PAID_FEATURES, true ) ) {
+        if ( ! in_array( $feature, self::LICENSE_FEATURES, true ) ) {
             return true;
         }
         return self::has_active_license();

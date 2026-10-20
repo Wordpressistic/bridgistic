@@ -10,7 +10,7 @@
       "name": "bridgistic",
       "source": "./plugins/bridgistic",
       "description": "Connect Claude Code to WordPress through the Bridgistic MCP server.",
-      "version": "1.5.3",
+      "version": "1.5.4",
       "author": {
         "name": "WordPressistic"
       }

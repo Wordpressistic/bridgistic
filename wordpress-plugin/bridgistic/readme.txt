@@ -4,7 +4,7 @@ Tags: mcp, ai, claude, chatgpt, automation
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.5.3
+Stable tag: 1.5.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,7 +16,7 @@ Bridgistic is the WordPress side of an MCP (Model Context Protocol) bridge. It l
 
 Every request is HMAC-signed and tied to a least-privilege key. Destructive actions can be previewed (dry-run), held for human approval, and are snapshotted first so any change is one call away from a rollback. Usage is metered per key, and playbooks can run unattended on a schedule.
 
-**Free, with every security feature included.** The plugin is the complete secure bridge, and no bridge or security feature is ever gated on a license. Bridgistic Pro (https://bridgistic.app) adds a WPistic license and the hosted Bridgistic dashboard at dashboard.bridgistic.app. Unlimited schedules, advanced snapshots, audit export and a skills marketplace are planned for Pro and are not part of this plugin.
+**Free, with every security feature included.** The plugin is the complete secure bridge, and no bridge or security feature is ever gated on a license. Bridgistic Pro (https://bridgistic.app) adds a WPistic license and the hosted Bridgistic dashboard at dashboard.bridgistic.app. A live license on the site opens unlimited schedules, snapshots past 50 and audit export. The skills marketplace, agency dashboard, team permissions and white-label remain planned and are not part of this release.
 
 = What you get =
 
@@ -27,7 +27,7 @@ Every request is HMAC-signed and tied to a least-privilege key. Destructive acti
 * Full audit log of every request.
 * Per-key rate limiting and basic usage metering.
 * Per-site memory and reusable, parameterised playbooks.
-* Scheduled playbooks that run unattended via cron (up to 3 active schedules).
+* Scheduled playbooks that run unattended via cron (up to 3 active schedules without a live license; unlimited with one).
 * A server-side PHP sandbox: executable PHP can only be written to one quarantined directory.
 
 = Part of the WordPressistic Galaxy =
@@ -70,6 +70,12 @@ The plugin makes no outbound requests on its own. It contacts the external servi
 The local MCP server and the Claude Desktop extension run on your own computer and talk directly to your site.
 
 == Changelog ==
+
+= 1.5.4 =
+* Added: a live WPistic license on the site opens unlimited schedules, snapshots past 50 and audit export.
+* Added: scoped license activate, validate and deactivate routes for the hosted dashboard; responses are signature-verified and raw license keys are never stored.
+* Changed: pricing and setup copy now explains the three license gates and the $49 Lifetime Deal, while the skills marketplace, agency/team lines, white-label and Cloud Agent credits stay closed.
+* Fixed: feature-gate policy no longer treats coming-soon marketplace, agency or team lines as license-unlocked.
 
 = 1.5.3 =
 * Security: SQL dry run no longer executes the statement (MySQL DDL auto-commits); it classifies only and reports whether approval is required.
@@ -130,6 +136,9 @@ The local MCP server and the Claude Desktop extension run on your own computer a
 * Initial public release.
 
 == Upgrade Notice ==
+
+= 1.5.4 =
+Update the plugin before activating a new license. Without a live license, the free caps remain: 3 enabled schedules, 50 snapshots and an on-screen audit log. A live license opens only the three shipped paid lines; the skills marketplace, agency/team lines and white-label remain closed.
 
 = 1.5.3 =
 Security release that fixes five audit findings. Update the plugin and your MCP client together. Custom integrations must now send `dry_run`, `force` and `approval_id` in the signed request body, not in the query string.
