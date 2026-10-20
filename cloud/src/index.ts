@@ -54,6 +54,44 @@ export default {
     const started = Date.now();
     const requestId = newRequestId();
     const url = new URL(request.url);
+
+    // Public ownership proof for MCPBundles listing + claim (OTP email)
+    if (url.pathname === "/.well-known/mcpbundles.json") {
+      return new Response(
+        JSON.stringify({
+          maintainers: [
+            {
+              email: "shuvosarker42069@gmail.com",
+              name: "Shubo Chandro Sarker",
+            },
+          ],
+        }),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "Cache-Control": "public, max-age=300",
+            "Access-Control-Allow-Origin": "*",
+            "X-Bridgistic-Request-Id": requestId,
+          },
+        }
+      );
+    }
+
+    if (url.pathname === "/.well-known/security.txt") {
+      return new Response(
+        "Contact: mailto:shuvo@wpistic.com\nExpires: 2027-12-31T23:59:59.000Z\n",
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "text/plain; charset=utf-8",
+            "Cache-Control": "public, max-age=300",
+            "X-Bridgistic-Request-Id": requestId,
+          },
+        }
+      );
+    }
+
     const ip = request.headers.get("cf-connecting-ip") || "unknown";
     const isMcp = url.pathname === "/mcp";
     const routeClass = isMcp ? "mcp" : "auth";
