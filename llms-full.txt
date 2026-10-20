@@ -12,7 +12,7 @@ Give AI a safe control plane for WordPress. Connect Claude, ChatGPT, Codex, Gemi
 Bridgistic connects MCP clients to WordPress without handing over a WordPress administrator password. A site owner mints a scoped key. Requests are HMAC-signed. Writes can require human approval. Destructive operations can be snapshotted and restored. The local connection is the recommended default. Bridgistic Cloud is a public beta and has not completed an independent third-party security review.
 
 ## Pricing
-Free is $0. The Lifetime Deal welcome offer is $49 once for 1 license · 1 site, available until 31 December 2026 or 100 licenses, whichever comes first. Pro Monthly is $12 USD per month for 1 license · 5 sites. Pro Yearly is $99 USD per year for 1 license · 5 sites. Paddle is the merchant of record. Every purchase has a 7-day refund guarantee.
+Free is $0. The Lifetime Deal welcome offer is $49.99 once for 1 license · 1 site, available until 31 December 2026 or 100 licenses, whichever comes first. Pro Monthly is $12 USD per month for 1 license · 5 sites. Pro Yearly is $99 USD per year for 1 license · 5 sites. Paddle is the merchant of record. Every purchase has a 7-day refund guarantee.
 
 ## Bridgistic: Safe AI Control for WordPress via MCP
 URL: https://bridgistic.app/
@@ -148,7 +148,7 @@ Sections:
 Bridgistic adds a policy-controlled MCP bridge to WordPress. Compatible AI clients call structured tools through a dedicated connection key; the WordPress plugin verifies authentication, scopes and safety rules before an operation runs.
 
 ### Are unlimited schedules, advanced snapshots and audit export included today?
-Without a license, no. The free plugin includes up to 3 scheduled playbooks, up to 50 snapshots and a 90-day on-screen audit log. After you activate the key from your purchase email, those three open on that site. Skills marketplace, the agency dashboard, team permissions and white-label stay marked coming soon. Cloud Agent credits are not part of the license. The feature guide and the setup docs describe the current behavior.
+Without a license, the free caps stay: 3 schedules, 50 snapshots, and a 90-day on-screen log. A live license opens unlimited schedules, snapshots past 50, audit export, the skills marketplace, the agency dashboard and team permissions. White-label and Cloud Agent credits stay marked coming soon and are not included in the $49.99 Lifetime Deal. The feature guide and the setup docs describe the current behavior.
 
 ### Do I give Claude, ChatGPT or Codex my WordPress admin password?
 No. Bridgistic creates its own scoped key ID and secret for the connection. Local requests are HMAC-signed, and the WordPress administrator password is not the integration credential.

@@ -122,14 +122,14 @@ The plugin download is free and open source, and the plugin never gates its brid
 
 | | Free | Pro: Lifetime Deal (welcome offer) | Pro: monthly / yearly |
 | --- | --- | --- | --- |
-| Price | $0 | **$49 one time.** Offered until 31 December 2026, 100 licenses only. | **$12 / month** or **$99 / year** |
+| Price | $0 | **$49.99 one time.** Offered until 31 December 2026, 100 licenses only. | **$12 / month** or **$99 / year** |
 | Licenses · sites | — | 1 license · 1 site | 1 license · 5 sites |
 | Full local bridge: scoped keys, HMAC signing, approvals, snapshots, audit log, 54 MCP tools | ✅ | ✅ | ✅ |
 | Playbooks and schedules | ✅ (up to 3 active schedules) | ✅ | ✅ |
 | Bridgistic dashboard at `dashboard.bridgistic.app` | — | ✅ | ✅ |
 | Updates | GitHub releases | All future updates | While the plan is active |
-| Unlimited schedules, snapshots past 50, audit log export | — | Opens when the license is live on the site | Opens when the license is live on the site |
-| Skills marketplace, agency dashboard, team permissions, white-label, Cloud Agent credits | — | Not in this release | Not in this release |
+| Unlimited schedules, snapshots past 50, audit log export, skills marketplace, agency dashboard, team permissions | — | Included with a live license. Later app updates included | Included with a live license. Later app updates included |
+| White-label, Cloud Agent credits | — | Not included | Not included |
 
 Prices are in USD and taxes are calculated at checkout. Every purchase has a 7-day refund guarantee. The current offer and terms are on [bridgistic.app](https://bridgistic.app): [Terms](https://bridgistic.app/terms), [Privacy](https://bridgistic.app/privacy), [Refund policy](https://bridgistic.app/refund-policy), [How purchases work](https://bridgistic.app/how-purchases-work).
 
