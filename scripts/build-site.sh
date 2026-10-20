@@ -88,7 +88,7 @@ fi
 printf 'bridgistic.app\n' > "$OUT/CNAME"
 cp assets/bridgistic-icon.png assets/bridgistic-logo.png "$OUT/assets/"
 # Legal and ecosystem pages (static; served at /terms, /privacy, /refund-policy, /how-purchases-work).
-cp terms.html privacy.html refund-policy.html how-purchases-work.html "$OUT/"
+cp terms.html privacy.html refund-policy.html how-purchases-work.html features.html docs.html "$OUT/"
 cp assets/legal.css "$OUT/assets/"
 # Crawl files are rebuilt from the pages above, so a content edit cannot ship
 # a stale sitemap, robots.txt or LLM summary. Also refreshes the copies in

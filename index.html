@@ -127,6 +127,11 @@
           },
           {
             "@type": "Question",
+            "name": "Are unlimited schedules, advanced snapshots and audit export included today?",
+            "acceptedAnswer": {"@type":"Answer","text":"No. The free plugin includes up to 3 scheduled playbooks, up to 50 snapshots and a 90-day audit log. Those three paid lines stay marked coming soon because the public plugin does not unlock them. See https://bridgistic.app/features and https://bridgistic.app/docs."}
+          },
+          {
+            "@type": "Question",
             "name": "Does Bridgistic require a WordPress administrator password?",
             "acceptedAnswer": {"@type":"Answer","text":"No. Bridgistic uses its own scoped connection keys and HMAC-signed requests instead of sharing a WordPress administrator password with the AI client."}
           },
@@ -1103,6 +1108,8 @@
         <a href="#security">Security</a>
         <a href="#clients">AI clients</a>
         <a href="#features">Features</a>
+        <a href="/features">Guide</a>
+        <a href="/docs">Docs</a>
         <a href="#pricing">Pricing</a>
         <a href="#faq">FAQ</a>
         <a href="https://dashboard.bridgistic.app/">Dashboard</a>
@@ -1722,7 +1729,7 @@ Bridgistic Cloud is currently a public beta.</pre>
             <span class="btn btn-disabled offer-only" aria-disabled="true">Opens when the welcome offer ends</span>
           </article>
         </div>
-        <div class="price-fine center">Prices in USD. Payment is processed by Paddle, our reseller and Merchant of Record. Taxes are calculated at checkout. Every purchase has a 7-day refund guarantee.</div>
+        <div class="price-fine center">Prices in USD. Payment is processed by Paddle, our reseller and Merchant of Record. Taxes are calculated at checkout. Every purchase has a 7-day refund guarantee. The three gold coming-soon lines are not unlocked in the free plugin. <a href="/features">The feature guide</a> says what ships today.</div>
       </div>
     </section>
 
@@ -1735,6 +1742,7 @@ Bridgistic Cloud is currently a public beta.</pre>
 
         <div class="faq">
           <details class="reveal"><summary>What exactly does Bridgistic do?</summary><div class="faq-body">Bridgistic adds a policy-controlled MCP bridge to WordPress. Compatible AI clients call structured tools through a dedicated connection key; the WordPress plugin verifies authentication, scopes and safety rules before an operation runs.</div></details>
+          <details class="reveal"><summary>Are unlimited schedules, advanced snapshots and audit export included today?</summary><div class="faq-body">No. The free plugin includes up to 3 scheduled playbooks, up to 50 snapshots and a 90-day audit log. Those three paid lines stay marked coming soon because the public plugin does not unlock them, and a license key is refused. The <a href="/features">feature guide</a> and the <a href="/docs">setup docs</a> describe the current behavior.</div></details>
           <details class="reveal"><summary>Do I give Claude, ChatGPT or Codex my WordPress admin password?</summary><div class="faq-body">No. Bridgistic creates its own scoped key ID and secret for the connection. Local requests are HMAC-signed, and the WordPress administrator password is not the integration credential.</div></details>
           <details class="reveal"><summary>Which permission preset should I use first?</summary><div class="faq-body">Start with <strong>Read-only</strong>. Move to Content Manager or Safe Admin only when the workflow requires writes. Developer Mode exposes the highest-risk tools and should be reserved for sites you fully control.</div></details>
           <details class="reveal"><summary>Can I require approval before the AI changes my site?</summary><div class="faq-body">Yes. Keys can require approval for writes or destructive operations. Pending actions appear in <strong>Bridgistic → Approvals</strong> so a human can allow or deny them.</div></details>
@@ -1787,7 +1795,7 @@ Bridgistic Cloud is currently a public beta.</pre>
         </a>
         <p>A local-first MCP bridge for giving AI assistants controlled, auditable and reversible access to WordPress.</p>
       </div>
-      <div class="footer-col"><h3>Product</h3><a href="#how">How it works</a><a href="#security">Security</a><a href="#clients">AI clients</a><a href="#pricing">Pricing</a><a href="https://dashboard.bridgistic.app/">Dashboard</a></div>
+      <div class="footer-col"><h3>Product</h3><a href="#how">How it works</a><a href="#security">Security</a><a href="/features">Feature guide</a><a href="/docs">Docs</a><a href="#pricing">Pricing</a><a href="https://dashboard.bridgistic.app/">Dashboard</a></div>
       <div class="footer-col"><h3>Resources</h3><a href="https://github.com/Wordpressistic/bridgistic" target="_blank" rel="noopener">GitHub</a><a href="__BRIDGISTIC_RELEASE_PAGE__" target="_blank" rel="noopener">Releases</a><a href="https://github.com/Wordpressistic/bridgistic/issues" target="_blank" rel="noopener">Support</a><a href="https://github.com/Wordpressistic/bridgistic/blob/main/docs/SECURITY.md" target="_blank" rel="noopener">Security</a><a href="https://github.com/Wordpressistic/bridgistic/blob/main/docs/REPO-STRUCTURE.md" target="_blank" rel="noopener">Repo structure</a><a href="/sitemap.html">Sitemap</a></div>
       <div class="footer-col"><h3>Ecosystem</h3><a href="https://wpistic.com/" target="_blank" rel="noopener">WPistic</a><a href="https://wordpressistic.com/" target="_blank" rel="noopener">WordPressistic</a><a href="https://wpistic.com/pricing" target="_blank" rel="noopener">Plans</a></div>
       <div class="footer-col footer-legal"><h3>Legal</h3><a href="/terms">Terms of Service</a><a href="/privacy">Privacy Policy</a><a href="/refund-policy">Refund Policy</a><a href="/how-purchases-work">How purchases work</a></div>

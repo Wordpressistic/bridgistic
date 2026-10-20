@@ -18,6 +18,8 @@ import { dirname, join, resolve } from "node:path";
 const ORIGIN = "https://bridgistic.app";
 const PAGES = [
   { file: "index.html", path: "/", changefreq: "weekly", priority: "1.0" },
+  { file: "features.html", path: "/features", changefreq: "weekly", priority: "0.8" },
+  { file: "docs.html", path: "/docs", changefreq: "weekly", priority: "0.8" },
   { file: "terms.html", path: "/terms", changefreq: "monthly", priority: "0.5" },
   { file: "privacy.html", path: "/privacy", changefreq: "monthly", priority: "0.5" },
   { file: "refund-policy.html", path: "/refund-policy", changefreq: "monthly", priority: "0.4" },

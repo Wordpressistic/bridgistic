@@ -8,6 +8,24 @@ import { join } from "node:path";
 const root = new URL("../../", import.meta.url);
 const read = (file) => readFileSync(new URL(file, root), "utf8");
 
+test("feature guide and docs cite the site and do not invent an unlock", () => {
+  const index = read("index.html");
+  assert.match(index, /href="\/features"/);
+  assert.match(index, /href="\/docs"/);
+  assert.equal((index.match(/class="soon">Coming soon</g) || []).length, 12);
+  for (const file of ["features.html", "docs.html"]) {
+    const html = read(file);
+    const text = html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ");
+    assert.equal(/!/.test(text), false, file);
+    assert.match(html, /WordPressistic LLC/);
+    assert.match(html, /https:\/\/bridgistic\.app\//);
+    assert.match(html, /modelcontextprotocol\.io/);
+  }
+  assert.match(read("features.html"), /Coming soon/);
+  assert.match(read("features.html"), /up to 3 enabled schedules|3 enabled schedules/);
+  assert.match(read("docs.html"), /href="\/features"/);
+});
+
 test("homepage points at the sitemap and names the publisher", () => {
   const html = read("index.html");
   assert.match(html, /rel="sitemap"/);
@@ -39,7 +57,7 @@ test("site build regenerates the crawl files", () => {
     assert.equal(read(file), a, `${file} in the repo matches the generator`);
   }
   const xml = read("sitemap.xml");
-  for (const loc of ["https://bridgistic.app/", "https://bridgistic.app/terms", "https://bridgistic.app/privacy", "https://bridgistic.app/refund-policy", "https://bridgistic.app/how-purchases-work", "https://bridgistic.app/sitemap.html"]) {
+  for (const loc of ["https://bridgistic.app/", "https://bridgistic.app/features", "https://bridgistic.app/docs", "https://bridgistic.app/terms", "https://bridgistic.app/privacy", "https://bridgistic.app/refund-policy", "https://bridgistic.app/how-purchases-work", "https://bridgistic.app/sitemap.html"]) {
     assert.ok(xml.includes(`<loc>${loc}</loc>`), loc);
   }
   assert.equal(xml.includes("/#"), false, "XML sitemap has no fragment URLs");
