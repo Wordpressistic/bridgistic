@@ -3,6 +3,9 @@ main = "src/index.ts"
 compatibility_date = "2025-09-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Required by wrangler preview / Workers Builds
+[previews]
+
 # wpistic.cloud is on this Cloudflare account and mcp.wpistic.cloud already
 # routes to this Worker. Verify the DNS route is active in the dashboard if
 # requests to it don't reach this Worker.
