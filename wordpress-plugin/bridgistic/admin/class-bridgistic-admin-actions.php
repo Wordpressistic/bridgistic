@@ -19,6 +19,7 @@ declare( strict_types=1 );
 namespace Bridgistic\Admin;
 
 use Bridgistic\AuditLog;
+use Bridgistic\LicenseLink;
 use Bridgistic\Oauth;
 use Bridgistic\Playbooks;
 use Bridgistic\Snapshot;
@@ -50,6 +51,9 @@ final class Actions {
 		add_action( 'admin_post_bridgistic_schedule_action', array( $this, 'handle_schedule_action' ) );
 		add_action( 'admin_post_bridgistic_export_package', array( $this, 'handle_export_package' ) );
 		add_action( 'admin_post_bridgistic_oauth_consent', array( $this, 'handle_oauth_consent' ) );
+		add_action( 'admin_post_bridgistic_license_activate', array( $this, 'handle_license_activate' ) );
+		add_action( 'admin_post_bridgistic_license_validate', array( $this, 'handle_license_validate' ) );
+		add_action( 'admin_post_bridgistic_license_deactivate', array( $this, 'handle_license_deactivate' ) );
 
 		// AJAX endpoints (admin only; no nopriv variants on purpose).
 		add_action( 'wp_ajax_bridgistic_setup_create_key', array( $this, 'ajax_setup_create_key' ) );
@@ -670,5 +674,47 @@ final class Actions {
 		}
 
 		wp_send_json_success( $res );
+	}
+
+	// ---- license link (Premium Features page) ---------------------------------
+
+	/** Redirect back to the Premium screen with a result flag; errors carry detail. */
+	private function license_redirect( string $flag, ?WP_Error $error = null ): void {
+		if ( $error ) {
+			set_transient( 'bridgistic_license_error', $error->get_error_message(), 120 );
+		}
+		wp_safe_redirect( admin_url( 'admin.php?page=bridgistic-premium&license=' . rawurlencode( $flag ) ) );
+		exit;
+	}
+
+	public function handle_license_activate(): void {
+		$this->guard_post( 'bridgistic_license_activate' );
+		$key = isset( $_POST['license_key'] ) ? sanitize_text_field( wp_unslash( $_POST['license_key'] ) ) : '';
+		if ( '' === $key ) {
+			$this->license_redirect( 'error', new WP_Error( 'bridgistic_license_empty', __( 'Enter a license key first.', 'bridgistic' ) ) );
+		}
+		$r = LicenseLink::activate( $key );
+		if ( is_wp_error( $r ) ) {
+			AuditLog::record( 'admin-ui', 'license:activate', 'error' );
+			$this->license_redirect( 'error', $r );
+		}
+		AuditLog::record( 'admin-ui', 'license:activate', 'ok' );
+		$this->license_redirect( 'activated' );
+	}
+
+	public function handle_license_validate(): void {
+		$this->guard_post( 'bridgistic_license_validate' );
+		$r = LicenseLink::validate();
+		if ( is_wp_error( $r ) ) {
+			$this->license_redirect( 'error', $r );
+		}
+		$this->license_redirect( 'validated' );
+	}
+
+	public function handle_license_deactivate(): void {
+		$this->guard_post( 'bridgistic_license_deactivate' );
+		LicenseLink::deactivate();
+		AuditLog::record( 'admin-ui', 'license:deactivate', 'ok' );
+		$this->license_redirect( 'deactivated' );
 	}
 }

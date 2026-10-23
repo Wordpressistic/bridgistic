@@ -34,11 +34,21 @@ final class LicenseLink {
 
 	public const OPTION       = 'bridgistic_license_link';
 	public const UUID_OPTION  = 'wpistic_installation_uuid';
-	public const DEFAULT_API  = 'https://api.wpistic.com/api/v1/licenses';
+	/**
+	 * Bridgistic keys are issued by the Bridgistic console (Paddle purchases
+	 * land there), so that is the default activation endpoint. The WPistic
+	 * ecosystem server speaks the identical contract — point BRIDGISTIC_LICENSE_API
+	 * at https://api.wpistic.com/api/v1/licenses when a deployment is aliased there.
+	 */
+	public const DEFAULT_API  = 'https://admin.bridgistic.app/api/v1/licenses';
 
-	/** Base URL, overridable for staging with the BRIDGISTIC_LICENSE_API constant. */
+	/** Base URL: BRIDGISTIC_LICENSE_API constant, bridgistic_license_api filter, then the default. */
 	public static function api(): string {
-		return defined( 'BRIDGISTIC_LICENSE_API' ) ? rtrim( (string) BRIDGISTIC_LICENSE_API, '/' ) : self::DEFAULT_API;
+		if ( defined( 'BRIDGISTIC_LICENSE_API' ) ) {
+			return rtrim( (string) BRIDGISTIC_LICENSE_API, '/' );
+		}
+		$filtered = apply_filters( 'bridgistic_license_api', self::DEFAULT_API );
+		return is_string( $filtered ) && '' !== $filtered ? rtrim( $filtered, '/' ) : self::DEFAULT_API;
 	}
 
 	/** Stable per-site id shared by WPistic plugins. */

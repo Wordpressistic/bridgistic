@@ -5,6 +5,18 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 ## [Unreleased]
 
+## [1.5.5] — 2026-10-23
+
+### Added
+
+- License activation in WP Admin: the Premium Features screen now carries the license panel — paste a key, activate it on the site, re-validate with the license server or deactivate. The status card shows plan, masked key, bound domain and entitlements.
+- The license endpoint defaults to the Bridgistic console (`https://admin.bridgistic.app/api/v1/licenses`), where Paddle purchases issue keys; the `BRIDGISTIC_LICENSE_API` constant or the `bridgistic_license_api` filter retarget it (e.g. an aliased WPistic ecosystem server).
+
+### Changed
+
+- `License::activate()`, `validate_now()` and `deactivate()` now run the real license link instead of refusing; `get_status()` reports the live link state.
+- Dashboard license screen: points at the plugin license panel when no site is connected, and the Lifetime Deal price reads $49.99.
+
 ## [1.5.4] — 2026-10-20
 
 ### Added

@@ -60,21 +60,24 @@ final class License {
     }
 
     /**
-     * Stable, non-sensitive status shape for any remaining integrations.
+     * Stable, non-sensitive status shape for any remaining integrations,
+     * fed by the live license link when one is connected.
      *
      * @return array<string,mixed>
      */
     public static function get_status(): array {
+        $link = LicenseLink::status();
+        $on   = ! empty( $link['connected'] );
         return array(
-            'connected'            => false,
-            'active'               => false,
-            'plan'                 => 'free',
-            'status'               => 'free_only',
-            'key_mask'             => '',
-            'expires_at'           => '',
+            'connected'            => $on,
+            'active'               => self::has_active_license(),
+            'plan'                 => $on ? (string) ( $link['plan'] ?? '' ) : 'free',
+            'status'               => $on ? (string) ( $link['status'] ?? 'unknown' ) : 'free_only',
+            'key_mask'             => (string) ( $link['key_mask'] ?? '' ),
+            'expires_at'           => (string) ( $link['expires_at'] ?? '' ),
             'grace_left'           => 0,
             'grace_period_ends_at' => '',
-            'entitlements'         => array(),
+            'entitlements'         => (array) ( $link['entitlements'] ?? array() ),
         );
     }
 
@@ -109,28 +112,44 @@ final class License {
         return __( 'This feature is part of Bridgistic SaaS and is not included in the free local plugin.', 'bridgistic' );
     }
 
-    /** Paid license activation is intentionally unavailable in the free build. */
-    public static function activate( string $key ): array {
-        unset( $key );
-        return array(
-            'ok'      => false,
-            'message' => __( 'Paid licensing is not included in the free Bridgistic plugin.', 'bridgistic' ),
-        );
-    }
+	/** Paid license activation runs through the WPistic license link. */
+	public static function activate( string $key ): array {
+		$r = LicenseLink::activate( $key );
+		if ( is_wp_error( $r ) ) {
+			return array(
+				'ok'      => false,
+				'message' => $r->get_error_message(),
+			);
+		}
+		return array(
+			'ok'      => true,
+			'message' => __( 'License activated on this site.', 'bridgistic' ),
+			'status'  => $r,
+		);
+	}
 
-    /** No remote seat or local license state exists to deactivate. */
-    public static function deactivate(): array {
-        return array(
-            'ok'      => false,
-            'message' => __( 'The free Bridgistic plugin has no license connection to deactivate.', 'bridgistic' ),
-        );
-    }
+	/** Deactivation clears local state and releases the seat at the server. */
+	public static function deactivate(): array {
+		LicenseLink::deactivate();
+		return array(
+			'ok'      => true,
+			'message' => __( 'License deactivated on this site.', 'bridgistic' ),
+		);
+	}
 
-    /** No remote validation request is made by the free build. */
-    public static function validate_now(): array {
-        return array(
-            'ok'      => false,
-            'message' => __( 'The free Bridgistic plugin does not contact a licensing service.', 'bridgistic' ),
-        );
-    }
+	/** Validation replays the signed status from the license server. */
+	public static function validate_now(): array {
+		$r = LicenseLink::validate();
+		if ( is_wp_error( $r ) ) {
+			return array(
+				'ok'      => false,
+				'message' => $r->get_error_message(),
+			);
+		}
+		return array(
+			'ok'      => true,
+			'message' => __( 'License status confirmed with the license server.', 'bridgistic' ),
+			'status'  => $r,
+		);
+	}
 }

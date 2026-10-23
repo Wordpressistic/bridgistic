@@ -1,7 +1,9 @@
 <?php
 /**
- * Premium Features: locked showcase of the Bridgistic SaaS direction.
- * Display only — no unlock system, no billing, no SaaS logic.
+ * Premium Features: the license link plus a locked showcase of the Bridgistic
+ * SaaS direction. A live WPistic license opens the three shipped gates
+ * (unlimited schedules, advanced snapshots, audit export); the marketplace,
+ * agency, team and white-label lines stay SaaS.
  *
  * @package Bridgistic
  */
@@ -9,6 +11,8 @@
 declare( strict_types=1 );
 
 namespace Bridgistic\Admin;
+
+use Bridgistic\LicenseLink;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -22,7 +26,10 @@ final class PremiumPage extends Page {
 
 	protected function data(): array {
 		return array(
-			'sections' => array(
+			'license'    => LicenseLink::status(),
+			'action_url' => admin_url( 'admin-post.php' ),
+			'notice'     => isset( $_GET['license'] ) ? sanitize_key( wp_unslash( $_GET['license'] ) ) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			'sections'   => array(
 				array(
 					'icon'        => 'sparkle',
 					'label'       => __( 'AI Skills Marketplace', 'bridgistic' ),
