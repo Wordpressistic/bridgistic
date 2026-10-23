@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 ## [Unreleased]
 
+## [1.5.6] — 2026-10-23
+
+### Fixed
+
+- The version constant was a literal that drifted from the release: 1.5.5 files ran with `BRIDGISTIC_VERSION` reading 1.5.4 (footers, debug reports, license-server version reports). The constant is now derived from the plugin header and can never drift again.
+
 ## [1.5.5] — 2026-10-23
 
 ### Added
