@@ -26,6 +26,9 @@ declare( strict_types=1 );
 
 namespace Bridgistic;
 
+use Bridgistic\Security\KeyStore;
+use Bridgistic\Security\Scopes;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -66,6 +69,57 @@ final class LicenseLink {
 		return strtolower( preg_replace( '/^www\./', '', $host ) ?? $host );
 	}
 
+	/**
+	 * The auto-paired dashboard key. Minted once per site at first license
+	 * activation and pushed to the license server on every activate/validate,
+	 * so the license owner's Bridgistic dashboard connects this site with no
+	 * manual key ceremony. Heals itself: if the key is deleted in WP Admin,
+	 * the next mint replaces it. The secret lives here (non-autoloaded option)
+	 * and at the license server, encrypted at rest — never in a URL.
+	 *
+	 * @return array{key_id:string,secret:string} Empty when minting is impossible.
+	 */
+	private static function dashboard_key(): array {
+		$s  = self::state();
+		$dk = $s['dashboard_key'] ?? array();
+		if ( is_array( $dk ) && ! empty( $dk['key_id'] ) && ! empty( $dk['secret'] ) ) {
+			return array( 'key_id' => (string) $dk['key_id'], 'secret' => (string) $dk['secret'] );
+		}
+		if ( ! class_exists( KeyStore::class ) ) {
+			return array();
+		}
+		$scopes = array(
+			Scopes::SITE_READ,
+			Scopes::POSTS_READ,
+			Scopes::POSTS_WRITE,
+			Scopes::MEDIA_WRITE,
+			Scopes::USERS_READ,
+			Scopes::OPTIONS_READ,
+			Scopes::OPTIONS_WRITE,
+			Scopes::PLUGINS_MANAGE,
+			Scopes::DB_READ,
+			Scopes::FS_READ,
+			Scopes::SNAPSHOT,
+			Scopes::MEMORY_READ,
+			Scopes::MEMORY_WRITE,
+			Scopes::PLAYBOOK_MANAGE,
+			Scopes::SCHEDULE_MANAGE,
+			Scopes::AUDIT_READ,
+			Scopes::LICENSE_MANAGE,
+			Scopes::WOO_PRODUCTS_READ,
+			Scopes::WOO_ORDERS_READ,
+			Scopes::WOO_CUSTOMERS_READ,
+			Scopes::WOO_ANALYTICS_READ,
+		);
+		$created = KeyStore::create( __( 'Bridgistic Dashboard (auto-paired)', 'bridgistic' ), $scopes, array(), 240, true, 'dashboard' );
+		if ( empty( $created['key_id'] ) || empty( $created['secret'] ) ) {
+			return array();
+		}
+		$s['dashboard_key'] = array( 'key_id' => (string) $created['key_id'], 'secret' => (string) $created['secret'] );
+		self::store( $s );
+		return $s['dashboard_key'];
+	}
+
 	public static function environment(): string {
 		$env = function_exists( 'wp_get_environment_type' ) ? wp_get_environment_type() : 'production';
 		return in_array( $env, array( 'local', 'development', 'staging', 'production' ), true ) ? $env : 'production';
@@ -84,6 +138,9 @@ final class LicenseLink {
 			'expires_at'   => $on ? ( $resp['expires_at'] ?? null ) : null,
 			'validated_at' => $on && ! empty( $s['validated_at'] ) ? gmdate( 'c', (int) $s['validated_at'] ) : null,
 			'domain'       => $on ? (string) ( $resp['activation']['domain'] ?? self::domain() ) : null,
+			// Masked license-owner email: tells the member which Bridgistic
+			// dashboard account unlocks Pro and the marketplace collection.
+			'member'       => $on ? (string) ( $resp['member'] ?? '' ) : '',
 			'entitlements' => $on ? self::bridgistic_entitlements( (array) ( $resp['entitlements'] ?? array() ) ) : array(),
 		);
 	}
@@ -94,19 +151,24 @@ final class LicenseLink {
 		if ( '' === $raw_key || strlen( $raw_key ) > 200 ) {
 			return new \WP_Error( 'bridgistic_license_key', 'Enter a valid license key.', array( 'status' => 400 ) );
 		}
+		$body = array(
+			'key'               => $raw_key,
+			'domain'            => self::domain(),
+			'installation_uuid' => self::installation_uuid(),
+			'site_url'          => site_url(),
+			'home_url'          => home_url(),
+			'environment'       => self::environment(),
+			'product_version'   => defined( 'BRIDGISTIC_VERSION' ) ? BRIDGISTIC_VERSION : '',
+			'wp_version'        => get_bloginfo( 'version' ),
+			'php_version'       => PHP_VERSION,
+		);
+		$dashboard_key = self::dashboard_key();
+		if ( $dashboard_key ) {
+			$body['dashboard_key'] = $dashboard_key;
+		}
 		$resp = self::post(
 			'/activate',
-			array(
-				'key'               => $raw_key,
-				'domain'            => self::domain(),
-				'installation_uuid' => self::installation_uuid(),
-				'site_url'          => site_url(),
-				'home_url'          => home_url(),
-				'environment'       => self::environment(),
-				'product_version'   => defined( 'BRIDGISTIC_VERSION' ) ? BRIDGISTIC_VERSION : '',
-				'wp_version'        => get_bloginfo( 'version' ),
-				'php_version'       => PHP_VERSION,
-			),
+			$body,
 			// One key per attempt: the server replays a cached response for a repeated
 			// key, so a fixed key would hand back the token revoked by an earlier deactivate.
 			array( 'X-Idempotency-Key' => self::installation_uuid() . '-' . md5( $raw_key ) . '-' . ( function_exists( 'wp_generate_uuid4' ) ? wp_generate_uuid4() : bin2hex( random_bytes( 16 ) ) ) )
@@ -138,16 +200,18 @@ final class LicenseLink {
 		if ( empty( $s['activation_token'] ) ) {
 			return new \WP_Error( 'bridgistic_license_none', 'No license is activated on this site.', array( 'status' => 400 ) );
 		}
-		$resp = self::post(
-			'/validate',
-			array(
-				'activation_token'  => (string) $s['activation_token'],
-				'domain'            => self::bound( $s, 'domain', self::domain() ),
-				'environment'       => self::bound( $s, 'environment', self::environment() ),
-				'installation_uuid' => self::installation_uuid(),
-				'plugin_version'    => defined( 'BRIDGISTIC_VERSION' ) ? BRIDGISTIC_VERSION : '',
-			)
+		$validate_body = array(
+			'activation_token'  => (string) $s['activation_token'],
+			'domain'            => self::bound( $s, 'domain', self::domain() ),
+			'environment'       => self::bound( $s, 'environment', self::environment() ),
+			'installation_uuid' => self::installation_uuid(),
+			'plugin_version'    => defined( 'BRIDGISTIC_VERSION' ) ? BRIDGISTIC_VERSION : '',
 		);
+		$dashboard_key = self::dashboard_key();
+		if ( $dashboard_key ) {
+			$validate_body['dashboard_key'] = $dashboard_key;
+		}
+		$resp = self::post( '/validate', $validate_body );
 		if ( is_wp_error( $resp ) ) {
 			return $resp;
 		}

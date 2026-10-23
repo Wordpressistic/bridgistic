@@ -46,6 +46,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			);
 			?>
 		</p>
+		<?php if ( ! empty( $license['member'] ) ) : ?>
+			<p class="bridgistic-help"><?php printf( esc_html__( 'Marketplace membership: sign in to %1$s with %2$s — the Pro skills collection unlocks there.', 'bridgistic' ), '<a href="https://admin.bridgistic.app/" target="_blank" rel="noopener noreferrer">admin.bridgistic.app</a>', '<strong>' . esc_html( (string) $license['member'] ) . '</strong>' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></p>
+		<?php endif; ?>
 	<?php else : ?>
 		<p class="bridgistic-help"><?php esc_html_e( 'Paste your Bridgistic license key (BRG-…, from your purchase email or the Bridgistic console) to unlock unlimited scheduled playbooks, advanced snapshots and audit export on this site.', 'bridgistic' ); ?></p>
 	<?php endif; ?>
@@ -108,30 +111,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <section class="bridgistic-grid is-3 bridgistic-stagger">
 	<?php foreach ( $data['sections'] as $section ) : ?>
-		<article class="bridgistic-card bridgistic-locked-card is-tall">
-			<div class="bridgistic-locked-blur" aria-hidden="true">
-				<div class="bridgistic-skeleton-line"></div>
-				<div class="bridgistic-skeleton-line is-short"></div>
-				<div class="bridgistic-skeleton-line"></div>
-				<div class="bridgistic-skeleton-line is-short"></div>
-			</div>
-			<div class="bridgistic-locked-overlay">
+		<?php if ( ! empty( $section['live'] ) ) : ?>
+			<article class="bridgistic-card bridgistic-fade-in">
 				<?php echo Page::icon( (string) $section['icon'], 22 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-				<h3>
-					<?php echo Page::icon( 'lock', 14 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-					<?php echo esc_html( (string) $section['label'] ); ?>
-				</h3>
+				<h3><?php echo esc_html( (string) $section['label'] ); ?></h3>
 				<p><?php echo esc_html( (string) $section['description'] ); ?></p>
-				<?php if ( ! empty( $section['items'] ) ) : ?>
-					<ul class="bridgistic-locked-list">
-						<?php foreach ( $section['items'] as $item ) : ?>
-							<li><?php echo esc_html( (string) $item ); ?></li>
-						<?php endforeach; ?>
-					</ul>
-				<?php endif; ?>
-				<?php echo Page::badge( 'muted', __( 'Coming in Bridgistic SaaS', 'bridgistic' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-				<a class="bridgistic-button is-ghost is-small" href="https://wpistic.com/pricing" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Learn More', 'bridgistic' ); ?></a>
-			</div>
-		</article>
+				<?php echo Page::badge( 'success', (string) $section['live_badge'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+				<a class="bridgistic-button is-primary is-small" href="<?php echo esc_url( (string) $section['live_href'] ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( (string) $section['live_cta'] ); ?></a>
+			</article>
+		<?php else : ?>
+			<article class="bridgistic-card bridgistic-locked-card is-tall">
+				<div class="bridgistic-locked-blur" aria-hidden="true">
+					<div class="bridgistic-skeleton-line"></div>
+					<div class="bridgistic-skeleton-line is-short"></div>
+					<div class="bridgistic-skeleton-line"></div>
+					<div class="bridgistic-skeleton-line is-short"></div>
+				</div>
+				<div class="bridgistic-locked-overlay">
+					<?php echo Page::icon( (string) $section['icon'], 22 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+					<h3>
+						<?php echo Page::icon( 'lock', 14 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+						<?php echo esc_html( (string) $section['label'] ); ?>
+					</h3>
+					<p><?php echo esc_html( (string) $section['description'] ); ?></p>
+					<?php if ( ! empty( $section['items'] ) ) : ?>
+						<ul class="bridgistic-locked-list">
+							<?php foreach ( $section['items'] as $item ) : ?>
+								<li><?php echo esc_html( (string) $item ); ?></li>
+							<?php endforeach; ?>
+						</ul>
+					<?php endif; ?>
+					<?php echo Page::badge( 'muted', __( 'Coming in Bridgistic SaaS', 'bridgistic' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+					<a class="bridgistic-button is-ghost is-small" href="https://wpistic.com/pricing" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Learn More', 'bridgistic' ); ?></a>
+				</div>
+			</article>
+		<?php endif; ?>
 	<?php endforeach; ?>
 </section>

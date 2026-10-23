@@ -5,6 +5,17 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 ## [Unreleased]
 
+## [1.5.7] — 2026-10-23
+
+### Added
+
+- **Zero-step dashboard connection.** At license activation (and every validate), the plugin mints an auto-paired "Bridgistic Dashboard" key and pushes it to the license server. The license owner's dashboard picks the site up automatically — no key minting, no copy-paste. The key self-heals: delete it in WP Admin and the next validate replaces it.
+- The license status now carries the masked owner email, and the Premium screen shows which Bridgistic account unlocks the Pro marketplace.
+
+### Changed
+
+- Premium Features: the **AI Skills Marketplace** card is now a live link to marketplace.bridgistic.app (100 free skills, Pro collection for members) instead of a "coming soon" placeholder; **Advanced Logs & Snapshots** shows "Included with your license" once a license is active.
+
 ## [1.5.6] — 2026-10-23
 
 ### Fixed
