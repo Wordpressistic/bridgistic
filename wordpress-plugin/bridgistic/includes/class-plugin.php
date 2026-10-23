@@ -208,6 +208,16 @@ final class Plugin {
 		if ( headers_sent() || ! $request instanceof \WP_REST_Request ) {
 			return $served;
 		}
+		// Every bridge response must be uncacheable. Each call carries its own
+		// key, signature and nonce, but caches key on the URL alone — a cached
+		// 200 would serve one key's data to another and freeze dashboard data
+		// at the edge. Applies to the whole namespace, auth failures included,
+		// with or without an Origin header.
+		if ( str_starts_with( (string) $request->get_route(), '/' . BRIDGISTIC_REST_NAMESPACE ) ) {
+			header( 'Cache-Control: no-store, no-cache, must-revalidate, max-age=0', true );
+			header( 'Pragma: no-cache', true );
+			header( 'Expires: Wed, 11 Jan 1984 05:00:00 GMT', true );
+		}
 		$origin = self::dashboard_cors_origin( (string) $request->get_route(), (string) get_http_origin() );
 		if ( '' !== $origin ) {
 			header( 'Access-Control-Allow-Origin: ' . $origin, true );
