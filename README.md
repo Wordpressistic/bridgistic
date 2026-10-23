@@ -26,14 +26,14 @@
 
 Bridgistic lets AI assistants such as Claude, ChatGPT, OpenAI Codex, Gemini CLI, Cursor or any other [Model Context Protocol](https://modelcontextprotocol.io) client work on a real WordPress site. The assistant never gets an administrator password or a full-admin Application Password. Each connection uses its own least-privilege key. Every request is HMAC-signed and checked against that key's scopes. Risky operations can be dry-run, held for a human to approve, and snapshotted before they run.
 
-The project has four components:
+The project has four components. This repository carries the WordPress plugin — the free, GPL core of all of them:
 
-| Component | What it is | Where it lives |
+| Component | What it is | Where to get it |
 | --- | --- | --- |
-| **WordPress plugin** | The free bridge. It provides the REST API, keys and scopes, the Guard (dry run → approval → snapshot → execute), the audit log, snapshots, playbooks, the health check and the setup wizard. | [`wordpress-plugin/bridgistic`](wordpress-plugin/bridgistic) |
-| **MCP server** | A local stdio (or Streamable HTTP) MCP server with 54 tools. It signs every call to your site. Published on npm as `bridgistic-mcp-server`. | [`mcp-server`](mcp-server) |
-| **Claude integrations** | A one-click Claude Desktop extension (`bridgistic.mcpb`) and a Claude Code plugin marketplace. | [`mcpb`](mcpb), [`plugins/bridgistic`](plugins/bridgistic), [`.claude-plugin`](.claude-plugin) |
-| **Bridgistic Cloud** | A hosted OAuth 2.1 + PKCE relay at `mcp.bridgistic.app` for remote-only clients such as ChatGPT. **Public beta.** | [`cloud`](cloud), [`openai-plugin`](openai-plugin) |
+| **WordPress plugin** | The free bridge: REST API, keys and scopes, the Guard (dry run → approval → snapshot → execute), audit log, snapshots, playbooks, health check and setup wizard. | This repository — [`wordpress-plugin/bridgistic`](wordpress-plugin/bridgistic) and the [latest release](https://github.com/Wordpressistic/bridgistic/releases/latest) |
+| **MCP server** | A local stdio (or Streamable HTTP) MCP server with 54 tools. It signs every call to your site. Published on npm as `bridgistic-mcp-server`. | `npx bridgistic-mcp-server` · [npm](https://www.npmjs.com/package/bridgistic-mcp-server) |
+| **Claude integrations** | A one-click Claude Desktop extension (`bridgistic.mcpb`) and a Claude Code plugin marketplace. | [Latest release assets](https://github.com/Wordpressistic/bridgistic/releases/latest) · [Wordpressistic/bridgistic-claude-marketplace](https://github.com/Wordpressistic/bridgistic-claude-marketplace) |
+| **Bridgistic Cloud** | A hosted OAuth 2.1 + PKCE relay at `mcp.bridgistic.app` for remote-only clients such as ChatGPT. **Public beta.** | [bridgistic.app](https://bridgistic.app) — connect from WP Admin → Bridgistic → Bridgistic Cloud |
 
 ## Features
 
@@ -147,7 +147,7 @@ Prices are in USD and taxes are calculated at checkout. Every purchase has a 7-d
 | Security model | [docs/SECURITY.md](docs/SECURITY.md) |
 | Free vs Pro, from the code | [docs/FEATURE-MATRIX.md](docs/FEATURE-MATRIX.md) |
 | Account dashboard and platform admin | [docs/CONTROL-PLANE.md](docs/CONTROL-PLANE.md) |
-| Public site SEO, sitemap and llms.txt | [docs/SEO.md](docs/SEO.md) |
+
 | Privacy | [docs/PRIVACY.md](docs/PRIVACY.md) |
 | Testing | [docs/TESTING.md](docs/TESTING.md) |
 | Releasing | [docs/RELEASING.md](docs/RELEASING.md) |
@@ -157,30 +157,27 @@ Prices are in USD and taxes are calculated at checkout. Every purchase has a 7-d
 ## Repository layout
 
 ```text
-wordpress-plugin/bridgistic/   WordPress plugin (PHP) and its test suites
-mcp-server/                    MCP server (TypeScript), npm package bridgistic-mcp-server
+wordpress-plugin/bridgistic/   The WordPress plugin (PHP) and its test suites
+docs/                          User guides: connect, install, security, clients
 plugins/bridgistic/            Claude Code plugin: bundled server, example configs, install scripts
 .claude-plugin/                Claude Code marketplace manifest
-mcpb/                          Claude Desktop extension manifest and icon
-cloud/                         Bridgistic Cloud: Cloudflare Worker OAuth relay
-openai-plugin/                 OpenAI / ChatGPT agent-plugin package
-scripts/                       Build, package, verification and release scripts
+scripts/                       Package and release build scripts
 release/                       Per-version release notes, test reports and security checklists
-index.html, functions/, *.html Website at bridgistic.app (Cloudflare Pages)
+tests/                         Test suites
+.github/workflows/release.yml  Tag a vX.Y.Z to build and publish the plugin zip
 ```
 
-Official Claude and plugin-marketplace listings are published from [Wordpressistic/bridgistic-claude-marketplace](https://github.com/Wordpressistic/bridgistic-claude-marketplace). Each release there is synced from this repository.
+The marketing site (bridgistic.app), the hosted console (admin and marketplace), the MCP server build and the cloud relay live in the app repository, [Shubochandrosarker/bridgistic](https://github.com/Shubochandrosarker/bridgistic). Official Claude marketplace listings are published from [Wordpressistic/bridgistic-claude-marketplace](https://github.com/Wordpressistic/bridgistic-claude-marketplace).
 
 ## Development
 
 ```bash
-npm run bootstrap   # install mcp-server and cloud dependencies
-npm run build       # compile the MCP server and refresh the bundled Claude plugin server
-npm run test:all    # MCP contract and integration tests, PHP suites, cloud tests, bundle smoke test
-npm run lint:php    # php -l across the plugin
-npm run validate    # manifests, version consistency and secret scan
-npm run release     # build every release artifact into dist/release-v<version>/
+node scripts/build-package.js   # build the distribution zips into dist/
+node scripts/build-release.js   # build dist/release-v<version>/ with the plugin zip
+php -l <file>                   # lint a plugin file (the release workflow lints all of them)
 ```
+
+The plugin test suites run inside WordPress (see [docs/TESTING.md](docs/TESTING.md)); releasing is documented in [docs/RELEASING.md](docs/RELEASING.md) — bump the plugin header, tag `vX.Y.Z`, and the workflow publishes the zip.
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 
