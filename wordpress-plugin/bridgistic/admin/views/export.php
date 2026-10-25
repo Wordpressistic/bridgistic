@@ -46,9 +46,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="bridgistic-field-row">
 				<label for="bridgistic-export-key"><?php esc_html_e( 'Key to embed', 'bridgistic' ); ?></label>
 				<select name="key_id" id="bridgistic-export-key" class="bridgistic-input">
-					<?php foreach ( $data['keys'] as $k ) : ?>
-						<option value="<?php echo esc_attr( (string) $k['key_id'] ); ?>">
-							<?php echo esc_html( (string) $k['label'] . ' — ' . (string) $k['key_id'] ); ?>
+					<?php foreach ( $data['keys'] as $bridgistic_item ) : ?>
+						<option value="<?php echo esc_attr( (string) $bridgistic_item['key_id'] ); ?>">
+							<?php echo esc_html( (string) $bridgistic_item['label'] . ' — ' . (string) $bridgistic_item['key_id'] ); ?>
 						</option>
 					<?php endforeach; ?>
 				</select>
@@ -69,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<label class="bridgistic-check-row">
 							<input type="checkbox" name="include_secret" value="1" data-fresh-key="<?php echo esc_attr( (string) $data['fresh_key_id'] ); ?>" />
 							<span>
-								<?php echo esc_html( sprintf( __( 'Embed the secret for the key created just now (%s). Available for two minutes after creation only.', 'bridgistic' ), (string) $data['fresh_key_id'] ) ); ?>
+								<?php /* translators: %s: the key id just created */ echo esc_html( sprintf( __( 'Embed the secret for the key created just now (%s). Available for two minutes after creation only.', 'bridgistic' ), (string) $data['fresh_key_id'] ) ); ?>
 							</span>
 						</label>
 						<p class="bridgistic-help"><?php esc_html_e( 'Never share this package publicly if it contains secrets.', 'bridgistic' ); ?></p>

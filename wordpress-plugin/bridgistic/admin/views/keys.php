@@ -14,12 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$bridgistic_scope_badge = static function ( string $scope ) use ( $data ): void {
-	$risky = in_array( $scope, (array) $data['risky_scopes'], true );
+$bridgistic_scope_badge = static function ( string $bridgistic_scope ) use ( $data ): void {
+	$risky = in_array( $bridgistic_scope, (array) $data['risky_scopes'], true );
 	printf(
 		'<span class="bridgistic-badge is-scope%s">%s</span>',
 		$risky ? ' is-warn' : '',
-		esc_html( $scope )
+		esc_html( $bridgistic_scope )
 	);
 };
 ?>
@@ -59,45 +59,45 @@ $bridgistic_scope_badge = static function ( string $scope ) use ( $data ): void 
 		</div>
 	<?php else : ?>
 		<div class="bridgistic-grid is-2 bridgistic-stagger">
-			<?php foreach ( $data['active'] as $k ) : ?>
+			<?php foreach ( $data['active'] as $bridgistic_key_row ) : ?>
 				<article class="bridgistic-card bridgistic-key-card">
 					<header class="bridgistic-key-head">
 						<div>
-							<h3><?php echo esc_html( (string) $k['label'] ); ?></h3>
-							<code class="bridgistic-key-id"><?php echo esc_html( (string) $k['key_id'] ); ?></code>
+							<h3><?php echo esc_html( (string) $bridgistic_key_row['label'] ); ?></h3>
+							<code class="bridgistic-key-id"><?php echo esc_html( (string) $bridgistic_key_row['key_id'] ); ?></code>
 						</div>
 						<?php
-						$preset_label = isset( $data['presets'][ $k['preset'] ] ) ? (string) $data['presets'][ $k['preset'] ]['label'] : __( 'Custom', 'bridgistic' );
-						echo Page::badge( 'developer' === $k['preset'] ? 'warn' : 'info', $preset_label ); // phpcs:ignore WordPress.Security.EscapeOutput
+						$bridgistic_preset_label = isset( $data['presets'][ $bridgistic_key_row['preset'] ] ) ? (string) $data['presets'][ $bridgistic_key_row['preset'] ]['label'] : __( 'Custom', 'bridgistic' );
+						echo Page::badge( 'developer' === $bridgistic_key_row['preset'] ? 'warn' : 'info', $bridgistic_preset_label ); // phpcs:ignore WordPress.Security.EscapeOutput
 						?>
 					</header>
 
 					<dl class="bridgistic-key-meta">
-						<div><dt><?php esc_html_e( 'Created', 'bridgistic' ); ?></dt><dd><?php echo esc_html( Page::ago( (string) $k['created_at'] ) ); ?></dd></div>
-						<div><dt><?php esc_html_e( 'Last used', 'bridgistic' ); ?></dt><dd><?php echo esc_html( Page::ago( $k['last_used_at'] ? (string) $k['last_used_at'] : null ) ); ?></dd></div>
-						<div><dt><?php esc_html_e( 'Rate limit', 'bridgistic' ); ?></dt><dd><?php echo esc_html( (string) ( $k['rate_limit'] ?? 120 ) ); ?>/min</dd></div>
-						<div><dt><?php esc_html_e( 'This month', 'bridgistic' ); ?></dt><dd><?php echo esc_html( number_format_i18n( (int) ( $k['usage']['this_month'] ?? 0 ) ) ); ?> req</dd></div>
-						<div><dt><?php esc_html_e( 'Approval', 'bridgistic' ); ?></dt><dd><?php echo ! empty( $k['require_approval'] ) ? esc_html__( 'Required for writes', 'bridgistic' ) : '—'; ?></dd></div>
+						<div><dt><?php esc_html_e( 'Created', 'bridgistic' ); ?></dt><dd><?php echo esc_html( Page::ago( (string) $bridgistic_key_row['created_at'] ) ); ?></dd></div>
+						<div><dt><?php esc_html_e( 'Last used', 'bridgistic' ); ?></dt><dd><?php echo esc_html( Page::ago( $bridgistic_key_row['last_used_at'] ? (string) $bridgistic_key_row['last_used_at'] : null ) ); ?></dd></div>
+						<div><dt><?php esc_html_e( 'Rate limit', 'bridgistic' ); ?></dt><dd><?php echo esc_html( (string) ( $bridgistic_key_row['rate_limit'] ?? 120 ) ); ?>/min</dd></div>
+						<div><dt><?php esc_html_e( 'This month', 'bridgistic' ); ?></dt><dd><?php echo esc_html( number_format_i18n( (int) ( $bridgistic_key_row['usage']['this_month'] ?? 0 ) ) ); ?> req</dd></div>
+						<div><dt><?php esc_html_e( 'Approval', 'bridgistic' ); ?></dt><dd><?php echo ! empty( $bridgistic_key_row['require_approval'] ) ? esc_html__( 'Required for writes', 'bridgistic' ) : '—'; ?></dd></div>
 					</dl>
 
 					<div class="bridgistic-key-scopes">
 						<?php
-						foreach ( (array) $k['scopes_list'] as $scope ) {
-							$bridgistic_scope_badge( (string) $scope );
+						foreach ( (array) $bridgistic_key_row['scopes_list'] as $bridgistic_scope ) {
+							$bridgistic_scope_badge( (string) $bridgistic_scope );
 						}
 						?>
 					</div>
 
 					<footer class="bridgistic-key-actions">
-						<button type="button" class="bridgistic-button is-soft is-small" data-key-config="<?php echo esc_attr( (string) $k['key_id'] ); ?>">
+						<button type="button" class="bridgistic-button is-soft is-small" data-key-config="<?php echo esc_attr( (string) $bridgistic_key_row['key_id'] ); ?>">
 							<?php echo Page::icon( 'copy', 13 ); // phpcs:ignore WordPress.Security.EscapeOutput ?> <?php esc_html_e( 'Get config', 'bridgistic' ); ?>
 						</button>
-						<button type="button" class="bridgistic-button is-soft is-small" data-key-rotate="<?php echo esc_attr( (string) $k['key_id'] ); ?>">
+						<button type="button" class="bridgistic-button is-soft is-small" data-key-rotate="<?php echo esc_attr( (string) $bridgistic_key_row['key_id'] ); ?>">
 							<?php echo Page::icon( 'refresh', 13 ); // phpcs:ignore WordPress.Security.EscapeOutput ?> <?php esc_html_e( 'Rotate secret', 'bridgistic' ); ?>
 						</button>
 						<form method="post" action="<?php echo esc_url( (string) $data['action_url'] ); ?>" class="bridgistic-inline-form" data-confirm="revoke">
 							<input type="hidden" name="action" value="bridgistic_revoke_key" />
-							<input type="hidden" name="key_id" value="<?php echo esc_attr( (string) $k['key_id'] ); ?>" />
+							<input type="hidden" name="key_id" value="<?php echo esc_attr( (string) $bridgistic_key_row['key_id'] ); ?>" />
 							<?php wp_nonce_field( 'bridgistic_revoke_key' ); ?>
 							<button class="bridgistic-button is-danger-soft is-small"><?php esc_html_e( 'Revoke', 'bridgistic' ); ?></button>
 						</form>
@@ -141,15 +141,15 @@ $bridgistic_scope_badge = static function ( string $scope ) use ( $data ): void 
 <section class="bridgistic-section">
 	<h2 class="bridgistic-section-title"><?php esc_html_e( 'Scope presets', 'bridgistic' ); ?></h2>
 	<div class="bridgistic-grid is-4 bridgistic-stagger">
-		<?php foreach ( $data['presets'] as $preset ) : ?>
-			<article class="bridgistic-card bridgistic-preset-card<?php echo $preset['risky'] ? ' is-risky' : ''; ?>">
+		<?php foreach ( $data['presets'] as $bridgistic_preset ) : ?>
+			<article class="bridgistic-card bridgistic-preset-card<?php echo $bridgistic_preset['risky'] ? ' is-risky' : ''; ?>">
 				<h3>
-					<?php echo esc_html( (string) $preset['label'] ); ?>
-					<?php if ( $preset['risky'] ) : ?>
+					<?php echo esc_html( (string) $bridgistic_preset['label'] ); ?>
+					<?php if ( $bridgistic_preset['risky'] ) : ?>
 						<?php echo Page::badge( 'warn', __( 'High risk', 'bridgistic' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 					<?php endif; ?>
 				</h3>
-				<p><?php echo esc_html( (string) $preset['description'] ); ?></p>
+				<p><?php echo esc_html( (string) $bridgistic_preset['description'] ); ?></p>
 			</article>
 		<?php endforeach; ?>
 	</div>
@@ -171,11 +171,11 @@ $bridgistic_scope_badge = static function ( string $scope ) use ( $data ): void 
 			<fieldset class="bridgistic-field-row">
 				<legend><?php esc_html_e( 'Scopes', 'bridgistic' ); ?></legend>
 				<div class="bridgistic-scope-grid">
-					<?php foreach ( $data['all_scopes'] as $scope => $desc ) : ?>
-						<label class="bridgistic-scope-option<?php echo in_array( $scope, (array) $data['risky_scopes'], true ) ? ' is-risky' : ''; ?>">
-							<input type="checkbox" name="scopes[]" value="<?php echo esc_attr( $scope ); ?>" />
-							<span class="bridgistic-scope-option-name"><code><?php echo esc_html( $scope ); ?></code></span>
-							<span class="bridgistic-scope-option-desc"><?php echo esc_html( $desc ); ?></span>
+					<?php foreach ( $data['all_scopes'] as $bridgistic_scope => $bridgistic_desc ) : ?>
+						<label class="bridgistic-scope-option<?php echo in_array( $bridgistic_scope, (array) $data['risky_scopes'], true ) ? ' is-risky' : ''; ?>">
+							<input type="checkbox" name="scopes[]" value="<?php echo esc_attr( $bridgistic_scope ); ?>" />
+							<span class="bridgistic-scope-option-name"><code><?php echo esc_html( $bridgistic_scope ); ?></code></span>
+							<span class="bridgistic-scope-option-desc"><?php echo esc_html( $bridgistic_desc ); ?></span>
 						</label>
 					<?php endforeach; ?>
 				</div>
@@ -209,21 +209,21 @@ $bridgistic_scope_badge = static function ( string $scope ) use ( $data ): void 
 			<table class="bridgistic-table">
 				<thead><tr><th><?php esc_html_e( 'Label', 'bridgistic' ); ?></th><th><?php esc_html_e( 'Key ID', 'bridgistic' ); ?></th><th><?php esc_html_e( 'Last used', 'bridgistic' ); ?></th><th></th></tr></thead>
 				<tbody>
-					<?php foreach ( $data['revoked'] as $k ) : ?>
+					<?php foreach ( $data['revoked'] as $bridgistic_key_row ) : ?>
 						<tr>
-							<td><?php echo esc_html( (string) $k['label'] ); ?></td>
-							<td><code><?php echo esc_html( (string) $k['key_id'] ); ?></code></td>
-							<td><?php echo esc_html( Page::ago( $k['last_used_at'] ? (string) $k['last_used_at'] : null ) ); ?></td>
+							<td><?php echo esc_html( (string) $bridgistic_key_row['label'] ); ?></td>
+							<td><code><?php echo esc_html( (string) $bridgistic_key_row['key_id'] ); ?></code></td>
+							<td><?php echo esc_html( Page::ago( $bridgistic_key_row['last_used_at'] ? (string) $bridgistic_key_row['last_used_at'] : null ) ); ?></td>
 							<td class="bridgistic-table-actions">
 								<form method="post" action="<?php echo esc_url( (string) $data['action_url'] ); ?>" class="bridgistic-inline-form">
 									<input type="hidden" name="action" value="bridgistic_enable_key" />
-									<input type="hidden" name="key_id" value="<?php echo esc_attr( (string) $k['key_id'] ); ?>" />
+									<input type="hidden" name="key_id" value="<?php echo esc_attr( (string) $bridgistic_key_row['key_id'] ); ?>" />
 									<?php wp_nonce_field( 'bridgistic_enable_key' ); ?>
 									<button class="bridgistic-button is-soft is-small"><?php esc_html_e( 'Re-enable', 'bridgistic' ); ?></button>
 								</form>
 								<form method="post" action="<?php echo esc_url( (string) $data['action_url'] ); ?>" class="bridgistic-inline-form" data-confirm="delete">
 									<input type="hidden" name="action" value="bridgistic_delete_key" />
-									<input type="hidden" name="key_id" value="<?php echo esc_attr( (string) $k['key_id'] ); ?>" />
+									<input type="hidden" name="key_id" value="<?php echo esc_attr( (string) $bridgistic_key_row['key_id'] ); ?>" />
 									<?php wp_nonce_field( 'bridgistic_delete_key' ); ?>
 									<button class="bridgistic-button is-danger-soft is-small"><?php esc_html_e( 'Delete permanently', 'bridgistic' ); ?></button>
 								</form>

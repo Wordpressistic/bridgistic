@@ -1,0 +1,18 @@
+# Troubleshooting
+
+1. **Server missing in Claude Desktop** — check Node 20+ (`node --version`),
+   check the `args` path exists, fully restart Claude Desktop.
+2. **"No WordPress connections configured"** — the BRIDGISTIC_* env values
+   did not reach the server. Re-check the `env` block of your config.
+3. **401 bridgistic_auth_stale** — clock drift. Enable NTP on your computer
+   or ask your host to fix server time (window is ±300 seconds).
+4. **401 bridgistic_auth_signature** — wrong or stale secret. Rotate the key
+   in WP Admin -> Bridgistic -> Keys & Scopes and paste the new secret.
+5. **403 / HTML instead of JSON** — a security plugin or WAF is blocking
+   `/wp-json/bridgistic/v1/`. Allowlist the namespace.
+6. **404 on /wp-json/** — enable pretty permalinks (Settings -> Permalinks).
+
+The full guide lives at:
+https://github.com/wordpressistic/bridgistic/blob/main/plugins/bridgistic/package/TROUBLESHOOTING.md
+
+Run WP Admin -> Bridgistic -> Health Check for automated diagnostics.

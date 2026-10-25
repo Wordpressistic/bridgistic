@@ -1,0 +1,26 @@
+# Bridgistic — merge claude_desktop_config.json into Claude Desktop (Windows).
+# Backs up your existing config first. Run from inside the unzipped package.
+$ErrorActionPreference = "Stop"
+$dir  = Join-Path $env:APPDATA "Claude"
+$file = Join-Path $dir "claude_desktop_config.json"
+New-Item -ItemType Directory -Force -Path $dir | Out-Null
+if (Test-Path $file) {
+    Copy-Item $file "$file.backup.$(Get-Date -Format yyyyMMddHHmmss)"
+    $config = Get-Content $file -Raw | ConvertFrom-Json
+} else {
+    $config = [pscustomobject]@{}
+}
+$incoming = Get-Content "claude_desktop_config.json" -Raw | ConvertFrom-Json
+if (-not ($config.PSObject.Properties.Name -contains "mcpServers")) {
+    $config | Add-Member -NotePropertyName mcpServers -NotePropertyValue ([pscustomobject]@{})
+}
+foreach ($p in $incoming.mcpServers.PSObject.Properties) {
+    if ($config.mcpServers.PSObject.Properties.Name -contains $p.Name) {
+        $config.mcpServers.($p.Name) = $p.Value
+    } else {
+        $config.mcpServers | Add-Member -NotePropertyName $p.Name -NotePropertyValue $p.Value
+    }
+}
+$config | ConvertTo-Json -Depth 10 | Set-Content -Path $file -Encoding UTF8
+Write-Host "Merged bridgistic into $file"
+Write-Host "Now edit the file and set the real path to mcp-server\dist\index.js, then restart Claude Desktop."

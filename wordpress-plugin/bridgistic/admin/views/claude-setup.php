@@ -96,23 +96,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</header>
 		<div class="bridgistic-step-body">
 			<div class="bridgistic-choice-grid is-presets" role="radiogroup" aria-label="<?php esc_attr_e( 'Permission preset', 'bridgistic' ); ?>">
-				<?php foreach ( $data['presets'] as $preset_id => $preset ) : ?>
+				<?php foreach ( $data['presets'] as $bridgistic_preset_id => $bridgistic_preset ) : ?>
 					<button
 						type="button"
-						class="bridgistic-choice<?php echo $preset['risky'] ? ' is-risky' : ''; ?><?php echo 'read_only' === $preset_id ? ' is-selected' : ''; ?>"
-						data-preset="<?php echo esc_attr( $preset_id ); ?>"
-						data-risky="<?php echo $preset['risky'] ? '1' : '0'; ?>"
+						class="bridgistic-choice<?php echo $bridgistic_preset['risky'] ? ' is-risky' : ''; ?><?php echo 'read_only' === $bridgistic_preset_id ? ' is-selected' : ''; ?>"
+						data-preset="<?php echo esc_attr( $bridgistic_preset_id ); ?>"
+						data-risky="<?php echo $bridgistic_preset['risky'] ? '1' : '0'; ?>"
 					>
 						<strong>
-							<?php echo esc_html( $preset['label'] ); ?>
-							<?php if ( $preset['risky'] ) : ?>
+							<?php echo esc_html( $bridgistic_preset['label'] ); ?>
+							<?php if ( $bridgistic_preset['risky'] ) : ?>
 								<?php echo Page::badge( 'warn', __( 'High risk', 'bridgistic' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-							<?php elseif ( ! empty( $preset['require_approval'] ) ) : ?>
+							<?php elseif ( ! empty( $bridgistic_preset['require_approval'] ) ) : ?>
 								<?php echo Page::badge( 'info', __( 'Approval required', 'bridgistic' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 							<?php endif; ?>
 						</strong>
-						<span><?php echo esc_html( $preset['description'] ); ?></span>
-						<code class="bridgistic-choice-scopes"><?php echo esc_html( implode( ' · ', array_slice( (array) $preset['scopes'], 0, 5 ) ) . ( count( (array) $preset['scopes'] ) > 5 ? ' +' . ( count( (array) $preset['scopes'] ) - 5 ) : '' ) ); ?></code>
+						<span><?php echo esc_html( $bridgistic_preset['description'] ); ?></span>
+						<code class="bridgistic-choice-scopes"><?php echo esc_html( implode( ' · ', array_slice( (array) $bridgistic_preset['scopes'], 0, 5 ) ) . ( count( (array) $bridgistic_preset['scopes'] ) > 5 ? ' +' . ( count( (array) $bridgistic_preset['scopes'] ) - 5 ) : '' ) ); ?></code>
 					</button>
 				<?php endforeach; ?>
 			</div>

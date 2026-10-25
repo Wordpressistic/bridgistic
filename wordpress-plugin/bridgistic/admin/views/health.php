@@ -36,6 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<p class="bridgistic-help" id="bridgistic-health-subline">
 			<?php
 			if ( $data['last_time'] ) {
+				/* translators: %s: human-readable time since the last check */
 				echo esc_html( sprintf( __( 'Last checked %s ago.', 'bridgistic' ), human_time_diff( (int) $data['last_time'] ) ) );
 			} else {
 				esc_html_e( 'Not run yet on this site.', 'bridgistic' );
@@ -57,11 +58,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 </section>
 
 <section class="bridgistic-grid is-4 bridgistic-health-grid" id="bridgistic-health-grid">
-	<?php foreach ( $data['skeleton'] as $label ) : ?>
+	<?php foreach ( $data['skeleton'] as $bridgistic_label ) : ?>
 		<article class="bridgistic-card bridgistic-health-card is-skeleton">
 			<header>
 				<span class="bridgistic-skeleton-dot"></span>
-				<h3><?php echo esc_html( $label ); ?></h3>
+				<h3><?php echo esc_html( $bridgistic_label ); ?></h3>
 			</header>
 			<div class="bridgistic-skeleton-line"></div>
 			<div class="bridgistic-skeleton-line is-short"></div>

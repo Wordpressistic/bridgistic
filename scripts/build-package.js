@@ -24,7 +24,7 @@ mkdirSync(DIST, { recursive: true });
 
 function addTree(zip, dir, prefix, skip = new Set()) {
   for (const name of readdirSync(dir)) {
-    if (skip.has(name)) continue;
+    if (skip.has(name) || name.startsWith(".")) continue; // hidden files are not permitted in a distribution zip
     const path = join(dir, name);
     if (statSync(path).isDirectory()) {
       addTree(zip, path, `${prefix}${name}/`, skip);

@@ -34,11 +34,11 @@ $bridgistic_status_kind = static function ( string $status ): string {
 </header>
 
 <nav class="bridgistic-chips bridgistic-fade-in" aria-label="<?php esc_attr_e( 'Log filters', 'bridgistic' ); ?>">
-	<?php foreach ( $data['filters'] as $key => $label ) : ?>
+	<?php foreach ( $data['filters'] as $bridgistic_log_key => $bridgistic_label ) : ?>
 		<a
-			class="bridgistic-chip<?php echo $key === $data['filter'] ? ' is-active' : ''; ?>"
-			href="<?php echo esc_url( add_query_arg( 'filter', $key, $data['base_url'] ) ); ?>"
-		><?php echo esc_html( $label ); ?></a>
+			class="bridgistic-chip<?php echo $bridgistic_log_key === $data['filter'] ? ' is-active' : ''; ?>"
+			href="<?php echo esc_url( add_query_arg( 'filter', $bridgistic_log_key, $data['base_url'] ) ); ?>"
+		><?php echo esc_html( $bridgistic_label ); ?></a>
 	<?php endforeach; ?>
 </nav>
 
@@ -62,26 +62,26 @@ $bridgistic_status_kind = static function ( string $status ): string {
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach ( $data['rows'] as $row ) : ?>
+				<?php foreach ( $data['rows'] as $bridgistic_row ) : ?>
 					<tr>
 						<td>
-							<span title="<?php echo esc_attr( (string) $row['created_at'] . ' UTC' ); ?>"><?php echo esc_html( Page::ago( (string) $row['created_at'] ) ); ?></span>
+							<span title="<?php echo esc_attr( (string) $bridgistic_row['created_at'] . ' UTC' ); ?>"><?php echo esc_html( Page::ago( (string) $bridgistic_row['created_at'] ) ); ?></span>
 						</td>
-						<td><code><?php echo esc_html( (string) $row['action'] ); ?></code></td>
-						<td><code class="bridgistic-key-id"><?php echo esc_html( (string) ( $row['key_id'] ?: '—' ) ); ?></code></td>
-						<td><?php echo Page::badge( $bridgistic_status_kind( (string) $row['status'] ), (string) $row['status'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
-						<td><?php echo esc_html( (string) ( $row['ip'] ?: '—' ) ); ?></td>
+						<td><code><?php echo esc_html( (string) $bridgistic_row['action'] ); ?></code></td>
+						<td><code class="bridgistic-key-id"><?php echo esc_html( (string) ( $bridgistic_row['key_id'] ?: '—' ) ); ?></code></td>
+						<td><?php echo Page::badge( $bridgistic_status_kind( (string) $bridgistic_row['status'] ), (string) $bridgistic_row['status'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
+						<td><?php echo esc_html( (string) ( $bridgistic_row['ip'] ?: '—' ) ); ?></td>
 						<td class="bridgistic-table-actions">
-							<?php if ( ! empty( $row['summary'] ) ) : ?>
-								<button type="button" class="bridgistic-button is-ghost is-small" data-log-toggle="log-<?php echo esc_attr( (string) $row['id'] ); ?>"><?php esc_html_e( 'Details', 'bridgistic' ); ?></button>
+							<?php if ( ! empty( $bridgistic_row['summary'] ) ) : ?>
+								<button type="button" class="bridgistic-button is-ghost is-small" data-log-toggle="log-<?php echo esc_attr( (string) $bridgistic_row['id'] ); ?>"><?php esc_html_e( 'Details', 'bridgistic' ); ?></button>
 							<?php endif; ?>
 						</td>
 					</tr>
-					<?php if ( ! empty( $row['summary'] ) ) : ?>
-						<tr class="bridgistic-log-details" id="log-<?php echo esc_attr( (string) $row['id'] ); ?>" hidden>
+					<?php if ( ! empty( $bridgistic_row['summary'] ) ) : ?>
+						<tr class="bridgistic-log-details" id="log-<?php echo esc_attr( (string) $bridgistic_row['id'] ); ?>" hidden>
 							<td colspan="6">
-								<pre class="bridgistic-code is-compact"><?php echo esc_html( (string) $row['summary'] ); ?></pre>
-								<span class="bridgistic-help is-muted"><?php echo esc_html( sprintf( __( 'Params hash: %s', 'bridgistic' ), substr( (string) $row['params_hash'], 0, 16 ) . '…' ) ); ?></span>
+								<pre class="bridgistic-code is-compact"><?php echo esc_html( (string) $bridgistic_row['summary'] ); ?></pre>
+								<span class="bridgistic-help is-muted"><?php /* translators: %s: truncated parameters hash */ echo esc_html( sprintf( __( 'Params hash: %s', 'bridgistic' ), substr( (string) $bridgistic_row['params_hash'], 0, 16 ) . '…' ) ); ?></span>
 							</td>
 						</tr>
 					<?php endif; ?>

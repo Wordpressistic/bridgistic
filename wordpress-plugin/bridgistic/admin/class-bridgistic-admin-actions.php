@@ -73,6 +73,60 @@ final class Actions {
 
 	// ---- shared guards --------------------------------------------------------
 
+	/**
+	 * Input helpers. Every classic handler calls guard_post() (capability +
+	 * nonce via check_admin_referer) and every AJAX handler guard_ajax()
+	 * BEFORE any of these run, which is why the superglobal reads live only
+	 * in this one place, each with its justification. They also centralize
+	 * sanitization so no handler can forget it.
+	 */
+	private static function post_text( string $key, string $default = '' ): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by guard_post()/guard_ajax() before the handler runs.
+		return isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : $default;
+	}
+
+	private static function post_key( string $key, string $default = '' ): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by guard_post()/guard_ajax() before the handler runs.
+		return isset( $_POST[ $key ] ) ? sanitize_key( wp_unslash( $_POST[ $key ] ) ) : $default;
+	}
+
+	private static function post_title( string $key, string $default = '' ): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by guard_post()/guard_ajax() before the handler runs.
+		return isset( $_POST[ $key ] ) ? sanitize_title( wp_unslash( $_POST[ $key ] ) ) : $default;
+	}
+
+	private static function post_url( string $key ): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by guard_post()/guard_ajax() before the handler runs.
+		return isset( $_POST[ $key ] ) ? esc_url_raw( wp_unslash( $_POST[ $key ] ) ) : '';
+	}
+
+	private static function post_textarea( string $key ): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by guard_post()/guard_ajax() before the handler runs.
+		return isset( $_POST[ $key ] ) ? sanitize_textarea_field( wp_unslash( $_POST[ $key ] ) ) : '';
+	}
+
+	private static function post_int( string $key, int $default = 0 ): int {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by guard_post()/guard_ajax() before the handler runs.
+		return isset( $_POST[ $key ] ) ? (int) $_POST[ $key ] : $default;
+	}
+
+	private static function post_bool( string $key ): bool {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by guard_post()/guard_ajax() before the handler runs.
+		return ! empty( $_POST[ $key ] );
+	}
+
+	/** @return string[] One trimmed, non-empty line per submitted row. */
+	private static function post_lines( string $key ): array {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by guard_post()/guard_ajax() before the handler runs.
+		return isset( $_POST[ $key ] ) ? array_filter( array_map( 'trim', explode( "\n", sanitize_textarea_field( wp_unslash( $_POST[ $key ] ) ) ) ) ) : array();
+	}
+
+	/** @return string[] Sanitized text array (checkbox/scopes style input). */
+	private static function post_text_array( string $key ): array {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by guard_post()/guard_ajax() before the handler runs.
+		return isset( $_POST[ $key ] ) ? array_map( 'sanitize_text_field', (array) wp_unslash( $_POST[ $key ] ) ) : array();
+	}
+
 	private function guard_post( string $nonce_action ): void {
 		if ( ! current_user_can( Controller::CAP ) || ! check_admin_referer( $nonce_action ) ) {
 			wp_die( esc_html__( 'Not allowed.', 'bridgistic' ) );
@@ -91,11 +145,11 @@ final class Actions {
 	public function handle_create_key(): void {
 		$this->guard_post( 'bridgistic_create_key' );
 
-		$label   = isset( $_POST['label'] ) ? sanitize_text_field( wp_unslash( $_POST['label'] ) ) : 'MCP Key';
-		$scopes  = isset( $_POST['scopes'] ) ? array_map( 'sanitize_text_field', (array) wp_unslash( $_POST['scopes'] ) ) : array();
-		$rate    = isset( $_POST['rate_limit'] ) ? (int) $_POST['rate_limit'] : 120;
-		$ips     = isset( $_POST['ip_allowlist'] ) ? array_filter( array_map( 'trim', explode( "\n", sanitize_textarea_field( wp_unslash( $_POST['ip_allowlist'] ) ) ) ) ) : array();
-		$approve = ! empty( $_POST['require_approval'] );
+		$label   = self::post_text( 'label', 'MCP Key' );
+		$scopes  = self::post_text_array( 'scopes' );
+		$rate    = self::post_int( 'rate_limit', 120 );
+		$ips     = self::post_lines( 'ip_allowlist' );
+		$approve = self::post_bool( 'require_approval' );
 
 		$created = KeyStore::create( $label, Scopes::sanitize( $scopes ), $ips, $rate, $approve );
 
@@ -108,7 +162,7 @@ final class Actions {
 
 	public function handle_revoke_key(): void {
 		$this->guard_post( 'bridgistic_revoke_key' );
-		$key_id = isset( $_POST['key_id'] ) ? sanitize_text_field( wp_unslash( $_POST['key_id'] ) ) : '';
+		$key_id = self::post_text( 'key_id' );
 		if ( $key_id ) {
 			KeyStore::set_enabled( $key_id, false );
 		}
@@ -118,7 +172,7 @@ final class Actions {
 
 	public function handle_enable_key(): void {
 		$this->guard_post( 'bridgistic_enable_key' );
-		$key_id = isset( $_POST['key_id'] ) ? sanitize_text_field( wp_unslash( $_POST['key_id'] ) ) : '';
+		$key_id = self::post_text( 'key_id' );
 		if ( $key_id ) {
 			KeyStore::set_enabled( $key_id, true );
 		}
@@ -128,7 +182,7 @@ final class Actions {
 
 	public function handle_delete_key(): void {
 		$this->guard_post( 'bridgistic_delete_key' );
-		$key_id = isset( $_POST['key_id'] ) ? sanitize_text_field( wp_unslash( $_POST['key_id'] ) ) : '';
+		$key_id = self::post_text( 'key_id' );
 		if ( $key_id ) {
 			KeyStore::revoke( $key_id );
 		}
@@ -139,13 +193,13 @@ final class Actions {
 	public function handle_oauth_consent(): void {
 		$this->guard_post( 'bridgistic_oauth_consent' );
 
-		$client_id      = isset( $_POST['client_id'] ) ? sanitize_text_field( wp_unslash( $_POST['client_id'] ) ) : '';
-		$redirect_uri   = isset( $_POST['redirect_uri'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_uri'] ) ) : '';
-		$code_challenge = isset( $_POST['code_challenge'] ) ? sanitize_text_field( wp_unslash( $_POST['code_challenge'] ) ) : '';
-		$method         = isset( $_POST['code_challenge_method'] ) ? sanitize_text_field( wp_unslash( $_POST['code_challenge_method'] ) ) : '';
-		$state          = isset( $_POST['state'] ) ? sanitize_text_field( wp_unslash( $_POST['state'] ) ) : '';
-		$decision       = isset( $_POST['decision'] ) ? sanitize_key( wp_unslash( $_POST['decision'] ) ) : '';
-		$preset_id      = isset( $_POST['preset'] ) ? sanitize_key( wp_unslash( $_POST['preset'] ) ) : 'read_only';
+		$client_id      = self::post_text( 'client_id' );
+		$redirect_uri   = self::post_url( 'redirect_uri' );
+		$code_challenge = self::post_text( 'code_challenge' );
+		$method         = self::post_text( 'code_challenge_method' );
+		$state          = self::post_text( 'state' );
+		$decision       = self::post_key( 'decision' );
+		$preset_id      = self::post_key( 'preset', 'read_only' );
 
 		// Re-validate every hidden field independently - a nonce proves this
 		// browser session submitted the form, not that the values in it are safe.
@@ -194,8 +248,8 @@ final class Actions {
 
 	public function handle_decide_approval(): void {
 		$this->guard_post( 'bridgistic_decide_approval' );
-		$id      = isset( $_POST['approval_id'] ) ? sanitize_text_field( wp_unslash( $_POST['approval_id'] ) ) : '';
-		$approve = isset( $_POST['decision'] ) && 'approve' === $_POST['decision'];
+		$id      = self::post_text( 'approval_id' );
+		$approve = 'approve' === self::post_text( 'decision' );
 		if ( $id ) {
 			\Bridgistic\Approvals::decide( $id, $approve, get_current_user_id() );
 		}
@@ -205,7 +259,7 @@ final class Actions {
 
 	public function handle_save_allowlist(): void {
 		$this->guard_post( 'bridgistic_save_allowlist' );
-		$raw  = isset( $_POST['allowlist'] ) ? sanitize_textarea_field( wp_unslash( $_POST['allowlist'] ) ) : '';
+		$raw  = self::post_textarea( 'allowlist' );
 		$list = array_values( array_filter( array_map( 'trim', explode( "\n", $raw ) ) ) );
 		update_option( 'bridgistic_options_allowlist', $list );
 		wp_safe_redirect( admin_url( 'admin.php?page=bridgistic-settings&saved=1' ) );
@@ -214,8 +268,8 @@ final class Actions {
 
 	public function handle_schedule_action(): void {
 		$this->guard_post( 'bridgistic_schedule_action' );
-		$id  = isset( $_POST['schedule_id'] ) ? sanitize_text_field( wp_unslash( $_POST['schedule_id'] ) ) : '';
-		$act = isset( $_POST['do'] ) ? sanitize_key( wp_unslash( $_POST['do'] ) ) : '';
+		$id  = self::post_text( 'schedule_id' );
+		$act = self::post_key( 'do' );
 		if ( $id ) {
 			switch ( $act ) {
 				case 'enable':
@@ -249,20 +303,20 @@ final class Actions {
 	public function handle_export_package(): void {
 		$this->guard_post( 'bridgistic_export_package' );
 
-		$key_id = isset( $_POST['key_id'] ) ? sanitize_text_field( wp_unslash( $_POST['key_id'] ) ) : '';
+		$key_id = self::post_text( 'key_id' );
 		if ( '' === $key_id || ! KeyStore::get( $key_id ) ) {
 			wp_die( esc_html__( 'Pick a key first (create one in AI / MCP Connections).', 'bridgistic' ) );
 		}
 
 		$include = array(
-			'desktop'         => ! empty( $_POST['include_desktop'] ),
-			'code'            => ! empty( $_POST['include_code'] ),
-			'scripts'         => ! empty( $_POST['include_scripts'] ),
-			'troubleshooting' => ! empty( $_POST['include_troubleshooting'] ),
+			'desktop'         => self::post_bool( 'include_desktop' ),
+			'code'            => self::post_bool( 'include_code' ),
+			'scripts'         => self::post_bool( 'include_scripts' ),
+			'troubleshooting' => self::post_bool( 'include_troubleshooting' ),
 		);
 
 		$secret = null;
-		if ( ! empty( $_POST['include_secret'] ) ) {
+		if ( self::post_bool( 'include_secret' ) ) {
 			$fresh = get_transient( self::FRESH_SECRET_TRANSIENT . get_current_user_id() );
 			if ( is_array( $fresh ) && ( $fresh['key_id'] ?? '' ) === $key_id && ! empty( $fresh['secret'] ) ) {
 				$secret = (string) $fresh['secret'];
@@ -295,8 +349,8 @@ final class Actions {
 	public function ajax_setup_create_key(): void {
 		$this->guard_ajax();
 
-		$preset_id = isset( $_POST['preset'] ) ? sanitize_key( wp_unslash( $_POST['preset'] ) ) : '';
-		$label     = isset( $_POST['label'] ) ? sanitize_text_field( wp_unslash( $_POST['label'] ) ) : '';
+		$preset_id = self::post_key( 'preset' );
+		$label     = self::post_text( 'label' );
 
 		$preset = Presets::get( $preset_id );
 		if ( ! $preset ) {
@@ -318,7 +372,7 @@ final class Actions {
 	public function ajax_rotate_key(): void {
 		$this->guard_ajax();
 
-		$key_id = isset( $_POST['key_id'] ) ? sanitize_text_field( wp_unslash( $_POST['key_id'] ) ) : '';
+		$key_id = self::post_text( 'key_id' );
 		$secret = $key_id ? KeyStore::rotate_secret( $key_id ) : null;
 		if ( null === $secret ) {
 			wp_send_json_error( array( 'message' => __( 'Key not found.', 'bridgistic' ) ), 404 );
@@ -335,7 +389,7 @@ final class Actions {
 	public function ajax_revoke_key(): void {
 		$this->guard_ajax();
 
-		$key_id = isset( $_POST['key_id'] ) ? sanitize_text_field( wp_unslash( $_POST['key_id'] ) ) : '';
+		$key_id = self::post_text( 'key_id' );
 		if ( ! $key_id || ! KeyStore::get( $key_id ) ) {
 			wp_send_json_error( array( 'message' => __( 'Key not found.', 'bridgistic' ) ), 404 );
 		}
@@ -348,7 +402,7 @@ final class Actions {
 	public function ajax_get_config(): void {
 		$this->guard_ajax();
 
-		$key_id = isset( $_POST['key_id'] ) ? sanitize_text_field( wp_unslash( $_POST['key_id'] ) ) : '';
+		$key_id = self::post_text( 'key_id' );
 		if ( ! $key_id || ! KeyStore::get( $key_id ) ) {
 			wp_send_json_error( array( 'message' => __( 'Key not found.', 'bridgistic' ) ), 404 );
 		}
@@ -441,8 +495,8 @@ final class Actions {
 	public function ajax_poll_client_connected(): void {
 		$this->guard_ajax();
 
-		$key_id = isset( $_POST['key_id'] ) ? sanitize_text_field( wp_unslash( $_POST['key_id'] ) ) : '';
-		$since  = isset( $_POST['since'] ) ? sanitize_text_field( wp_unslash( $_POST['since'] ) ) : '';
+		$key_id = self::post_text( 'key_id' );
+		$since  = self::post_text( 'since' );
 
 		$row = $key_id ? KeyStore::get( $key_id ) : null;
 		if ( ! $row ) {
@@ -481,6 +535,7 @@ final class Actions {
 			$status_label = __( 'Connected', 'bridgistic' );
 			$status_kind  = 'pass';
 			/* translators: %s: human-readable time since the last request. */
+			/* translators: %s: human-readable time since the last MCP request. */
 			$status_note = sprintf( __( 'Last MCP request %s', 'bridgistic' ), Page::ago( $stats['last_used'] ) );
 		} elseif ( $stats['keys_enabled'] > 0 ) {
 			$status_label = __( 'Waiting for first request', 'bridgistic' );
@@ -491,6 +546,7 @@ final class Actions {
 		$latest_log_text = '';
 		if ( $stats['latest_log'] ) {
 			/* translators: 1: action name, 2: human-readable time since. */
+			/* translators: 1: latest action name, 2: human-readable time since it ran. */
 			$latest_log_text = sprintf( __( 'Latest: %1$s (%2$s)', 'bridgistic' ), (string) $stats['latest_log']['action'], Page::ago( (string) $stats['latest_log']['created_at'] ) );
 		}
 
@@ -525,6 +581,7 @@ final class Actions {
 		if ( ! \Bridgistic\License::gate( 'snapshots_advanced' )
 			&& count( Snapshot::list_recent( self::SNAPSHOT_LIMIT + 1 ) ) >= self::SNAPSHOT_LIMIT ) {
 			wp_send_json_error(
+				/* translators: %d: free snapshot cap. */
 				array( 'message' => sprintf( __( 'The free version keeps up to %d snapshots. Advanced snapshot history belongs to Bridgistic SaaS; delete old snapshots to create new ones.', 'bridgistic' ), self::SNAPSHOT_LIMIT ) ),
 				400
 			);
@@ -548,7 +605,7 @@ final class Actions {
 	public function ajax_restore_snapshot(): void {
 		$this->guard_ajax();
 
-		$id  = isset( $_POST['snapshot_id'] ) ? sanitize_text_field( wp_unslash( $_POST['snapshot_id'] ) ) : '';
+		$id  = self::post_text( 'snapshot_id' );
 		$res = Snapshot::restore( $id );
 		if ( is_wp_error( $res ) ) {
 			AuditLog::record( 'admin-ui', 'snapshot.restore', 'error', array( 'snapshot_id' => $id ), $res->get_error_message() );
@@ -561,7 +618,7 @@ final class Actions {
 	public function ajax_delete_snapshot(): void {
 		$this->guard_ajax();
 
-		$id = isset( $_POST['snapshot_id'] ) ? sanitize_text_field( wp_unslash( $_POST['snapshot_id'] ) ) : '';
+		$id = self::post_text( 'snapshot_id' );
 		if ( '' === $id ) {
 			wp_send_json_error( array( 'message' => __( 'Missing snapshot id.', 'bridgistic' ) ), 400 );
 		}
@@ -579,7 +636,7 @@ final class Actions {
 		$this->guard_ajax();
 		global $wpdb;
 
-		$slug   = isset( $_POST['playbook'] ) ? sanitize_key( wp_unslash( $_POST['playbook'] ) ) : '';
+		$slug   = self::post_key( 'playbook' );
 		$result = null;
 
 		switch ( $slug ) {
@@ -588,6 +645,7 @@ final class Actions {
 				if ( is_wp_error( $res ) ) {
 					wp_send_json_error( array( 'message' => $res->get_error_message() ), 400 );
 				}
+				/* translators: 1: snapshot id, 2: formatted size. */
 				$result = sprintf( __( 'Snapshot %1$s created (%2$s).', 'bridgistic' ), $res['snapshot_id'], size_format( (int) $res['byte_size'] ) );
 				break;
 
@@ -596,6 +654,7 @@ final class Actions {
 				$plugins = get_option( 'active_plugins', array() );
 				$result  = sprintf(
 					/* translators: versions + counts summary. */
+					/* translators: 1: WordPress version, 2: PHP version, 3: theme name, 4: active plugin count, 5: key count, 6: HTTPS status. */
 					__( 'WordPress %1$s, PHP %2$s, theme "%3$s", %4$d active plugins, %5$d Bridgistic keys, HTTPS %6$s.', 'bridgistic' ),
 					$wp_version,
 					PHP_VERSION,
@@ -616,6 +675,7 @@ final class Actions {
 				$pending  = isset( $updates['response'] ) ? count( (array) $updates['response'] ) : ( is_object( $updates ) && isset( $updates->response ) ? count( (array) $updates->response ) : 0 );
 				$inactive = count( $all ) - count( $active );
 				$result   = sprintf(
+					/* translators: 1: plugins installed, 2: active, 3: inactive, 4: updates pending. */
 					__( '%1$d plugins installed: %2$d active, %3$d inactive, %4$d with updates pending. Consider removing inactive plugins.', 'bridgistic' ),
 					count( $all ),
 					count( $active ),
@@ -629,6 +689,7 @@ final class Actions {
 				$trash     = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_status = 'trash'" ); // phpcs:ignore WordPress.DB
 				$revisions = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'revision'" ); // phpcs:ignore WordPress.DB
 				$result    = sprintf(
+					/* translators: 1: draft count, 2: trash count, 3: revision count. */
 					__( 'Content review: %1$d drafts, %2$d items in trash, %3$d stored revisions. Ask Claude (Content Manager key) to help you clean these up safely.', 'bridgistic' ),
 					$drafts,
 					$trash,
@@ -656,8 +717,8 @@ final class Actions {
 	public function ajax_run_saved_playbook(): void {
 		$this->guard_ajax();
 
-		$slug    = isset( $_POST['playbook'] ) ? sanitize_title( wp_unslash( $_POST['playbook'] ) ) : '';
-		$dry_run = ! empty( $_POST['dry_run'] );
+		$slug    = self::post_title( 'playbook' );
+		$dry_run = self::post_bool( 'dry_run' );
 
 		if ( ! Playbooks::get( $slug ) ) {
 			wp_send_json_error( array( 'message' => __( 'Playbook not found.', 'bridgistic' ) ), 404 );
@@ -689,7 +750,7 @@ final class Actions {
 
 	public function handle_license_activate(): void {
 		$this->guard_post( 'bridgistic_license_activate' );
-		$key = isset( $_POST['license_key'] ) ? sanitize_text_field( wp_unslash( $_POST['license_key'] ) ) : '';
+		$key = self::post_text( 'license_key' );
 		if ( '' === $key ) {
 			$this->license_redirect( 'error', new WP_Error( 'bridgistic_license_empty', __( 'Enter a license key first.', 'bridgistic' ) ) );
 		}

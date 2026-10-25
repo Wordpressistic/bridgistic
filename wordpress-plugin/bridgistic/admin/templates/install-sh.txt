@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Bridgistic — merge claude_desktop_config.json into Claude Desktop (macOS/Linux).
+# Backs up your existing config first. Run from inside the unzipped package.
+set -euo pipefail
+
+case "$(uname -s)" in
+  Darwin) DIR="$HOME/Library/Application Support/Claude" ;;
+  *)      DIR="${XDG_CONFIG_HOME:-$HOME/.config}/Claude" ;;
+esac
+FILE="$DIR/claude_desktop_config.json"
+mkdir -p "$DIR"
+[ -f "$FILE" ] && cp "$FILE" "$FILE.backup.$(date +%Y%m%d%H%M%S)" || echo '{}' > "$FILE"
+
+FILE="$FILE" node <<'EOF'
+const fs = require("fs");
+const target = process.env.FILE;
+const incoming = JSON.parse(fs.readFileSync("claude_desktop_config.json", "utf8"));
+const config = JSON.parse(fs.readFileSync(target, "utf8"));
+config.mcpServers = Object.assign({}, config.mcpServers, incoming.mcpServers);
+fs.writeFileSync(target, JSON.stringify(config, null, 2) + "\n");
+console.log("Merged bridgistic into " + target);
+EOF
+
+echo "Now edit the file and set the real path to mcp-server/dist/index.js, then restart Claude Desktop."

@@ -23,26 +23,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 <section class="bridgistic-section">
 	<h2 class="bridgistic-section-title"><?php esc_html_e( 'Manual playbooks', 'bridgistic' ); ?></h2>
 	<div class="bridgistic-grid is-4 bridgistic-stagger">
-		<?php foreach ( $data['builtin'] as $slug => $pb ) : ?>
+		<?php foreach ( $data['builtin'] as $bridgistic_slug => $bridgistic_pb ) : ?>
 			<article class="bridgistic-card bridgistic-playbook-card">
 				<header>
-					<?php echo Page::icon( (string) $pb['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-					<h3><?php echo esc_html( (string) $pb['label'] ); ?></h3>
+					<?php echo Page::icon( (string) $bridgistic_pb['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+					<h3><?php echo esc_html( (string) $bridgistic_pb['label'] ); ?></h3>
 				</header>
-				<p class="bridgistic-card-desc"><?php echo esc_html( (string) $pb['description'] ); ?></p>
+				<p class="bridgistic-card-desc"><?php echo esc_html( (string) $bridgistic_pb['description'] ); ?></p>
 				<p class="bridgistic-help is-muted">
-					<?php echo esc_html( sprintf( __( 'Permission: %s', 'bridgistic' ), (string) $pb['permission'] ) ); ?>
+					<?php /* translators: %s: permission name. */ echo esc_html( sprintf( __( 'Permission: %s', 'bridgistic' ), (string) $bridgistic_pb['permission'] ) ); ?>
 					·
 					<?php
-					if ( $pb['last_run'] ) {
-						echo esc_html( sprintf( __( 'Last run %s ago', 'bridgistic' ), human_time_diff( (int) $pb['last_run'] ) ) );
+					if ( $bridgistic_pb['last_run'] ) {
+						/* translators: %s: human-readable time ago. */
+						echo esc_html( sprintf( __( 'Last run %s ago', 'bridgistic' ), human_time_diff( (int) $bridgistic_pb['last_run'] ) ) );
 					} else {
 						esc_html_e( 'Never run', 'bridgistic' );
 					}
 					?>
 				</p>
-				<div class="bridgistic-playbook-result" data-playbook-result="<?php echo esc_attr( (string) $slug ); ?>" hidden></div>
-				<button type="button" class="bridgistic-button is-soft is-small" data-playbook-run="<?php echo esc_attr( (string) $slug ); ?>">
+				<div class="bridgistic-playbook-result" data-playbook-result="<?php echo esc_attr( (string) $bridgistic_slug ); ?>" hidden></div>
+				<button type="button" class="bridgistic-button is-soft is-small" data-playbook-run="<?php echo esc_attr( (string) $bridgistic_slug ); ?>">
 					<?php echo Page::icon( 'play', 13 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 					<?php esc_html_e( 'Run', 'bridgistic' ); ?>
 				</button>
@@ -63,17 +64,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<table class="bridgistic-table">
 				<thead><tr><th><?php esc_html_e( 'Playbook', 'bridgistic' ); ?></th><th><?php esc_html_e( 'Description', 'bridgistic' ); ?></th><th><?php esc_html_e( 'Updated', 'bridgistic' ); ?></th><th></th></tr></thead>
 				<tbody>
-					<?php foreach ( $data['saved'] as $pb ) : ?>
+					<?php foreach ( $data['saved'] as $bridgistic_pb ) : ?>
 						<tr>
-							<td><strong><?php echo esc_html( (string) ( $pb['name'] ?: $pb['slug'] ) ); ?></strong><br><code><?php echo esc_html( (string) $pb['slug'] ); ?></code></td>
-							<td><?php echo esc_html( (string) ( $pb['description'] ?: '—' ) ); ?></td>
-							<td><?php echo esc_html( Page::ago( (string) $pb['updated_at'] ) ); ?></td>
+							<td><strong><?php echo esc_html( (string) ( $bridgistic_pb['name'] ?: $bridgistic_pb['slug'] ) ); ?></strong><br><code><?php echo esc_html( (string) $bridgistic_pb['slug'] ); ?></code></td>
+							<td><?php echo esc_html( (string) ( $bridgistic_pb['description'] ?: '—' ) ); ?></td>
+							<td><?php echo esc_html( Page::ago( (string) $bridgistic_pb['updated_at'] ) ); ?></td>
 							<td class="bridgistic-table-actions">
-								<button type="button" class="bridgistic-button is-soft is-small" data-saved-playbook-run="<?php echo esc_attr( (string) $pb['slug'] ); ?>" data-dry="1"><?php esc_html_e( 'Dry run', 'bridgistic' ); ?></button>
-								<button type="button" class="bridgistic-button is-soft is-small" data-saved-playbook-run="<?php echo esc_attr( (string) $pb['slug'] ); ?>" data-dry="0"><?php esc_html_e( 'Run now', 'bridgistic' ); ?></button>
+								<button type="button" class="bridgistic-button is-soft is-small" data-saved-playbook-run="<?php echo esc_attr( (string) $bridgistic_pb['slug'] ); ?>" data-dry="1"><?php esc_html_e( 'Dry run', 'bridgistic' ); ?></button>
+								<button type="button" class="bridgistic-button is-soft is-small" data-saved-playbook-run="<?php echo esc_attr( (string) $bridgistic_pb['slug'] ); ?>" data-dry="0"><?php esc_html_e( 'Run now', 'bridgistic' ); ?></button>
 							</td>
 						</tr>
-						<tr class="bridgistic-log-details" data-saved-playbook-result="<?php echo esc_attr( (string) $pb['slug'] ); ?>" hidden>
+						<tr class="bridgistic-log-details" data-saved-playbook-result="<?php echo esc_attr( (string) $bridgistic_pb['slug'] ); ?>" hidden>
 							<td colspan="4"><pre class="bridgistic-code is-compact"></pre></td>
 						</tr>
 					<?php endforeach; ?>
@@ -89,7 +90,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php if ( $data['cron_off'] ) : ?>
 		<div class="bridgistic-callout is-info">
 			<?php echo Page::icon( 'info', 16 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-			<p><?php echo esc_html( sprintf( __( 'WP-Cron is disabled — good. Make sure a real system cron hits %s every few minutes so schedules fire reliably.', 'bridgistic' ), (string) $data['cron_url'] ) ); ?></p>
+			<p><?php /* translators: %s: WP-Cron URL. */ echo esc_html( sprintf( __( 'WP-Cron is disabled — good. Make sure a real system cron hits %s every few minutes so schedules fire reliably.', 'bridgistic' ), (string) $data['cron_url'] ) ); ?></p>
 		</div>
 	<?php else : ?>
 		<div class="bridgistic-callout is-warning">
@@ -108,29 +109,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<table class="bridgistic-table">
 				<thead><tr><th>ID</th><th><?php esc_html_e( 'Playbook', 'bridgistic' ); ?></th><th><?php esc_html_e( 'Recurrence', 'bridgistic' ); ?></th><th><?php esc_html_e( 'Next run (UTC)', 'bridgistic' ); ?></th><th><?php esc_html_e( 'Last status', 'bridgistic' ); ?></th><th><?php esc_html_e( 'State', 'bridgistic' ); ?></th><th></th></tr></thead>
 				<tbody>
-					<?php foreach ( $data['schedules'] as $r ) : ?>
+					<?php foreach ( $data['schedules'] as $bridgistic_result ) : ?>
 						<tr>
-							<td><code><?php echo esc_html( (string) $r['schedule_id'] ); ?></code></td>
-							<td><?php echo esc_html( (string) $r['playbook_slug'] ); ?></td>
-							<td><?php echo esc_html( (string) $r['recurrence'] ); ?></td>
-							<td><?php echo esc_html( (string) ( $r['next_run'] ?: '—' ) ); ?></td>
-							<td><?php echo esc_html( (string) ( $r['last_status'] ?: '—' ) ); ?></td>
-							<td><?php echo (int) $r['enabled'] === 1 ? Page::badge( 'pass', __( 'enabled', 'bridgistic' ) ) : Page::badge( 'muted', __( 'disabled', 'bridgistic' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
+							<td><code><?php echo esc_html( (string) $bridgistic_result['schedule_id'] ); ?></code></td>
+							<td><?php echo esc_html( (string) $bridgistic_result['playbook_slug'] ); ?></td>
+							<td><?php echo esc_html( (string) $bridgistic_result['recurrence'] ); ?></td>
+							<td><?php echo esc_html( (string) ( $bridgistic_result['next_run'] ?: '—' ) ); ?></td>
+							<td><?php echo esc_html( (string) ( $bridgistic_result['last_status'] ?: '—' ) ); ?></td>
+							<td><?php echo (int) $bridgistic_result['enabled'] === 1 ? Page::badge( 'pass', __( 'enabled', 'bridgistic' ) ) : Page::badge( 'muted', __( 'disabled', 'bridgistic' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
 							<td class="bridgistic-table-actions">
 								<?php
 								$bridgistic_schedule_buttons = array(
 									'run' => __( 'Run now', 'bridgistic' ),
-									( (int) $r['enabled'] === 1 ? 'disable' : 'enable' ) => ( (int) $r['enabled'] === 1 ? __( 'Disable', 'bridgistic' ) : __( 'Enable', 'bridgistic' ) ),
+									( (int) $bridgistic_result['enabled'] === 1 ? 'disable' : 'enable' ) => ( (int) $bridgistic_result['enabled'] === 1 ? __( 'Disable', 'bridgistic' ) : __( 'Enable', 'bridgistic' ) ),
 									'delete' => __( 'Delete', 'bridgistic' ),
 								);
-								foreach ( $bridgistic_schedule_buttons as $do => $label ) :
+								foreach ( $bridgistic_schedule_buttons as $bridgistic_action => $bridgistic_label ) :
 									?>
-									<form method="post" action="<?php echo esc_url( (string) $data['action_url'] ); ?>" class="bridgistic-inline-form"<?php echo 'delete' === $do ? ' data-confirm="delete"' : ''; ?>>
+									<form method="post" action="<?php echo esc_url( (string) $data['action_url'] ); ?>" class="bridgistic-inline-form"<?php echo 'delete' === $bridgistic_action ? ' data-confirm="delete"' : ''; ?>>
 										<input type="hidden" name="action" value="bridgistic_schedule_action" />
-										<input type="hidden" name="schedule_id" value="<?php echo esc_attr( (string) $r['schedule_id'] ); ?>" />
-										<input type="hidden" name="do" value="<?php echo esc_attr( (string) $do ); ?>" />
+										<input type="hidden" name="schedule_id" value="<?php echo esc_attr( (string) $bridgistic_result['schedule_id'] ); ?>" />
+										<input type="hidden" name="do" value="<?php echo esc_attr( (string) $bridgistic_action ); ?>" />
 										<?php wp_nonce_field( 'bridgistic_schedule_action' ); ?>
-										<button class="bridgistic-button is-small <?php echo 'delete' === $do ? 'is-danger-soft' : 'is-soft'; ?>"><?php echo esc_html( $label ); ?></button>
+										<button class="bridgistic-button is-small <?php echo 'delete' === $bridgistic_action ? 'is-danger-soft' : 'is-soft'; ?>"><?php echo esc_html( $bridgistic_label ); ?></button>
 									</form>
 								<?php endforeach; ?>
 							</td>
@@ -145,15 +146,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 <section class="bridgistic-section">
 	<h2 class="bridgistic-section-title"><?php esc_html_e( 'Premium automation', 'bridgistic' ); ?></h2>
 	<div class="bridgistic-grid is-3 bridgistic-stagger">
-		<?php foreach ( $data['premium'] as $pb ) : ?>
+		<?php foreach ( $data['premium'] as $bridgistic_pb ) : ?>
 			<article class="bridgistic-card bridgistic-locked-card">
 				<div class="bridgistic-locked-blur" aria-hidden="true">
 					<div class="bridgistic-skeleton-line"></div>
 					<div class="bridgistic-skeleton-line is-short"></div>
 				</div>
 				<div class="bridgistic-locked-overlay">
-					<?php echo Page::icon( (string) $pb['icon'], 20 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-					<h3><?php echo esc_html( (string) $pb['label'] ); ?></h3>
+					<?php echo Page::icon( (string) $bridgistic_pb['icon'], 20 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+					<h3><?php echo esc_html( (string) $bridgistic_pb['label'] ); ?></h3>
 					<?php echo Page::badge( 'muted', __( 'Coming in Bridgistic SaaS', 'bridgistic' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				</div>
 			</article>

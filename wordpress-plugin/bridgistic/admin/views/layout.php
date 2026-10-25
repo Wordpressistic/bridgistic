@@ -69,20 +69,20 @@ $bridgistic_nav_icons = array(
 		</header>
 
 		<nav class="bridgistic-nav" aria-label="<?php esc_attr_e( 'Bridgistic sections', 'bridgistic' ); ?>">
-			<?php foreach ( Controller::pages() as $nav_slug => $nav_page ) : ?>
+			<?php foreach ( Controller::pages() as $bridgistic_nav_slug => $bridgistic_nav_page ) : ?>
 				<a
-					class="bridgistic-nav-item<?php echo $nav_slug === $this->slug() ? ' is-active' : ''; ?>"
-					href="<?php echo esc_url( admin_url( 'admin.php?page=' . $nav_slug ) ); ?>"
-					<?php echo $nav_slug === $this->slug() ? 'aria-current="page"' : ''; ?>
+					class="bridgistic-nav-item<?php echo $bridgistic_nav_slug === $this->slug() ? ' is-active' : ''; ?>"
+					href="<?php echo esc_url( admin_url( 'admin.php?page=' . $bridgistic_nav_slug ) ); ?>"
+					<?php echo $bridgistic_nav_slug === $this->slug() ? 'aria-current="page"' : ''; ?>
 				>
-					<?php echo Page::icon( $bridgistic_nav_icons[ $nav_slug ] ?? 'dashboard', 15 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+					<?php echo Page::icon( $bridgistic_nav_icons[ $bridgistic_nav_slug ] ?? 'dashboard', 15 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 					<span>
-						<?php echo esc_html( $nav_page[0] ); ?>
-						<?php if ( 'bridgistic-setup' === $nav_slug ) : ?>
+						<?php echo esc_html( $bridgistic_nav_page[0] ); ?>
+						<?php if ( 'bridgistic-setup' === $bridgistic_nav_slug ) : ?>
 							<span class="bridgistic-nav-hint"><?php esc_html_e( 'all clients', 'bridgistic' ); ?></span>
 						<?php endif; ?>
 					</span>
-					<?php if ( 'bridgistic-cloud' === $nav_slug ) : ?>
+					<?php if ( 'bridgistic-cloud' === $bridgistic_nav_slug ) : ?>
 						<span class="bridgistic-nav-beta"><?php esc_html_e( 'Beta', 'bridgistic' ); ?></span>
 					<?php endif; ?>
 				</a>

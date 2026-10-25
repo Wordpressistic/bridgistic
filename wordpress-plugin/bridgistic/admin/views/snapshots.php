@@ -22,7 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <section class="bridgistic-card bridgistic-snapshot-bar bridgistic-fade-in">
 	<div>
-		<strong><?php echo esc_html( sprintf( __( '%1$d of %2$d snapshots used', 'bridgistic' ), (int) $data['count'], (int) $data['limit'] ) ); ?></strong>
+		/* translators: 1: snapshots in use, 2: snapshot cap */
+		<strong><?php /* translators: %d: snapshot cap */ echo esc_html( sprintf( __( '%1$d of %2$d snapshots used', 'bridgistic' ), (int) $data['count'], (int) $data['limit'] ) ); ?></strong>
 		<p class="bridgistic-help"><?php echo esc_html( sprintf( __( 'The free version keeps up to %d snapshots. Delete old ones to make room.', 'bridgistic' ), (int) $data['limit'] ) ); ?></p>
 	</div>
 	<button type="button" class="bridgistic-button is-primary" id="bridgistic-create-snapshot">

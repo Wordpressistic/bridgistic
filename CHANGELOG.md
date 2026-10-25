@@ -5,6 +5,23 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 ## [Unreleased]
 
+## [1.5.9] — 2026-10-26
+
+### Security
+
+- **PHP execution no longer uses `eval()`.** Submitted code is written to a uniquely named file inside the hardened sandbox — direct web access blocked by `.htaccess`/`web.config`, every sandbox PHP file carries the `ABSPATH` guard — executed with `include`, and deleted in the same request's `finally`. Plugin Check forbids `eval()`; behaviour, output capture and the Guard approval binding are unchanged (covered by the security-regression suite).
+
+### Fixed
+
+- Plugin Check pass: 60 errors and 151 warnings to zero across the shipped files.
+  - Nonce verification: every classic and AJAX handler's input now goes through documented `post_*()` helpers that run after `guard_post()`/`guard_ajax()` — the superglobal reads live in one audited place.
+  - All placeholder-bearing translation calls carry `translators:` comments.
+  - View and `uninstall.php` variables renamed to the `bridgistic_` prefix.
+  - Custom-table queries (key store, audit, memory, playbooks, snapshots, scheduler, usage, approvals) carry a documented file-scope justification — the table name is code-defined and every value is prepared.
+  - The config generator's shell, PowerShell and Markdown templates moved to `admin/templates/` (heredoc syntax is not allowed); contents byte-identical.
+  - Hidden files (`.gitignore`, `.gitkeep`) are excluded from the distributed zip.
+  - `set_time_limit()` carries a scoped, justified annotation (bounded best-effort budget, restored in `finally`).
+
 ## [1.5.8] — 2026-10-23
 
 ### Fixed

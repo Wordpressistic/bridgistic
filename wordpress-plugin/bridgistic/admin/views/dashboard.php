@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="bridgistic-hero-status" id="bridgistic-hero-status" data-poll-dashboard>
 		<?php if ( $data['connected'] ) : ?>
 			<?php echo Page::badge( 'pass', __( 'Connected', 'bridgistic' ), true ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-			<span class="bridgistic-hero-status-note"><?php echo esc_html( sprintf( __( 'Last MCP request %s', 'bridgistic' ), Page::ago( $data['last_used'] ) ) ); ?></span>
+			<span class="bridgistic-hero-status-note"><?php /* translators: %s: human-readable time ago */ echo esc_html( sprintf( __( 'Last MCP request %s', 'bridgistic' ), Page::ago( $data['last_used'] ) ) ); ?></span>
 		<?php elseif ( $data['keys_enabled'] > 0 ) : ?>
 			<?php echo Page::badge( 'warn', __( 'Waiting for first request', 'bridgistic' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 			<span class="bridgistic-hero-status-note"><?php esc_html_e( 'Keys exist — connect Claude and run a read-only tool.', 'bridgistic' ); ?></span>
@@ -71,7 +71,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php echo Page::badge( 'pass', __( 'HMAC + Scopes Enabled', 'bridgistic' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 		</p>
 		<p class="bridgistic-card-desc">
-			<?php echo esc_html( sprintf( _n( '%d active key with least-privilege scopes.', '%d active keys with least-privilege scopes.', $data['keys_enabled'], 'bridgistic' ), $data['keys_enabled'] ) ); ?>
+			<?php /* translators: %d: number of active keys. */ echo esc_html( sprintf( _n( '%d active key with least-privilege scopes.', '%d active keys with least-privilege scopes.', $data['keys_enabled'], 'bridgistic' ), $data['keys_enabled'] ) ); ?>
 		</p>
 		<a class="bridgistic-button is-soft" href="<?php echo esc_url( $data['keys_url'] ); ?>"><?php esc_html_e( 'Manage Keys', 'bridgistic' ); ?></a>
 	</article>
@@ -94,7 +94,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<p class="bridgistic-stat"><span class="bridgistic-stat-number" id="bridgistic-audit-count"><?php echo esc_html( number_format_i18n( (int) $data['audit_count'] ) ); ?></span> <?php esc_html_e( 'logged actions', 'bridgistic' ); ?></p>
 		<p class="bridgistic-card-desc" id="bridgistic-latest-log">
 			<?php if ( $data['latest_log'] ) : ?>
-				<?php echo esc_html( sprintf( __( 'Latest: %1$s (%2$s)', 'bridgistic' ), (string) $data['latest_log']['action'], Page::ago( (string) $data['latest_log']['created_at'] ) ) ); ?>
+				<?php /* translators: 1: latest action name, 2: human-readable time ago. */ echo esc_html( sprintf( __( 'Latest: %1$s (%2$s)', 'bridgistic' ), (string) $data['latest_log']['action'], Page::ago( (string) $data['latest_log']['created_at'] ) ) ); ?>
 			<?php else : ?>
 				<?php esc_html_e( 'No MCP activity yet.', 'bridgistic' ); ?>
 			<?php endif; ?>
@@ -123,9 +123,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php echo Page::icon( 'pulse' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 		<div>
 			<strong><?php echo null !== $data['health_score'] ? esc_html( $data['health_score'] . '/100' ) : '—'; ?></strong>
+			/* translators: %s: human-readable time since the last health check */
 			<span>
 				<?php
 				if ( $data['health_time'] ) {
+					/* translators: %s: human-readable time since the last health check. */
 					echo esc_html( sprintf( __( 'Health score · checked %s ago', 'bridgistic' ), human_time_diff( (int) $data['health_time'] ) ) );
 				} else {
 					esc_html_e( 'Health score · not run yet', 'bridgistic' );

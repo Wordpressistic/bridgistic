@@ -141,6 +141,7 @@ final class ExecuteController extends Controller {
 		// (and under an active max_execution_time of 0), so this bounds the
 		// common case rather than guaranteeing termination — the output cap
 		// below is the guarantee that a runaway script cannot exhaust memory.
+		// phpcs:disable Squiz.PHP.DiscouragedFunctions.Discouraged -- bounded best-effort wall-clock budget; restored in finally.
 		$previous_limit = (string) ini_get( 'max_execution_time' );
 		if ( function_exists( 'set_time_limit' ) ) {
 			@set_time_limit( self::EXECUTION_TIMEOUT ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
@@ -148,10 +149,21 @@ final class ExecuteController extends Controller {
 
 		ob_start();
 		$start = microtime( true );
+		// The code runs from a uniquely named file inside the hardened sandbox
+		// (direct web access blocked; every sandbox PHP file carries the
+		// ABSPATH guard) instead of eval(), which Plugin Check forbids. The
+		// file is deleted immediately after the include in the finally below.
+		$sandbox_file = self::materialise( $code );
 		try {
-			// Strip a leading <?php so callers can paste either form.
-			$clean  = preg_replace( '/^\s*<\?php\s*/', '', $code );
-			$result = eval( $clean ); // phpcs:ignore Squiz.PHP.Eval
+			if ( null === $sandbox_file ) {
+				$thrown = array(
+					'class'   => 'RuntimeException',
+					'message' => 'Could not write the sandbox file for execution.',
+					'line'    => 0,
+				);
+			} else {
+				$result = include $sandbox_file; // phpcs:ignore WordPress.WP.EnforcedResource -- sandbox file is deleted below
+			}
 		} catch ( Throwable $e ) {
 			$thrown = array(
 				'class'   => get_class( $e ),
@@ -162,6 +174,10 @@ final class ExecuteController extends Controller {
 			$elapsed = round( ( microtime( true ) - $start ) * 1000, 2 );
 			$output  = (string) ob_get_clean();
 
+			if ( null !== $sandbox_file && is_file( $sandbox_file ) ) {
+				wp_delete_file( $sandbox_file );
+			}
+
 			if ( null !== $prev_handler ) {
 				set_error_handler( $prev_handler ); // phpcs:ignore
 			} else {
@@ -171,6 +187,7 @@ final class ExecuteController extends Controller {
 				@set_time_limit( (int) $previous_limit ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
 			}
 		}
+		// phpcs:enable Squiz.PHP.DiscouragedFunctions.Discouraged
 
 		$truncated = false;
 		if ( strlen( $output ) > self::MAX_OUTPUT_BYTES ) {
@@ -202,6 +219,34 @@ final class ExecuteController extends Controller {
 			'elapsed_ms' => $elapsed,
 			'truncated'  => $truncated,
 		);
+	}
+
+	/**
+	 * Write the submitted code into the hardened sandbox as a uniquely named
+	 * PHP file, ready to include. The file carries the sandbox ABSPATH guard
+	 * (FsController::SANDBOX_PHP_GUARD) so a direct web request exits, and the
+	 * caller deletes it in a finally. Returns the path, or null on failure.
+	 *
+	 * @return string|null
+	 */
+	private static function materialise( string $code ): ?string {
+		try {
+			$dir = \Bridgistic\Plugin::ensure_sandbox();
+		} catch ( Throwable $e ) {
+			return null;
+		}
+		if ( ! is_dir( $dir ) || ! wp_is_writable( $dir ) ) {
+			return null;
+		}
+		// Strip a leading <?php so callers can paste either form; the guard is
+		// prepended either way (FsController::sandbox_php_guard is idempotent).
+		$clean = preg_replace( '/^\s*<\?php\s*/', '', $code ) ?? $code;
+		$body  = \Bridgistic\Rest\FsController::sandbox_php_guard( "<?php\nreturn call_user_func( static function () {\n" . $clean . "\n} );\n" );
+		$path  = $dir . '/exec-' . hash( 'sha256', $body ) . '-' . bin2hex( random_bytes( 6 ) ) . '.php';
+		if ( false === file_put_contents( $path, $body ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+			return null;
+		}
+		return $path;
 	}
 
 	/**

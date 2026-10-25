@@ -40,7 +40,7 @@ define( 'DAY_IN_SECONDS', 86400 );
 define( 'MB_IN_BYTES', 1048576 );
 define( 'AUTH_KEY', 'unit-test-auth-key-000000000000000000' );
 define( 'SECURE_AUTH_KEY', 'unit-test-secure-auth-key-00000000000' );
-define( 'BRIDGISTIC_VERSION', '1.5.4' );
+define( 'BRIDGISTIC_VERSION', '1.5.9' );
 define( 'BRIDGISTIC_DIR', dirname( __DIR__ ) . '/' );
 define( 'BRIDGISTIC_URL', 'https://example.test/wp-content/plugins/bridgistic/' );
 define( 'BRIDGISTIC_REST_NAMESPACE', 'bridgistic/v1' );
@@ -344,6 +344,67 @@ function esc_html__( string $text, string $domain = '' ): string {
 
 function home_url( string $path = '' ): string {
 	return 'https://example.test' . $path;
+}
+
+function site_url( string $path = '' ): string {
+	return 'https://example.test' . $path;
+}
+
+/** The test harness has no hook system: filters pass the value through. */
+function apply_filters( string $hook, $value ) {
+	return $value;
+}
+
+/** WordPress's delete helper; the sandbox include path removes its temp file with it. */
+function wp_delete_file( string $file ): bool {
+	if ( is_file( $file ) ) {
+		return unlink( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+	}
+	return false;
+}
+
+function get_bloginfo( string $show = '' ): string {
+	return 'show' === $show ? '6.7' : '6.7';
+}
+
+function delete_option( string $name ): bool {
+	unset( $GLOBALS['__options'][ $name ] );
+	return true;
+}
+
+/**
+ * HTTP stub for the license link. Queue a handler per URL in
+ * $GLOBALS['__http_responses'][ $url ]; a handler receives the request args
+ * (including 'body') and returns the response payload array. URLs without a
+ * handler degrade to an unreachable-server WP_Error, which is the default
+ * behaviour the license suites rely on. The returned wrapper mirrors the
+ * WordPress response shape (code + body) so the retrieve helpers work
+ * unchanged.
+ */
+function wp_remote_post( string $url, array $args = array() ) {
+	$handler = $GLOBALS['__http_responses'][ $url ] ?? null;
+	if ( null === $handler ) {
+		return new WP_Error( 'http_request_failed', 'cURL error 7: license server unreachable (no stub queued).', array( 'status' => 502 ) );
+	}
+	return array( '__code' => 200, 'body' => (string) wp_json_encode( $handler( $args ) ) );
+}
+
+function wp_remote_retrieve_response_code( $response ): int {
+	if ( $response instanceof WP_Error ) {
+		return (int) ( $response->data['status'] ?? 502 );
+	}
+	return (int) ( $response['__code'] ?? 200 );
+}
+
+function wp_remote_retrieve_body( $response ): string {
+	if ( $response instanceof WP_Error ) {
+		return '';
+	}
+	return (string) ( $response['body'] ?? '' );
+}
+
+function wp_remote_retrieve_headers( $response ) {
+	return array();
 }
 
 function admin_url( string $path = '' ): string {

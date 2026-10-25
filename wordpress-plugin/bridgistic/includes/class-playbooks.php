@@ -26,6 +26,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/*
+ * Custom-table persistence layer.
+ *
+ * The table name comes from self::table() (code-defined, plugin-prefixed) and
+ * cannot be a prepare() placeholder, so the direct-DB sniffs are disabled for
+ * this file. Every user-supplied value still goes through $wpdb->prepare().
+ */
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+// phpcs:disable WordPress.DB.PreparedSQL
+// phpcs:disable PluginCheck.Security.DirectDB
+
 final class Playbooks {
 
 	/** Route prefixes a playbook step is allowed to call (no recursion into playbooks). */

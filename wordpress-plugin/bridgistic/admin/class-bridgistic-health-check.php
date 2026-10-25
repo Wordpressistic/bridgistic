@@ -220,6 +220,7 @@ final class HealthCheck {
 	private static function check_rest_api( array $probe ): array {
 		if ( $probe['error'] ) {
 			return self::result( 'rest_api', __( 'REST API', 'bridgistic' ), 'fail',
+				/* translators: %s: probe error message. */
 				sprintf( __( 'The site cannot reach its own REST API: %s', 'bridgistic' ), $probe['error'] ),
 				__( 'Ask your host whether loopback HTTP requests are blocked. Claude connects from outside, so this may still work — test from Claude to confirm.', 'bridgistic' )
 			);
@@ -239,6 +240,7 @@ final class HealthCheck {
 		$registered = in_array( BRIDGISTIC_REST_NAMESPACE, rest_get_server()->get_namespaces(), true );
 		if ( ! $registered ) {
 			return self::result( 'namespace', __( 'Bridgistic namespace', 'bridgistic' ), 'fail',
+				/* translators: %s: REST namespace. */
 				sprintf( __( 'The %s REST namespace is not registered.', 'bridgistic' ), BRIDGISTIC_REST_NAMESPACE ),
 				__( 'Deactivate and reactivate the Bridgistic plugin. If it persists, another plugin may be interfering with rest_api_init.', 'bridgistic' )
 			);
@@ -264,6 +266,7 @@ final class HealthCheck {
 		}
 		if ( in_array( $probe['code'], array( 403, 406, 503 ), true ) || ( $probe['code'] >= 400 && null === $probe['json'] && '' !== $probe['body'] ) ) {
 			return self::result( 'waf', __( 'Security plugin / WAF', 'bridgistic' ), 'warn',
+				/* translators: %d: HTTP status code. */
 				sprintf( __( 'A security layer may be intercepting REST requests (HTTP %d, non-Bridgistic response).', 'bridgistic' ), $probe['code'] ),
 				__( 'Allowlist the /wp-json/bridgistic/v1/ namespace in your security plugin or CDN firewall, and make sure X-Bridgistic-* headers are not stripped.', 'bridgistic' )
 			);
@@ -305,6 +308,7 @@ final class HealthCheck {
 
 		if ( is_wp_error( $res ) ) {
 			return self::result( 'hmac', __( 'HMAC authentication', 'bridgistic' ), 'warn',
+				/* translators: %s: WP_Error message. */
 				sprintf( __( 'Could not run the loopback self-test: %s', 'bridgistic' ), $res->get_error_message() ),
 				__( 'Loopback requests may be blocked on this host. Test from Claude directly — authentication can still work from outside.', 'bridgistic' )
 			);
@@ -319,6 +323,7 @@ final class HealthCheck {
 		$json = json_decode( (string) wp_remote_retrieve_body( $res ), true );
 		$why  = is_array( $json ) ? (string) ( $json['code'] ?? "HTTP {$code}" ) : "HTTP {$code}";
 		return self::result( 'hmac', __( 'HMAC authentication', 'bridgistic' ), 'fail',
+			/* translators: %s: rejection reason. */
 			sprintf( __( 'The signed self-test was rejected (%s).', 'bridgistic' ), $why ),
 			__( 'If the code is bridgistic_auth_stale, fix server time (see Server time below). Otherwise a proxy may be altering request bodies or stripping X-Bridgistic-* headers.', 'bridgistic' )
 		);
@@ -328,6 +333,7 @@ final class HealthCheck {
 		$home = home_url();
 		if ( ! wp_http_validate_url( $home ) ) {
 			return self::result( 'site_url', __( 'Site URL', 'bridgistic' ), 'fail',
+				/* translators: %s: configured site URL. */
 				sprintf( __( 'The configured site URL (%s) is not a valid URL.', 'bridgistic' ), $home ),
 				__( 'Fix it in Settings → General. Claude configs embed this value.', 'bridgistic' )
 			);
@@ -335,10 +341,12 @@ final class HealthCheck {
 		if ( get_option( 'siteurl' ) !== get_option( 'home' ) ) {
 			return self::result( 'site_url', __( 'Site URL', 'bridgistic' ), 'warn',
 				__( 'WordPress Address and Site Address differ. That is fine, but always use the Site Address in Claude configs.', 'bridgistic' ),
+				/* translators: %s: site URL. */
 				sprintf( __( 'Use %s in your Claude config.', 'bridgistic' ), $home )
 			);
 		}
 		return self::result( 'site_url', __( 'Site URL', 'bridgistic' ), 'pass',
+			/* translators: %s: site URL. */
 			sprintf( __( '%s is valid.', 'bridgistic' ), $home ), '' );
 	}
 
@@ -371,6 +379,7 @@ final class HealthCheck {
 	private static function check_php_version(): array {
 		$ok = version_compare( PHP_VERSION, self::MIN_PHP, '>=' );
 		return self::result( 'php', __( 'PHP version', 'bridgistic' ), $ok ? 'pass' : 'fail',
+			/* translators: 1: current PHP version, 2: minimum required. */
 			sprintf( __( 'Running PHP %1$s (minimum %2$s).', 'bridgistic' ), PHP_VERSION, self::MIN_PHP ),
 			$ok ? '' : __( 'Ask your host to switch this site to PHP 8.0 or newer.', 'bridgistic' )
 		);
@@ -380,6 +389,7 @@ final class HealthCheck {
 		global $wp_version;
 		$ok = version_compare( $wp_version, self::MIN_WP, '>=' );
 		return self::result( 'wp', __( 'WordPress version', 'bridgistic' ), $ok ? 'pass' : 'fail',
+			/* translators: 1: current WordPress version, 2: minimum required. */
 			sprintf( __( 'Running WordPress %1$s (minimum %2$s).', 'bridgistic' ), $wp_version, self::MIN_WP ),
 			$ok ? '' : __( 'Update WordPress from Dashboard → Updates.', 'bridgistic' )
 		);
@@ -390,6 +400,7 @@ final class HealthCheck {
 		if ( ! empty( $uploads['error'] ) || ! wp_is_writable( $uploads['basedir'] ) ) {
 			return self::result( 'uploads', __( 'Uploads directory', 'bridgistic' ), 'fail',
 				__( 'The uploads directory is not writable — media tools and the sandbox cannot work.', 'bridgistic' ),
+				/* translators: %s: uploads base directory. */
 				sprintf( __( 'Fix permissions on %s (your host can do this).', 'bridgistic' ), esc_html( (string) $uploads['basedir'] ) )
 			);
 		}
@@ -422,7 +433,9 @@ final class HealthCheck {
 		$exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table; // phpcs:ignore WordPress.DB
 		return self::result( $suffix, $label, $exists ? 'pass' : 'fail',
 			$exists
+				/* translators: %s: table name. */
 				? sprintf( __( 'Table %s exists.', 'bridgistic' ), $table )
+				/* translators: %s: table name. */
 				: sprintf( __( 'Table %s is missing.', 'bridgistic' ), $table ),
 			$exists ? '' : __( 'Deactivate and reactivate the Bridgistic plugin to recreate its tables.', 'bridgistic' )
 		);
@@ -450,11 +463,13 @@ final class HealthCheck {
 		}
 		if ( $broken ) {
 			return self::result( 'scopes', __( 'Key scopes', 'bridgistic' ), 'warn',
+				/* translators: %d: number of keys. */
 				sprintf( __( '%d key(s) carry unknown scopes (created by a different version?).', 'bridgistic' ), count( $broken ) ),
 				__( 'Rotate or recreate the affected keys from Keys & Scopes.', 'bridgistic' )
 			);
 		}
 		return self::result( 'scopes', __( 'Key scopes', 'bridgistic' ), 'pass',
+			/* translators: 1: total keys, 2: enabled keys. */
 			sprintf( __( '%1$d key(s), %2$d enabled — all scopes valid.', 'bridgistic' ), count( $keys ), $enabled ), '' );
 	}
 
@@ -462,6 +477,7 @@ final class HealthCheck {
 		$when = (int) get_option( ConfigGenerator::GENERATED_FLAG, 0 );
 		if ( $when ) {
 			return self::result( 'config', __( 'MCP config generated', 'bridgistic' ), 'pass',
+				/* translators: %s: human-readable time ago. */
 				sprintf( __( 'A Claude config was generated %s ago.', 'bridgistic' ), human_time_diff( $when ) ), '' );
 		}
 		return self::result( 'config', __( 'MCP config generated', 'bridgistic' ), 'info',
@@ -478,6 +494,7 @@ final class HealthCheck {
 
 		if ( $drift > 30 ) {
 			return self::result( 'time', __( 'Server time', 'bridgistic' ), 'warn',
+				/* translators: %d: clock drift in seconds. */
 				sprintf( __( 'PHP and database clocks differ by %d seconds — server time may be unreliable.', 'bridgistic' ), $drift ),
 				__( 'Signed requests allow ±300s of drift between Claude\'s machine and this server. Ask your host to enable NTP.', 'bridgistic' )
 			);
@@ -505,6 +522,7 @@ final class HealthCheck {
 
 		if ( is_wp_error( $res ) ) {
 			return self::result( 'admin_ajax', __( 'admin-ajax.php reachable', 'bridgistic' ), 'warn',
+				/* translators: %s: WP_Error message. */
 				sprintf( __( 'Loopback request to admin-ajax.php failed: %s', 'bridgistic' ), $res->get_error_message() ),
 				__( 'The plugin\'s admin screens talk to admin-ajax.php. If a firewall or security plugin blocks it, allowlist it for logged-in administrators.', 'bridgistic' )
 			);
@@ -513,10 +531,12 @@ final class HealthCheck {
 		$code = (int) wp_remote_retrieve_response_code( $res );
 		if ( $code >= 200 && $code < 400 ) {
 			return self::result( 'admin_ajax', __( 'admin-ajax.php reachable', 'bridgistic' ), 'pass',
+				/* translators: %d: HTTP status code. */
 				sprintf( __( 'admin-ajax.php answered with HTTP %d.', 'bridgistic' ), $code ), '' );
 		}
 
 		return self::result( 'admin_ajax', __( 'admin-ajax.php reachable', 'bridgistic' ), 'fail',
+			/* translators: %d: HTTP status code. */
 			sprintf( __( 'admin-ajax.php answered with HTTP %d — the admin screens will not work.', 'bridgistic' ), $code ),
 			__( 'A security plugin, firewall, or server rule is blocking admin-ajax.php. Allowlist it for logged-in administrators.', 'bridgistic' )
 		);
@@ -537,11 +557,13 @@ final class HealthCheck {
 		$dir = get_temp_dir();
 		if ( ! is_dir( $dir ) || ! wp_is_writable( $dir ) ) {
 			return self::result( 'temp_dir', __( 'Writable temp directory', 'bridgistic' ), 'warn',
+				/* translators: %s: temp directory path. */
 				sprintf( __( 'PHP\'s temp directory (%s) is missing or not writable.', 'bridgistic' ), $dir ),
 				__( 'Package export and snapshot creation write temporary files. Ask your host to provide a writable temp directory, or define WP_TEMP_DIR in wp-config.php.', 'bridgistic' )
 			);
 		}
 		return self::result( 'temp_dir', __( 'Writable temp directory', 'bridgistic' ), 'pass',
+			/* translators: %s: temp directory path. */
 			sprintf( __( 'Temp directory is writable (%s).', 'bridgistic' ), $dir ), '' );
 	}
 
@@ -596,6 +618,7 @@ final class HealthCheck {
 		}
 
 		return self::result( 'cron', __( 'Scheduled tasks', 'bridgistic' ), 'pass',
+			/* translators: %s: next scheduled run (UTC). */
 			sprintf( __( 'Daily cleanup is scheduled (next run %s UTC).', 'bridgistic' ), gmdate( 'Y-m-d H:i', (int) $scheduled ) ), '' );
 	}
 
@@ -603,6 +626,7 @@ final class HealthCheck {
 		$res = wp_remote_get( 'https://api.wordpress.org/core/version-check/1.7/', array( 'timeout' => 8 ) );
 		if ( is_wp_error( $res ) ) {
 			return self::result( 'outbound_https', __( 'Outbound HTTPS', 'bridgistic' ), 'warn',
+				/* translators: %s: WP_Error message. */
 				sprintf( __( 'This server could not make an outbound HTTPS request: %s', 'bridgistic' ), $res->get_error_message() ),
 				__( 'The local MCP connection does not need outbound access, so this is not fatal. Bridgistic Cloud and plugin updates do.', 'bridgistic' )
 			);
@@ -649,6 +673,7 @@ final class HealthCheck {
 			);
 		}
 		return self::result( 'woocommerce', __( 'WooCommerce tools', 'bridgistic' ), 'pass',
+			/* translators: %s: WooCommerce version. */
 			sprintf( __( 'WooCommerce %s detected — store tools are available to keys holding woo:* scopes.', 'bridgistic' ), defined( 'WC_VERSION' ) ? WC_VERSION : '?' ), '' );
 	}
 

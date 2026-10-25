@@ -17,7 +17,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 global $wpdb;
 
 // 1. Drop custom tables.
-$tables = array(
+$bridgistic_tables = array(
 	'bridgistic_keys',
 	'bridgistic_audit',
 	'bridgistic_snapshots',
@@ -27,9 +27,9 @@ $tables = array(
 	'bridgistic_playbooks',
 	'bridgistic_schedules',
 );
-foreach ( $tables as $t ) {
-	$table = $wpdb->prefix . $t;
-	$wpdb->query( "DROP TABLE IF EXISTS `{$table}`" ); // phpcs:ignore WordPress.DB
+foreach ( $bridgistic_tables as $bridgistic_table_prefix ) {
+	$bridgistic_table = $wpdb->prefix . $bridgistic_table_prefix;
+	$wpdb->query( "DROP TABLE IF EXISTS `{$bridgistic_table}`" ); // phpcs:ignore WordPress.DB
 }
 
 // 2. Delete options.
@@ -44,15 +44,15 @@ if ( function_exists( 'wp_unschedule_hook' ) ) {
 }
 
 // 4. Remove the sandbox directory.
-$uploads = wp_upload_dir();
-$sandbox = trailingslashit( $uploads['basedir'] ) . 'bridgistic-sandbox';
-if ( is_dir( $sandbox ) ) {
-	$it = new RecursiveIteratorIterator(
-		new RecursiveDirectoryIterator( $sandbox, FilesystemIterator::SKIP_DOTS ),
+$bridgistic_uploads = wp_upload_dir();
+$bridgistic_sandbox = trailingslashit( $bridgistic_uploads['basedir'] ) . 'bridgistic-sandbox';
+if ( is_dir( $bridgistic_sandbox ) ) {
+	$bridgistic_iterator = new RecursiveIteratorIterator(
+		new RecursiveDirectoryIterator( $bridgistic_sandbox, FilesystemIterator::SKIP_DOTS ),
 		RecursiveIteratorIterator::CHILD_FIRST
 	);
-	foreach ( $it as $file ) {
-		$file->isDir() ? rmdir( $file->getPathname() ) : unlink( $file->getPathname() ); // phpcs:ignore
+	foreach ( $bridgistic_iterator as $bridgistic_file ) {
+		$bridgistic_file->isDir() ? rmdir( $bridgistic_file->getPathname() ) : unlink( $bridgistic_file->getPathname() ); // phpcs:ignore
 	}
-	rmdir( $sandbox ); // phpcs:ignore
+	rmdir( $bridgistic_sandbox ); // phpcs:ignore
 }

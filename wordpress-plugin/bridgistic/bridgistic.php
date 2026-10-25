@@ -3,7 +3,7 @@
  * Plugin Name:       Bridgistic
  * Plugin URI:        https://github.com/wordpressistic/bridgistic
  * Description:        Connect your WordPress site to any AI model — Claude, ChatGPT, Codex, Gemini, Cursor or any MCP client — with production-safe, scoped control — HMAC-signed requests, least-privilege keys, dry-run and human approval on destructive ops, one-call rollback, full audit, usage metering, and scheduled playbooks.
- * Version:           1.5.8
+ * Version:           1.5.9
  * Requires at least: 6.4
  * Requires PHP:      8.0
  * Author:            Shuvo Sarker (WordPressistic)

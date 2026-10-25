@@ -108,24 +108,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 				<div class="bridgistic-consent-presets">
 					<?php
-					foreach ( $data['presets'] as $preset_id => $preset ) :
+					foreach ( $data['presets'] as $bridgistic_preset_id => $bridgistic_preset ) :
 						// Name the destructive capabilities rather than only styling
 						// the option — an admin approving a connection should not
 						// have to know which scope strings are dangerous.
-						$granted_risky = array_values( array_intersect( (array) $data['risky_scopes'], (array) $preset['scopes'] ) );
+						$bridgistic_granted_risky = array_values( array_intersect( (array) $data['risky_scopes'], (array) $bridgistic_preset['scopes'] ) );
 						?>
 						<label>
-							<input type="radio" name="preset" value="<?php echo esc_attr( $preset_id ); ?>" <?php checked( 'read_only', $preset_id ); ?> />
+							<input type="radio" name="preset" value="<?php echo esc_attr( $bridgistic_preset_id ); ?>" <?php checked( 'read_only', $bridgistic_preset_id ); ?> />
 							<span>
-								<strong><?php echo esc_html( (string) $preset['label'] ); ?></strong>
-								<span class="desc"><?php echo esc_html( (string) $preset['description'] ); ?></span>
-								<?php if ( $granted_risky ) : ?>
+								<strong><?php echo esc_html( (string) $bridgistic_preset['label'] ); ?></strong>
+								<span class="desc"><?php echo esc_html( (string) $bridgistic_preset['description'] ); ?></span>
+								<?php if ( $bridgistic_granted_risky ) : ?>
 									<span class="desc bridgistic-consent-risky">
 										<?php
 										printf(
 											/* translators: %s: comma-separated list of destructive permission scopes. */
 											esc_html__( 'Includes destructive access: %s', 'bridgistic' ),
-											esc_html( implode( ', ', $granted_risky ) )
+											esc_html( implode( ', ', $bridgistic_granted_risky ) )
 										);
 										?>
 									</span>

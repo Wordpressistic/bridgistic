@@ -44,8 +44,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="bridgistic-field-row">
 				<label for="bridgistic-ms-this-key"><?php esc_html_e( 'Key', 'bridgistic' ); ?></label>
 				<select id="bridgistic-ms-this-key" class="bridgistic-input" data-fresh-key-id="<?php echo esc_attr( (string) $data['fresh_key_id'] ); ?>" data-fresh-secret="<?php echo esc_attr( (string) $data['fresh_secret'] ); ?>">
-					<?php foreach ( $data['keys'] as $k ) : ?>
-						<option value="<?php echo esc_attr( (string) $k['key_id'] ); ?>"><?php echo esc_html( (string) $k['label'] . ' — ' . (string) $k['key_id'] ); ?></option>
+					<?php foreach ( $data['keys'] as $bridgistic_item ) : ?>
+						<option value="<?php echo esc_attr( (string) $bridgistic_item['key_id'] ); ?>"><?php echo esc_html( (string) $bridgistic_item['label'] . ' — ' . (string) $bridgistic_item['key_id'] ); ?></option>
 					<?php endforeach; ?>
 				</select>
 			</div>
