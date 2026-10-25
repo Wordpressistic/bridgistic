@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 ## [Unreleased]
 
+## [1.5.8] — 2026-10-23
+
+### Fixed
+
+- The admin badge no longer reads "Free Local MCP Version" on a licensed site: with a live license the header shows "Pro · {plan} licensed" and the footer "Pro ({plan}) licensed"; unlicensed sites keep the free label.
+
 ## [1.5.7] — 2026-10-23
 
 ### Added

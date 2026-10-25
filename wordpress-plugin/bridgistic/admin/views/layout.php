@@ -12,6 +12,8 @@ declare( strict_types=1 );
 
 namespace Bridgistic\Admin;
 
+use Bridgistic\LicenseLink;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -19,6 +21,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /** @var Page $this */
 /** @var array<string,mixed> $data */
 /** @var string $view */
+
+$bridgistic_license = LicenseLink::status();
+$bridgistic_licensed = ! empty( $bridgistic_license['connected'] ) && in_array( (string) ( $bridgistic_license['status'] ?? '' ), array( 'active', 'trialing', 'grace' ), true );
+$bridgistic_plan = $bridgistic_licensed ? (string) ( $bridgistic_license['plan'] ?? 'pro' ) : '';
 
 $bridgistic_nav_icons = array(
 	'bridgistic'           => 'dashboard',
@@ -48,7 +54,11 @@ $bridgistic_nav_icons = array(
 					<strong>Bridgistic</strong>
 					<em><?php esc_html_e( 'Safe AI Control Bridge for WordPress', 'bridgistic' ); ?></em>
 				</span>
-				<span class="bridgistic-badge is-accent"><?php esc_html_e( 'Free Local MCP Version', 'bridgistic' ); ?></span>
+				<?php if ( $bridgistic_licensed ) : ?>
+					<span class="bridgistic-badge is-accent"><?php echo esc_html( sprintf( /* translators: %s: plan name */ __( 'Pro · %s licensed', 'bridgistic' ), ucfirst( $bridgistic_plan ) ) ); ?></span>
+				<?php else : ?>
+					<span class="bridgistic-badge is-accent"><?php esc_html_e( 'Free Local MCP Version', 'bridgistic' ); ?></span>
+				<?php endif; ?>
 			</div>
 			<div class="bridgistic-topbar-actions">
 				<a class="bridgistic-topbar-link" href="https://wordpressistic.com" target="_blank" rel="noopener noreferrer">WordPressistic <?php echo Page::icon( 'arrow', 13 ); // phpcs:ignore WordPress.Security.EscapeOutput ?></a>
@@ -84,7 +94,7 @@ $bridgistic_nav_icons = array(
 		</main>
 
 		<footer class="bridgistic-footer">
-			<span>Bridgistic <?php echo esc_html( BRIDGISTIC_VERSION ); ?> — <?php esc_html_e( 'free local MCP bridge', 'bridgistic' ); ?></span>
+			<span><?php echo esc_html( 'Bridgistic ' . BRIDGISTIC_VERSION . ' — ' . ( $bridgistic_licensed ? sprintf( /* translators: %s: plan name */ __( 'Pro (%s) licensed', 'bridgistic' ), $bridgistic_plan ) : __( 'free local MCP bridge', 'bridgistic' ) ) ); ?></span>
 			<span class="bridgistic-footer-links">
 				<a href="https://github.com/wordpressistic/bridgistic" target="_blank" rel="noopener noreferrer">GitHub</a>
 				·
