@@ -63,13 +63,38 @@ Only inside a single quarantined sandbox directory under uploads, with direct we
 
 The plugin makes no outbound requests on its own. It contacts the external services below only when a site administrator or a connected key uses the related feature.
 
-* **WPistic license server** (`https://api.wpistic.com/api/v1/licenses`). This is used only when a key with the `license:manage` scope calls the license activate, validate or deactivate endpoints, for example from the Bridgistic dashboard. The request contains the license key (on activation only; it is never stored), the site domain, site and home URLs, the WordPress environment type, an installation ID, and the plugin, WordPress and PHP versions. Terms: https://bridgistic.app/terms. Privacy: https://bridgistic.app/privacy.
+* **Bridgistic license server** (`https://admin.bridgistic.app/api/v1/licenses`). This is used only when a key with the `license:manage` scope calls the license activate, validate or deactivate endpoints, for example from the Bridgistic dashboard. The request contains the license key (on activation only; it is never stored), the site domain, site and home URLs, the WordPress environment type, an installation ID, and the plugin, WordPress and PHP versions. A deployment can be aliased to the WPistic ecosystem server (`https://api.wpistic.com/api/v1/licenses`) with the `BRIDGISTIC_LICENSE_API` constant or the `bridgistic_license_api` filter. Terms: https://bridgistic.app/terms. Privacy: https://bridgistic.app/privacy.
 * **Bridgistic Cloud** (`https://mcp.bridgistic.app`). This is used only when an administrator connects a remote MCP client through **Bridgistic → Bridgistic Cloud** and approves the consent screen. The relay then calls this site's Bridgistic REST API with a scoped key, and every call goes through the same scopes, approvals and audit log as a local connection. Terms: https://bridgistic.app/terms. Privacy: https://bridgistic.app/privacy.
 * **Bridgistic dashboard** (`https://dashboard.bridgistic.app`). The plugin sends no data to the dashboard. It only allows that origin to call the `bridgistic/v1` REST namespace from a browser with a signed key (CORS). The origin list can be changed with the `bridgistic_dashboard_origins` filter.
 
 The local MCP server and the Claude Desktop extension run on your own computer and talk directly to your site.
 
 == Changelog ==
+
+= 1.5.9 =
+* Security: PHP execution in the sandbox no longer uses eval(). Submitted code runs from a uniquely named file with an ABSPATH guard and is deleted in the same request.
+* Security: all classic and AJAX handlers read input through documented post_*() helpers that run after the guard checks.
+* Fixed: internationalization errors (translator comments on every placeholder) and naming warnings in views and uninstall.php.
+* Fixed: Plugin Check database-layer findings documented for the custom tables; every user value still goes through $wpdb->prepare().
+* Changed: the config generator's shell, PowerShell and Markdown templates moved from heredoc to admin/templates/*.txt; hidden files are excluded from the distributed zip.
+* Verified: PHPCS (WPCS plus the Plugin Check sniff set) reports 0 errors and 0 warnings; all 10 PHP suites pass.
+
+= 1.5.8 =
+* Fixed: a licensed site no longer shows "Free Local MCP Version" in the admin header. The badge and footer read the live license link and show "Pro - {plan} licensed" when active, the free label otherwise.
+
+= 1.5.7 =
+* Added: zero-step dashboard pairing. At license activation and on every validate the plugin mints an auto-paired "Bridgistic Dashboard" key and pushes it to the license server, so the license owner's dashboard connects the site without manual key entry. The pairing self-heals if the key is deleted in WP Admin.
+* Added: the Premium Features AI Skills Marketplace card links to the live marketplace (100 free skills, Pro collection for members).
+* Changed: Advanced Logs & Snapshots reads "Included with your license" once a license is active, and license status carries the masked owner email.
+* Fixed: bridge responses are never cached. The bridgistic/v1 namespace sends no-store/no-cache/must-revalidate so a CDN cannot serve one key's response to another.
+
+= 1.5.6 =
+* Fixed: BRIDGISTIC_VERSION derives from the plugin header via get_file_data(), so the constant and header version can no longer drift.
+
+= 1.5.5 =
+* Added: the Premium Features screen carries the license panel: key input and activate, Check now (signed re-validation), Deactivate with confirm, and a status card with plan, masked key, bound domain and entitlements.
+* Changed: LicenseLink::DEFAULT_API now points at the Bridgistic console (admin.bridgistic.app/api/v1/licenses), where Paddle purchases issue keys; BRIDGISTIC_LICENSE_API and the bridgistic_license_api filter retarget an aliased WPistic server.
+* Changed: the dashboard license screen gains a connect-a-site card when no site is connected and shows the corrected $49.99 Lifetime Deal price.
 
 = 1.5.4 =
 * Added: a live WPistic license on the site opens unlimited schedules, snapshots past 50 and audit export.
@@ -136,6 +161,9 @@ The local MCP server and the Claude Desktop extension run on your own computer a
 * Initial public release.
 
 == Upgrade Notice ==
+
+= 1.5.9 =
+Security and compliance release. Sandbox PHP execution no longer uses eval(), all input handlers read through guarded post_*() helpers, and the plugin now passes WordPress Plugin Check with zero errors and zero warnings. Update to keep license-aware admin branding and dashboard pairing working.
 
 = 1.5.4 =
 Update the plugin before activating a new license. Without a live license, the free caps remain: 3 enabled schedules, 50 snapshots and an on-screen audit log. A live license opens only the three shipped paid lines; the skills marketplace, agency/team lines and white-label remain closed.
