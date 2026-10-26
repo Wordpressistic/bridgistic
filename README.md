@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://bridgistic.app"><img src="assets/bridgistic-logo.png" alt="Bridgistic" width="420"></a>
+  <a href="https://bridgistic.app"><img src="https://bridgistic.app/assets/bridgistic-logo.png" alt="Bridgistic" width="420"></a>
 </p>
 
 <p align="center"><strong>Safe AI control for WordPress over MCP: scoped keys, signed requests, human approvals, snapshots and a full audit trail.</strong></p>
