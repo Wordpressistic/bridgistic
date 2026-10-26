@@ -70,6 +70,32 @@ LicenseLink::cron_validate();
 check_equals( 'grace_period', LicenseLink::status()['status'], 'an unsigned/forged cron response does not change status' );
 check( ! empty( $GLOBALS['__options'][ LicenseLink::OPTION ]['last_error'] ), 'the cron records the failure' );
 
+// 401s: only "Activation token has been revoked" closes paid features; other 401s leave the status.
+$bridgistic_set_status = static function ( string $st ): void {
+	$GLOBALS['__options'][ LicenseLink::OPTION ]['response']['status'] = $st;
+};
+foreach ( array(
+	array( 'unauthorized', 'Invalid signature' ),
+	array( 'unauthorized', 'Invalid activation token' ),
+	array( 'invalid_signature', 'Activation token has been revoked' ),
+) as $bridgistic_case ) {
+	$bridgistic_set_status( 'active' );
+	$GLOBALS['__http_responses'][ LicenseLink::DEFAULT_API . '/validate' ] = static function () use ( $bridgistic_case ): array {
+		return array( '__status' => 401, 'error' => array( 'code' => $bridgistic_case[0], 'message' => $bridgistic_case[1] ) );
+	};
+	LicenseLink::cron_validate();
+	check_equals( 'active', LicenseLink::status()['status'], 'a 401 that is not a revoked token leaves the status (' . $bridgistic_case[0] . ': ' . $bridgistic_case[1] . ')' );
+}
+$bridgistic_set_status( 'active' );
+$GLOBALS['__http_responses'][ LicenseLink::DEFAULT_API . '/validate' ] = static function (): array {
+	return array( '__status' => 401, 'error' => array( 'code' => 'unauthorized', 'message' => 'Activation token has been revoked', 'correlation_id' => 'c1' ) );
+};
+LicenseLink::cron_validate();
+check_equals( 'activation_not_found', LicenseLink::status()['status'], 'a 401 revoked token closes paid features like a 404' );
+check( ! empty( $GLOBALS['__options'][ LicenseLink::OPTION ]['activation_token'] ), 'the token is kept after a revoked answer' );
+check( false !== stripos( (string) $GLOBALS['__options'][ LicenseLink::OPTION ]['last_error'], 'revoked' ), 'the revoked reason is recorded' );
+$bridgistic_set_status( 'active' );
+
 // Server says the activation is gone (seat released from the account): paid features close, token kept for Check now.
 $GLOBALS['__http_responses'][ LicenseLink::DEFAULT_API . '/validate' ] = static function (): array {
 	return array( '__status' => 404, 'success' => false, 'error' => array( 'code' => 'activation_not_found', 'message' => 'This activation no longer exists.' ) );
