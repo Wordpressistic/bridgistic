@@ -40,7 +40,7 @@ define( 'DAY_IN_SECONDS', 86400 );
 define( 'MB_IN_BYTES', 1048576 );
 define( 'AUTH_KEY', 'unit-test-auth-key-000000000000000000' );
 define( 'SECURE_AUTH_KEY', 'unit-test-secure-auth-key-00000000000' );
-define( 'BRIDGISTIC_VERSION', '1.5.9' );
+define( 'BRIDGISTIC_VERSION', '1.5.10' );
 define( 'BRIDGISTIC_DIR', dirname( __DIR__ ) . '/' );
 define( 'BRIDGISTIC_URL', 'https://example.test/wp-content/plugins/bridgistic/' );
 define( 'BRIDGISTIC_REST_NAMESPACE', 'bridgistic/v1' );
@@ -386,7 +386,13 @@ function wp_remote_post( string $url, array $args = array() ) {
 	if ( null === $handler ) {
 		return new WP_Error( 'http_request_failed', 'cURL error 7: license server unreachable (no stub queued).', array( 'status' => 502 ) );
 	}
-	return array( '__code' => 200, 'body' => (string) wp_json_encode( $handler( $args ) ) );
+	$out  = $handler( $args );
+	$code = 200;
+	if ( is_array( $out ) && isset( $out['__status'] ) ) {
+		$code = (int) $out['__status'];
+		unset( $out['__status'] );
+	}
+	return array( '__code' => $code, 'body' => (string) wp_json_encode( $out ) );
 }
 
 function wp_remote_retrieve_response_code( $response ): int {
@@ -459,8 +465,22 @@ function wp_using_ext_object_cache(): bool {
 	return false;
 }
 
+// Cron: a tiny in-memory schedule so cron wiring can be asserted.
+$GLOBALS['__cron'] = array();
+
 function wp_next_scheduled( string $hook ) {
-	return false;
+	return $GLOBALS['__cron'][ $hook ]['ts'] ?? false;
+}
+
+function wp_schedule_event( int $timestamp, string $recurrence, string $hook, array $args = array() ): bool {
+	$GLOBALS['__cron'][ $hook ] = array( 'ts' => $timestamp, 'recurrence' => $recurrence );
+	return true;
+}
+
+function wp_clear_scheduled_hook( string $hook, array $args = array() ): int {
+	$had = isset( $GLOBALS['__cron'][ $hook ] ) ? 1 : 0;
+	unset( $GLOBALS['__cron'][ $hook ] );
+	return $had;
 }
 
 function human_time_diff( int $from, int $to = 0 ): string {

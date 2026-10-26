@@ -82,6 +82,10 @@ final class Plugin {
 			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'bridgistic_cron_cleanup' );
 		}
 
+		// Daily license re-validation (re-pushes the dashboard key and site status).
+		add_action( LicenseLink::CRON_HOOK, array( LicenseLink::class, 'cron_validate' ) );
+		LicenseLink::schedule();
+
 		// Scheduled playbooks: register custom cron intervals + the run hook.
 		Scheduler::boot();
 
@@ -127,6 +131,7 @@ final class Plugin {
 
 	public static function deactivate(): void {
 		wp_clear_scheduled_hook( 'bridgistic_cron_cleanup' );
+		wp_clear_scheduled_hook( LicenseLink::CRON_HOOK );
 		wp_unschedule_hook( Scheduler::HOOK );
 		flush_rewrite_rules();
 	}
