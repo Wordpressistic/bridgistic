@@ -4,7 +4,7 @@ Tags: mcp, ai, claude, chatgpt, automation
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.5.9
+Stable tag: 1.5.10
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -63,13 +63,18 @@ Only inside a single quarantined sandbox directory under uploads, with direct we
 
 The plugin makes no outbound requests on its own. It contacts the external services below only when a site administrator or a connected key uses the related feature.
 
-* **Bridgistic license server** (`https://admin.bridgistic.app/api/v1/licenses`). This is used only when a key with the `license:manage` scope calls the license activate, validate or deactivate endpoints, for example from the Bridgistic dashboard. The request contains the license key (on activation only; it is never stored), the site domain, site and home URLs, the WordPress environment type, an installation ID, and the plugin, WordPress and PHP versions. A deployment can be aliased to the WPistic ecosystem server (`https://api.wpistic.com/api/v1/licenses`) with the `BRIDGISTIC_LICENSE_API` constant or the `bridgistic_license_api` filter. Terms: https://bridgistic.app/terms. Privacy: https://bridgistic.app/privacy.
+* **Bridgistic license server** (`https://admin.bridgistic.app/api/v1/licenses`). This is used when a license is activated or deactivated (from WP Admin, or by a key with the `license:manage` scope), once a day while a license is active (a background validate that also sends this site's dashboard pairing key so the account dashboard can reach the site), and once when the plugin is deleted (to release the license seat). Nothing is sent while no license is activated. The request contains the license key (on activation only; it is never stored), the site domain, site and home URLs, the WordPress environment type, an installation ID, and the plugin, WordPress and PHP versions; validate requests also carry the activation token and the dashboard pairing key. A deployment can be aliased to the WPistic ecosystem server (`https://api.wpistic.com/api/v1/licenses`) with the `BRIDGISTIC_LICENSE_API` constant or the `bridgistic_license_api` filter. Terms: https://bridgistic.app/terms. Privacy: https://bridgistic.app/privacy.
 * **Bridgistic Cloud** (`https://mcp.bridgistic.app`). This is used only when an administrator connects a remote MCP client through **Bridgistic → Bridgistic Cloud** and approves the consent screen. The relay then calls this site's Bridgistic REST API with a scoped key, and every call goes through the same scopes, approvals and audit log as a local connection. Terms: https://bridgistic.app/terms. Privacy: https://bridgistic.app/privacy.
 * **Bridgistic dashboard** (`https://dashboard.bridgistic.app`). The plugin sends no data to the dashboard. It only allows that origin to call the `bridgistic/v1` REST namespace from a browser with a signed key (CORS). The origin list can be changed with the `bridgistic_dashboard_origins` filter.
 
 The local MCP server and the Claude Desktop extension run on your own computer and talk directly to your site.
 
 == Changelog ==
+
+= 1.5.10 =
+* New: a daily background check re-validates the license and re-sends this site's dashboard pairing key, so the account dashboard shows the current status of every site without anyone clicking Check now.
+* New: deleting the plugin releases its license seat on the license server and removes the stored license link. Deactivating the plugin only stops the daily check; the seat stays.
+* Changed: Pro licenses cover 3 sites (Lifetime Deal: 1 site).
 
 = 1.5.9 =
 * Security: PHP execution in the sandbox no longer uses eval(). Submitted code runs from a uniquely named file with an ABSPATH guard and is deleted in the same request.
@@ -161,6 +166,9 @@ The local MCP server and the Claude Desktop extension run on your own computer a
 * Initial public release.
 
 == Upgrade Notice ==
+
+= 1.5.10 =
+Keeps the account dashboard in sync: the license is re-validated daily and the dashboard pairing is refreshed. Deleting the plugin now frees its license seat.
 
 = 1.5.9 =
 Security and compliance release. Sandbox PHP execution no longer uses eval(), all input handlers read through guarded post_*() helpers, and the plugin now passes WordPress Plugin Check with zero errors and zero warnings. Update to keep license-aware admin branding and dashboard pairing working.

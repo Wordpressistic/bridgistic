@@ -45,6 +45,9 @@ final class LicenseLink {
 	 */
 	public const DEFAULT_API  = 'https://admin.bridgistic.app/api/v1/licenses';
 
+	/** Daily re-validation: keeps the status fresh and re-pushes the dashboard key (1.5.10). */
+	public const CRON_HOOK = 'bridgistic_license_validate';
+
 	/** Base URL: BRIDGISTIC_LICENSE_API constant, bridgistic_license_api filter, then the default. */
 	public static function api(): string {
 		if ( defined( 'BRIDGISTIC_LICENSE_API' ) ) {
@@ -191,6 +194,7 @@ final class LicenseLink {
 				'validated_at'     => time(),
 			)
 		);
+		self::schedule();
 		return self::status();
 	}
 
@@ -231,7 +235,50 @@ final class LicenseLink {
 			self::post( '/deactivate', array( 'activation_token' => (string) $s['activation_token'], 'installation_uuid' => self::installation_uuid() ) );
 		}
 		delete_option( self::OPTION );
+		self::unschedule();
 		return self::status();
+	}
+
+	/** Ensure the daily validate event exists while a license is active; drop it otherwise. */
+	public static function schedule(): void {
+		$s = self::state();
+		if ( empty( $s['activation_token'] ) ) {
+			self::unschedule();
+			return;
+		}
+		if ( ! wp_next_scheduled( self::CRON_HOOK ) ) {
+			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', self::CRON_HOOK );
+		}
+	}
+
+	public static function unschedule(): void {
+		wp_clear_scheduled_hook( self::CRON_HOOK );
+	}
+
+	/**
+	 * Cron callback. A successful validate refreshes the signed status and
+	 * re-sends the dashboard key, so the account dashboard stays in sync.
+	 * When the server says the activation no longer exists (seat released from
+	 * the account), paid features close; the token is kept so Check now can retry.
+	 */
+	public static function cron_validate(): void {
+		$s = self::state();
+		if ( empty( $s['activation_token'] ) ) {
+			self::unschedule();
+			return;
+		}
+		$result = self::validate();
+		if ( is_wp_error( $result ) ) {
+			$data = (array) $result->get_error_data();
+			$s    = self::state();
+			if ( 404 === (int) ( $data['status'] ?? 0 ) ) {
+				$s['response']           = (array) ( $s['response'] ?? array() );
+				$s['response']['status'] = 'activation_not_found';
+			}
+			$s['last_error']    = substr( (string) $result->get_error_message(), 0, 200 );
+			$s['last_error_at'] = time();
+			self::store( $s );
+		}
 	}
 
 	/** HMAC check identical to the WPistic SDK HmacVerifier (canonical JSON, hex). */

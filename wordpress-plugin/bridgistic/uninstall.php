@@ -16,6 +16,19 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 
 global $wpdb;
 
+// 0. Release the license seat on the license server, then forget the link (1.5.10).
+// Runs before anything else is removed; a failed remote call can still be
+// cleaned up from the account. The shared WPistic installation id is kept.
+$bridgistic_license_file = __DIR__ . '/includes/class-license-link.php';
+if ( is_readable( $bridgistic_license_file ) ) {
+	require_once $bridgistic_license_file;
+	if ( class_exists( 'Bridgistic\\LicenseLink' ) ) {
+		\Bridgistic\LicenseLink::deactivate();
+	}
+}
+delete_option( 'bridgistic_license_link' );
+wp_clear_scheduled_hook( 'bridgistic_license_validate' );
+
 // 1. Drop custom tables.
 $bridgistic_tables = array(
 	'bridgistic_keys',
