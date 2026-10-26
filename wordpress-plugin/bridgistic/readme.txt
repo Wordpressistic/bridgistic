@@ -72,7 +72,7 @@ The local MCP server and the Claude Desktop extension run on your own computer a
 == Changelog ==
 
 = 1.5.10 =
-* New: a daily background check re-validates the license and re-sends this site's dashboard pairing key, so the account dashboard shows the current status of every site without anyone clicking Check now.
+* New: a daily background check re-validates the license and re-sends this site's dashboard pairing key, so the account dashboard shows the current status of every site without anyone clicking Check now. If the license server says this site's activation was removed or its token revoked, paid features close until the license is activated again.
 * New: deleting the plugin releases its license seat on the license server and removes the stored license link. Deactivating the plugin only stops the daily check; the seat stays.
 * Changed: Pro licenses cover 3 sites (Lifetime Deal: 1 site).
 
