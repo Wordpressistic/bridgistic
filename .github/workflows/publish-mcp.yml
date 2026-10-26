@@ -1,0 +1,136 @@
+name: Publish MCP server (manual)
+
+# Manual only. Publishes the Bridgistic MCP server to npm and the MCP Registry.
+# dry_run defaults to true: a dry run builds, tests and runs `npm publish --dry-run`
+# and `mcp-publisher validate`, and uploads nothing.
+#
+# Source: mcp-server/ was moved out of this repository in a911a2a. Until it is
+# restored here, `source_ref` must point at a commit that still has mcp-server/
+# (505df28 is the last one, at version 1.5.4). The job refuses to publish when
+# mcp-server/package.json does not already say the requested version: it never
+# rewrites a version, so 1.5.4 code cannot go out labelled 1.5.9.
+#
+# Secrets: NPM_TOKEN (npm automation token for bridgistic-mcp-server).
+# MCP Registry auth uses GitHub OIDC (io.github.wordpressistic/* namespace).
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (must match mcp-server/package.json at source_ref)"
+        required: true
+        default: "1.5.9"
+      source_ref:
+        description: "Commit/branch/tag containing mcp-server/ and server.json"
+        required: true
+        default: "main"
+      dry_run:
+        description: "Dry run (build + validate only, publish nothing)"
+        type: boolean
+        required: true
+        default: true
+      publish_npm:
+        description: "Publish to npm (ignored when dry_run)"
+        type: boolean
+        default: true
+      publish_registry:
+        description: "Publish to the MCP Registry (ignored when dry_run)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  id-token: write # npm provenance + MCP Registry GitHub OIDC login
+
+concurrency:
+  group: publish-mcp
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.dry_run && 'mcp-dry-run' || 'mcp-publish' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+
+      - name: Check source and version
+        run: |
+          set -euo pipefail
+          test -f mcp-server/package.json || { echo "::error::mcp-server/ not found at ${{ inputs.source_ref }}"; exit 1; }
+          PKG_VERSION=$(node -p "require('./mcp-server/package.json').version")
+          PKG_NAME=$(node -p "require('./mcp-server/package.json').name")
+          echo "package: $PKG_NAME@$PKG_VERSION"
+          if [ "$PKG_VERSION" != "${{ inputs.version }}" ]; then
+            echo "::error::mcp-server/package.json is $PKG_VERSION, requested ${{ inputs.version }}. Bump it in a commit first."
+            exit 1
+          fi
+          if npm view "$PKG_NAME@$PKG_VERSION" version >/dev/null 2>&1; then
+            echo "::error::$PKG_NAME@$PKG_VERSION is already on npm. Versions are immutable."
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Build and test
+        working-directory: mcp-server
+        run: |
+          npm ci
+          npm run build
+          npm run validate
+          npm test
+
+      - name: Prepare server.json
+        run: |
+          set -euo pipefail
+          SRC=mcp-server/server.json
+          [ -f "$SRC" ] || SRC=release/mcp/server.json
+          [ -f "$SRC" ] || { echo "::error::no server.json"; exit 1; }
+          node -e '
+            const fs=require("fs"); const v=process.argv[2]; const s=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));
+            const pkg=require("./mcp-server/package.json");
+            if (s.version!==v) { console.error(`server.json version ${s.version} != ${v}`); process.exit(1); }
+            for (const p of s.packages||[]) if (p.registryType==="npm" && p.version!==v) { console.error("server.json package version mismatch"); process.exit(1); }
+            if (pkg.mcpName!==s.name) { console.error(`package.json mcpName (${pkg.mcpName}) must equal server.json name (${s.name})`); process.exit(1); }
+            fs.copyFileSync(process.argv[1],"server.json");
+          ' "$SRC" "${{ inputs.version }}"
+
+      - name: Install mcp-publisher
+        run: |
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+          ./mcp-publisher --help >/dev/null
+
+      - name: npm publish (dry run)
+        if: ${{ inputs.dry_run }}
+        working-directory: mcp-server
+        run: npm publish --dry-run --access public
+
+      - name: Validate server.json (dry run)
+        if: ${{ inputs.dry_run }}
+        run: ./mcp-publisher validate server.json || ./mcp-publisher publish --dry-run server.json
+
+      - name: npm publish
+        if: ${{ !inputs.dry_run && inputs.publish_npm }}
+        working-directory: mcp-server
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance
+
+      - name: MCP Registry publish
+        if: ${{ !inputs.dry_run && inputs.publish_registry }}
+        run: |
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish server.json
+
+      - name: Summary
+        run: |
+          {
+            echo "### MCP server ${{ inputs.version }} (${{ inputs.dry_run && 'DRY RUN — nothing published' || 'published' }})"
+            echo "- source_ref: ${{ inputs.source_ref }}"
+            echo "- npm: ${{ (!inputs.dry_run && inputs.publish_npm) && 'published' || 'skipped' }}"
+            echo "- MCP Registry: ${{ (!inputs.dry_run && inputs.publish_registry) && 'published' || 'skipped' }}"
+          } >> "$GITHUB_STEP_SUMMARY"

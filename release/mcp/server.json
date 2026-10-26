@@ -1,0 +1,23 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.wordpressistic/bridgistic",
+  "title": "Bridgistic",
+  "description": "Scoped, HMAC-signed control of a WordPress site running the free Bridgistic plugin.",
+  "repository": { "url": "https://github.com/Wordpressistic/bridgistic", "source": "github" },
+  "websiteUrl": "https://bridgistic.app",
+  "version": "1.5.9",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "bridgistic-mcp-server",
+      "version": "1.5.9",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        { "name": "BRIDGISTIC_SITE_URL", "description": "WordPress site URL", "isRequired": true, "format": "string" },
+        { "name": "BRIDGISTIC_KEY_ID", "description": "Bridgistic key ID (wpk_…)", "isRequired": true, "format": "string" },
+        { "name": "BRIDGISTIC_KEY_SECRET", "description": "Bridgistic key secret", "isRequired": true, "isSecret": true, "format": "string" }
+      ]
+    }
+  ]
+}
