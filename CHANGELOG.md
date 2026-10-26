@@ -9,7 +9,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 ### Added
 
-- **Daily license re-validation.** A `bridgistic_license_validate` WP-Cron event (daily, scheduled while a license is active) re-validates the activation and re-sends the auto-paired dashboard key, so the account dashboard (`/api/me/sites`) shows current per-site status. A forged or unsigned response is discarded; when the server reports the activation gone, paid features close and the token is kept so Check now can retry.
+- **Daily license re-validation.** A `bridgistic_license_validate` WP-Cron event (daily, scheduled while a license is active) re-validates the activation and re-sends the auto-paired dashboard key, so the account dashboard (`/api/me/sites`) shows current per-site status. A forged or unsigned response is discarded; when the server reports the activation gone (404) or its token revoked (401 `Activation token has been revoked`; other 401s such as a bad signature are not treated as revoked), paid features close and the token is kept so Check now can retry.
 - **Uninstall releases the seat.** `uninstall.php` calls the license server's deactivate and deletes `bridgistic_license_link` before removing tables. Plugin deactivation only clears the cron.
 
 ### Changed

@@ -258,8 +258,9 @@ final class LicenseLink {
 	/**
 	 * Cron callback. A successful validate refreshes the signed status and
 	 * re-sends the dashboard key, so the account dashboard stays in sync.
-	 * When the server says the activation no longer exists (seat released from
-	 * the account), paid features close; the token is kept so Check now can retry.
+	 * When the server says the activation no longer exists (404) or its token was
+	 * revoked (401 "Activation token has been revoked"), paid features close; the
+	 * token is kept so Check now can retry.
 	 */
 	public static function cron_validate(): void {
 		$s = self::state();
@@ -271,7 +272,7 @@ final class LicenseLink {
 		if ( is_wp_error( $result ) ) {
 			$data = (array) $result->get_error_data();
 			$s    = self::state();
-			if ( 404 === (int) ( $data['status'] ?? 0 ) ) {
+			if ( 404 === (int) ( $data['status'] ?? 0 ) || self::is_revoked( $result ) ) {
 				$s['response']           = (array) ( $s['response'] ?? array() );
 				$s['response']['status'] = 'activation_not_found';
 			}
@@ -279,6 +280,20 @@ final class LicenseLink {
 			$s['last_error_at'] = time();
 			self::store( $s );
 		}
+	}
+
+	/**
+	 * The license server answers a deactivated token with
+	 * 401 {"error":{"code":"unauthorized","message":"Activation token has been revoked"}}.
+	 * Only that exact answer counts as revoked; any other 401 (bad signature, bad key) does not.
+	 *
+	 * @param \WP_Error $error Error returned by validate().
+	 */
+	public static function is_revoked( \WP_Error $error ): bool {
+		$data = (array) $error->get_error_data();
+		return 401 === (int) ( $data['status'] ?? 0 )
+			&& 'unauthorized' === (string) ( $data['server_code'] ?? '' )
+			&& false !== stripos( (string) $error->get_error_message(), 'activation token has been revoked' );
 	}
 
 	/** HMAC check identical to the WPistic SDK HmacVerifier (canonical JSON, hex). */
@@ -383,7 +398,15 @@ final class LicenseLink {
 		if ( $code < 200 || $code >= 300 || ! is_array( $json ) ) {
 			$msg = is_array( $json ) && isset( $json['error']['message'] ) ? (string) $json['error']['message'] : 'The license server refused the request.';
 			$status = in_array( $code, array( 400, 401, 403, 404, 409, 429 ), true ) ? $code : 502;
-			return new \WP_Error( 'bridgistic_license_refused', $msg, array( 'status' => $status ) );
+			$server = is_array( $json ) && isset( $json['error']['code'] ) && is_string( $json['error']['code'] ) ? substr( $json['error']['code'], 0, 64 ) : '';
+			return new \WP_Error(
+				'bridgistic_license_refused',
+				$msg,
+				array(
+					'status'      => $status,
+					'server_code' => $server,
+				)
+			);
 		}
 		return $json;
 	}
