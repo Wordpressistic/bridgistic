@@ -39,6 +39,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Playbooks {
 
+	/** Built-ins mirror the WP Admin playbook cards and are read-only recipes. */
+	public static function builtins(): array {
+		return array(
+			array( 'slug' => 'backup-before-edit', 'name' => 'Backup before edit', 'description' => 'Snapshot content before an agent changes it so the owner can restore safely.', 'builtin' => true ),
+			array( 'slug' => 'safe-site-inspection', 'name' => 'Safe site inspection', 'description' => 'Review WordPress, PHP, theme, plugins, HTTPS and bridge health.', 'builtin' => true ),
+			array( 'slug' => 'content-cleanup-checklist', 'name' => 'Content cleanup checklist', 'description' => 'Find drafts, trash, stale revisions and content that needs review.', 'builtin' => true ),
+			array( 'slug' => 'plugin-update-audit', 'name' => 'Plugin update audit', 'description' => 'Check installed plugins against the live WordPress update channel.', 'builtin' => true ),
+			array( 'slug' => 'memory-context-scan', 'name' => 'Memory context scan', 'description' => 'Refresh llms.txt, llms-full.txt, sitemap.xml and WordPress site context.', 'builtin' => true ),
+			array( 'slug' => 'woocommerce-sales-review', 'name' => 'WooCommerce sales review', 'description' => 'Review recent orders, revenue, inventory signals and top products when WooCommerce is active.', 'builtin' => true ),
+		);
+	}
+
 	/** Route prefixes a playbook step is allowed to call (no recursion into playbooks). */
 	private const ALLOWED_PREFIXES = array(
 		'posts', 'media', 'users', 'options', 'plugins',

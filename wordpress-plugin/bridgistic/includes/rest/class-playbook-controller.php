@@ -71,7 +71,7 @@ final class PlaybookController extends Controller {
 		if ( is_wp_error( $gate ) ) {
 			return $gate;
 		}
-		return $this->ok( array( 'playbooks' => Playbooks::list() ) );
+		return $this->ok( array( 'playbooks' => array_merge( Playbooks::builtins(), Playbooks::list() ) ) );
 	}
 
 	public function get_playbook( WP_REST_Request $request ) {

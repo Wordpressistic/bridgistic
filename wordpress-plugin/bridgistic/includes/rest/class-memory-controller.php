@@ -45,6 +45,24 @@ final class MemoryController extends Controller {
 				'permission_callback' => array( $this, 'authenticate' ),
 			)
 		);
+		register_rest_route(
+			$namespace,
+			'/memory/scan',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'scan' ),
+				'permission_callback' => array( $this, 'authenticate' ),
+			)
+		);
+		register_rest_route(
+			$namespace,
+			'/memory/import-url',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'import_url' ),
+				'permission_callback' => array( $this, 'authenticate' ),
+			)
+		);
 	}
 
 	public function read( WP_REST_Request $request ) {
@@ -89,5 +107,27 @@ final class MemoryController extends Controller {
 		$key = (string) ( $request->get_param( 'key' ) ?? '' );
 		Memory::delete( (string) ( $request->get_param( 'category' ) ?? 'general' ), $key );
 		return $this->ok( array( 'deleted' => true, 'key' => $key ) );
+	}
+
+	public function scan( WP_REST_Request $request ) {
+		$gate = $this->require_scope( $request, Scopes::MEMORY_WRITE );
+		if ( is_wp_error( $gate ) ) {
+			return $gate;
+		}
+		return $this->ok( Memory::scan_site_context( $this->key_id( $request ) ) );
+	}
+
+	public function import_url( WP_REST_Request $request ) {
+		$gate = $this->require_scope( $request, Scopes::MEMORY_WRITE );
+		if ( is_wp_error( $gate ) ) {
+			return $gate;
+		}
+		$url = (string) ( $request->get_param( 'url' ) ?? '' );
+		$key = (string) ( $request->get_param( 'key' ) ?? '' );
+		if ( '' === $url ) {
+			return $this->fail( 'bridgistic_mem_args', "Provide 'url'.", 400 );
+		}
+		$result = Memory::import_url( $url, $key, $this->key_id( $request ) );
+		return is_wp_error( $result ) ? $result : $this->ok( $result );
 	}
 }

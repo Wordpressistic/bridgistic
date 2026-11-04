@@ -40,6 +40,15 @@ final class PluginsController extends Controller {
 				'permission_callback' => array( $this, 'authenticate' ),
 			)
 		);
+		register_rest_route(
+			$namespace,
+			'/plugins/updates',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'updates' ),
+				'permission_callback' => array( $this, 'authenticate' ),
+			)
+		);
 	}
 
 	public function list_plugins( WP_REST_Request $request ) {
@@ -94,6 +103,40 @@ final class PluginsController extends Controller {
 					deactivate_plugins( $file );
 					return array( 'plugin' => $file, 'active' => false );
 				},
+			)
+		);
+	}
+
+	/** Return the live WordPress update channel; never invent CVE data. */
+	public function updates( WP_REST_Request $request ) {
+		$gate = $this->require_scope( $request, Scopes::PLUGINS_MANAGE );
+		if ( is_wp_error( $gate ) ) {
+			return $gate;
+		}
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		wp_update_plugins();
+		$transient = get_site_transient( 'update_plugins' );
+		$updates   = array();
+		foreach ( (array) ( $transient->response ?? array() ) as $file => $item ) {
+			$updates[] = array(
+				'file'       => (string) $file,
+				'new_version' => (string) ( $item->new_version ?? '' ),
+				'package'    => (string) ( $item->package ?? '' ),
+				'url'        => (string) ( $item->url ?? '' ),
+			);
+		}
+		return $this->ok(
+			array(
+				'checked_at' => current_time( 'mysql', true ),
+				'updates'    => $updates,
+				'count'      => count( $updates ),
+				'security'   => array(
+					'source'  => 'wordpress-update-channel',
+					'advisories' => array(),
+					'note'    => 'WordPress.org update signals are live. No third-party vulnerability feed is configured for this site.',
+				),
 			)
 		);
 	}
