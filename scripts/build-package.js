@@ -9,6 +9,9 @@
  *   dist/bridgistic-openai-plugin.zip      — official ChatGPT/Codex directory
  *                                            package with the remote MCP setup
  *
+ * openai-plugin/ is optional: when it is absent (the repo refocused on the
+ * WordPress plugin) the OpenAI package is skipped with a note.
+ *
  * Run `npm run build` first so the server bundle exists (the package is
  * still produced without it, with a warning).
  */
@@ -84,10 +87,15 @@ function addTree(zip, dir, prefix, skip = new Set()) {
 // ---- 3. OpenAI plugin directory package -----------------------------------------
 
 {
-  const zip = new ZipWriter();
-  addTree(zip, join(ROOT, "openai-plugin"), "");
-  const out = zip.write(join(DIST, "bridgistic-openai-plugin.zip"));
-  console.log(`✓ ${relative(ROOT, out)} (${(statSync(out).size / 1024).toFixed(0)} KB)`);
+  const openaiPlugin = join(ROOT, "openai-plugin");
+  if (existsSync(openaiPlugin)) {
+    const zip = new ZipWriter();
+    addTree(zip, openaiPlugin, "");
+    const out = zip.write(join(DIST, "bridgistic-openai-plugin.zip"));
+    console.log(`✓ ${relative(ROOT, out)} (${(statSync(out).size / 1024).toFixed(0)} KB)`);
+  } else {
+    console.log("openai-plugin/ not present, skipping — repo refocused on the WordPress plugin");
+  }
 }
 
 console.log("Done.");
