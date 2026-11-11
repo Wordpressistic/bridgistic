@@ -16,6 +16,11 @@
  *   bridgistic-mcp-server-<version>.tgz
  *   SHA256SUMS.txt
  *
+ * When the root package.json is absent (the repo refocused on the WordPress
+ * plugin), the npm-driven steps behind those artifacts are skipped and the
+ * release directory holds just the zips build-package.js produces, plus
+ * SHA256SUMS.txt.
+ *
  * The three markdown reports (release notes, test report, security checklist)
  * are authored, not generated, and are copied in from release/ alongside these.
  *
@@ -37,7 +42,19 @@ import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(fileURLToPath(import.meta.url), "..", "..");
-const VERSION = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8")).version;
+// The root package.json — and with it the mcp-server workspace and the
+// verify-packages.js checker — moved to the app repository when the repo
+// refocused on the WordPress plugin. Without it, the npm-driven steps below
+// are skipped and the version comes from the plugin header, like the workflow.
+const PKG_JSON = join(ROOT, "package.json");
+const HAS_NPM_SURFACE = existsSync(PKG_JSON);
+const pluginVersion = () => {
+  const header = readFileSync(join(ROOT, "wordpress-plugin/bridgistic/bridgistic.php"), "utf8");
+  const match = /^[ \t*]*Version:\s*(\S+)\s*$/m.exec(header);
+  if (!match) throw new Error("no `Version:` header found in wordpress-plugin/bridgistic/bridgistic.php");
+  return match[1];
+};
+const VERSION = HAS_NPM_SURFACE ? JSON.parse(readFileSync(PKG_JSON, "utf8")).version : pluginVersion();
 const DIST = join(ROOT, "dist");
 const OUT = join(DIST, `release-v${VERSION}`);
 
@@ -88,31 +105,40 @@ mkdirSync(OUT, { recursive: true });
 
 // ---- 2. Build ---------------------------------------------------------------
 
-step("Building the MCP server and shipped bundle");
-runNpm(["run", "build:ci"]);
+if (HAS_NPM_SURFACE) {
+  step("Building the MCP server and shipped bundle");
+  runNpm(["run", "build:ci"]);
 
-step("Building distribution archives");
-runNpm(["run", "package"]);
+  step("Building distribution archives");
+  runNpm(["run", "package"]);
 
-step("Building the Claude Desktop extension");
-runNpm(["run", "desktop:package"]);
+  step("Building the Claude Desktop extension");
+  runNpm(["run", "desktop:package"]);
 
-step("Packing the npm tarball");
-// `npm pack` writes bridgistic-mcp-server-<version>.tgz into its cwd. Packing
-// from the real package directory (not the private repo root) is what makes
-// this the same tarball `npm publish` would upload.
-runNpm(["pack", "--silent", "--pack-destination", OUT], { cwd: join(ROOT, "mcp-server") });
+  step("Packing the npm tarball");
+  // `npm pack` writes bridgistic-mcp-server-<version>.tgz into its cwd. Packing
+  // from the real package directory (not the private repo root) is what makes
+  // this the same tarball `npm publish` would upload.
+  runNpm(["pack", "--silent", "--pack-destination", OUT], { cwd: join(ROOT, "mcp-server") });
+} else {
+  step("Building distribution archives");
+  console.log("package.json not present, skipping the MCP server, Claude Desktop and npm tarball builds — repo refocused on the WordPress plugin");
+  run("node", ["scripts/build-package.js"]);
+}
 
 // ---- 3. Collect -------------------------------------------------------------
 
 step("Collecting artifacts");
 
-const ARCHIVES = [
-  "bridgistic-wordpress-plugin.zip",
-  "bridgistic-claude-package.zip",
-  "bridgistic-openai-plugin.zip",
-  "bridgistic.mcpb",
-];
+// The mcpb and the OpenAI package are only built when the npm surface exists.
+const ARCHIVES = HAS_NPM_SURFACE
+  ? [
+      "bridgistic-wordpress-plugin.zip",
+      "bridgistic-claude-package.zip",
+      "bridgistic-openai-plugin.zip",
+      "bridgistic.mcpb",
+    ]
+  : ["bridgistic-wordpress-plugin.zip", "bridgistic-claude-package.zip"];
 for (const name of ARCHIVES) {
   const from = join(DIST, name);
   if (!existsSync(from)) {
@@ -124,40 +150,47 @@ for (const name of ARCHIVES) {
 }
 
 const tarball = `bridgistic-mcp-server-${VERSION}.tgz`;
-if (!existsSync(join(OUT, tarball))) {
-  console.error(`✗ npm pack did not produce ${tarball}`);
-  process.exit(1);
+if (HAS_NPM_SURFACE) {
+  if (!existsSync(join(OUT, tarball))) {
+    console.error(`✗ npm pack did not produce ${tarball}`);
+    process.exit(1);
+  }
+  console.log(`  ✓ ${tarball} (${(statSync(join(OUT, tarball)).size / 1024).toFixed(0)} KB)`);
 }
-console.log(`  ✓ ${tarball} (${(statSync(join(OUT, tarball)).size / 1024).toFixed(0)} KB)`);
 
 // ---- 4. Verify --------------------------------------------------------------
 //
 // Verify the copies in the release directory, not the originals in dist/ —
 // these are the bytes that get published.
 
-step("Verifying artifact structure");
-run("node", ["scripts/verify-packages.js", "--dir", `dist/release-v${VERSION}`]);
+if (HAS_NPM_SURFACE) {
+  step("Verifying artifact structure");
+  run("node", ["scripts/verify-packages.js", "--dir", `dist/release-v${VERSION}`]);
 
-step("Verifying the npm tarball");
-{
-  const listing = execFileSync("tar", ["-tzf", join(OUT, tarball)], { encoding: "utf8" });
-  const entries = listing.split(/\r?\n/).filter(Boolean);
+  step("Verifying the npm tarball");
+  {
+    const listing = execFileSync("tar", ["-tzf", join(OUT, tarball)], { encoding: "utf8" });
+    const entries = listing.split(/\r?\n/).filter(Boolean);
 
-  const required = ["package/package.json", "package/dist/index.js", "package/README.md"];
-  for (const entry of required) {
-    if (entries.includes(entry)) console.log(`  ✓ contains ${entry}`);
-    else {
-      console.error(`  ✗ npm tarball is missing ${entry}`);
+    const required = ["package/package.json", "package/dist/index.js", "package/README.md"];
+    for (const entry of required) {
+      if (entries.includes(entry)) console.log(`  ✓ contains ${entry}`);
+      else {
+        console.error(`  ✗ npm tarball is missing ${entry}`);
+        process.exit(1);
+      }
+    }
+
+    const forbidden = entries.filter((e) => /(^|\/)(node_modules|\.env|src|evals)\//.test(e));
+    if (forbidden.length) {
+      console.error(`  ✗ npm tarball ships files it should not: ${forbidden.slice(0, 5).join(", ")}`);
       process.exit(1);
     }
+    console.log(`  ✓ ${entries.length} entries, no sources, tests, or node_modules`);
   }
-
-  const forbidden = entries.filter((e) => /(^|\/)(node_modules|\.env|src|evals)\//.test(e));
-  if (forbidden.length) {
-    console.error(`  ✗ npm tarball ships files it should not: ${forbidden.slice(0, 5).join(", ")}`);
-    process.exit(1);
-  }
-  console.log(`  ✓ ${entries.length} entries, no sources, tests, or node_modules`);
+} else {
+  step("Verifying artifact structure");
+  console.log("scripts/verify-packages.js not present, skipping — repo refocused on the WordPress plugin");
 }
 
 // ---- 5. Copy the authored reports -------------------------------------------
