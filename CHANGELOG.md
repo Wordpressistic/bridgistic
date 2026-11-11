@@ -1,11 +1,15 @@
+﻿# 1.5.12
+
+- New REST endpoints for dashboard actions: POST /cache/flush (WP Rocket, LiteSpeed, W3TC, Autoptimize, WP Super Cache, OPcache, wp_cache_flush) and GET/POST /permalinks with whitelist-validated structures.
+
 # Changelog
 
 All notable changes to the Bridgistic free public distribution.
-Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](https://semver.org/).
+Format: [Keep a Changelog](https://keepachangelog.com/) Â· Versioning: [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
-## [1.5.11] — 2026-11-11
+## [1.5.11] â€” 2026-11-11
 
 ### Added
 
@@ -15,7 +19,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 - `GET /usage` returns a `plan` block (name, limit, used, remaining, reset date, schedule and snapshot caps).
 - `LicenseLink::raw_response()`: the stored signed response without the activation token or verification key.
 
-## [1.5.10] — 2026-10-26
+## [1.5.10] â€” 2026-10-26
 
 ### Added
 
@@ -26,51 +30,51 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 - Pro licenses cover 3 sites; the Lifetime Deal covers 1.
 
-## [1.5.9] — 2026-10-26
+## [1.5.9] â€” 2026-10-26
 
 ### Security
 
-- **PHP execution no longer uses `eval()`.** Submitted code is written to a uniquely named file inside the hardened sandbox — direct web access blocked by `.htaccess`/`web.config`, every sandbox PHP file carries the `ABSPATH` guard — executed with `include`, and deleted in the same request's `finally`. Plugin Check forbids `eval()`; behaviour, output capture and the Guard approval binding are unchanged (covered by the security-regression suite).
+- **PHP execution no longer uses `eval()`.** Submitted code is written to a uniquely named file inside the hardened sandbox â€” direct web access blocked by `.htaccess`/`web.config`, every sandbox PHP file carries the `ABSPATH` guard â€” executed with `include`, and deleted in the same request's `finally`. Plugin Check forbids `eval()`; behaviour, output capture and the Guard approval binding are unchanged (covered by the security-regression suite).
 
 ### Fixed
 
 - Plugin Check pass: 60 errors and 151 warnings to zero across the shipped files.
-  - Nonce verification: every classic and AJAX handler's input now goes through documented `post_*()` helpers that run after `guard_post()`/`guard_ajax()` — the superglobal reads live in one audited place.
+  - Nonce verification: every classic and AJAX handler's input now goes through documented `post_*()` helpers that run after `guard_post()`/`guard_ajax()` â€” the superglobal reads live in one audited place.
   - All placeholder-bearing translation calls carry `translators:` comments.
   - View and `uninstall.php` variables renamed to the `bridgistic_` prefix.
-  - Custom-table queries (key store, audit, memory, playbooks, snapshots, scheduler, usage, approvals) carry a documented file-scope justification — the table name is code-defined and every value is prepared.
+  - Custom-table queries (key store, audit, memory, playbooks, snapshots, scheduler, usage, approvals) carry a documented file-scope justification â€” the table name is code-defined and every value is prepared.
   - The config generator's shell, PowerShell and Markdown templates moved to `admin/templates/` (heredoc syntax is not allowed); contents byte-identical.
   - Hidden files (`.gitignore`, `.gitkeep`) are excluded from the distributed zip.
   - `set_time_limit()` carries a scoped, justified annotation (bounded best-effort budget, restored in `finally`).
 
-## [1.5.8] — 2026-10-23
+## [1.5.8] â€” 2026-10-23
 
 ### Fixed
 
-- The admin badge no longer reads "Free Local MCP Version" on a licensed site: with a live license the header shows "Pro · {plan} licensed" and the footer "Pro ({plan}) licensed"; unlicensed sites keep the free label.
+- The admin badge no longer reads "Free Local MCP Version" on a licensed site: with a live license the header shows "Pro Â· {plan} licensed" and the footer "Pro ({plan}) licensed"; unlicensed sites keep the free label.
 
-## [1.5.7] — 2026-10-23
+## [1.5.7] â€” 2026-10-23
 
 ### Added
 
-- **Zero-step dashboard connection.** At license activation (and every validate), the plugin mints an auto-paired "Bridgistic Dashboard" key and pushes it to the license server. The license owner's dashboard picks the site up automatically — no key minting, no copy-paste. The key self-heals: delete it in WP Admin and the next validate replaces it.
+- **Zero-step dashboard connection.** At license activation (and every validate), the plugin mints an auto-paired "Bridgistic Dashboard" key and pushes it to the license server. The license owner's dashboard picks the site up automatically â€” no key minting, no copy-paste. The key self-heals: delete it in WP Admin and the next validate replaces it.
 - The license status now carries the masked owner email, and the Premium screen shows which Bridgistic account unlocks the Pro marketplace.
 
 ### Changed
 
 - Premium Features: the **AI Skills Marketplace** card is now a live link to marketplace.bridgistic.app (100 free skills, Pro collection for members) instead of a "coming soon" placeholder; **Advanced Logs & Snapshots** shows "Included with your license" once a license is active.
 
-## [1.5.6] — 2026-10-23
+## [1.5.6] â€” 2026-10-23
 
 ### Fixed
 
 - The version constant was a literal that drifted from the release: 1.5.5 files ran with `BRIDGISTIC_VERSION` reading 1.5.4 (footers, debug reports, license-server version reports). The constant is now derived from the plugin header and can never drift again.
 
-## [1.5.5] — 2026-10-23
+## [1.5.5] â€” 2026-10-23
 
 ### Added
 
-- License activation in WP Admin: the Premium Features screen now carries the license panel — paste a key, activate it on the site, re-validate with the license server or deactivate. The status card shows plan, masked key, bound domain and entitlements.
+- License activation in WP Admin: the Premium Features screen now carries the license panel â€” paste a key, activate it on the site, re-validate with the license server or deactivate. The status card shows plan, masked key, bound domain and entitlements.
 - The license endpoint defaults to the Bridgistic console (`https://admin.bridgistic.app/api/v1/licenses`), where Paddle purchases issue keys; the `BRIDGISTIC_LICENSE_API` constant or the `bridgistic_license_api` filter retarget it (e.g. an aliased WPistic ecosystem server).
 
 ### Changed
@@ -78,7 +82,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 - `License::activate()`, `validate_now()` and `deactivate()` now run the real license link instead of refusing; `get_status()` reports the live link state.
 - Dashboard license screen: points at the plugin license panel when no site is connected, and the Lifetime Deal price reads $49.99.
 
-## [1.5.4] — 2026-10-20
+## [1.5.4] â€” 2026-10-20
 
 ### Added
 
@@ -101,14 +105,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 - docs/REPO-STRUCTURE.md describes `bridgistic-claude-marketplace` as the official marketplace listing repo. docs/PAGES_RELEASES.md documents the Cloudflare Pages deploy.
 - readme.txt: shorter summary, five tags, an External services section and a 1.5.3 upgrade notice.
 
-## [1.5.3] — 2026-10-19
+## [1.5.3] â€” 2026-10-19
 
-Security release addressing the October 2026 baseline audit (S1–S5), plus the plugin endpoints used by the hosted Bridgistic dashboard.
+Security release addressing the October 2026 baseline audit (S1â€“S5), plus the plugin endpoints used by the hosted Bridgistic dashboard.
 
 ### Security
 
-- **SQL dry run no longer executes the statement.** `db_query` with `dry_run` used to run the SQL inside `START TRANSACTION … ROLLBACK`; MySQL DDL (`DROP`, `TRUNCATE`, `ALTER`, `RENAME`, `CREATE`) commits implicitly and MyISAM ignores rollback, so a `db:write` key could apply destructive SQL with no approval and no snapshot. The dry run now classifies only, and Guard reports `requires_approval` without ever executing.
-- **MySQL executable comments are rejected.** `/*! … */`, `/*!50000 … */` and MariaDB `/*M! … */` are executed by the server but were stripped as comments by the classifier, so `SELECT /*! LOAD_FILE(…) */` read as a plain read. They are now `forbidden`.
+- **SQL dry run no longer executes the statement.** `db_query` with `dry_run` used to run the SQL inside `START TRANSACTION â€¦ ROLLBACK`; MySQL DDL (`DROP`, `TRUNCATE`, `ALTER`, `RENAME`, `CREATE`) commits implicitly and MyISAM ignores rollback, so a `db:write` key could apply destructive SQL with no approval and no snapshot. The dry run now classifies only, and Guard reports `requires_approval` without ever executing.
+- **MySQL executable comments are rejected.** `/*! â€¦ */`, `/*!50000 â€¦ */` and MariaDB `/*M! â€¦ */` are executed by the server but were stripped as comments by the classifier, so `SELECT /*! LOAD_FILE(â€¦) */` read as a plain read. They are now `forbidden`.
 - **Sandbox can no longer be re-opened.** `.htaccess`, `.user.ini`, `php.ini`, `web.config` and the sandbox's own `index.php` cannot be written or deleted through the bridge at any scope, including inside the sandbox. `ensure_sandbox()` re-asserts its protective files (and now writes a `web.config` for IIS). Only `.php` may be written to the sandbox and every such file is prefixed with an `ABSPATH` guard, so direct web requests exit even on nginx where `.htaccess` is ignored.
 - **PHP execution goes through the Guard.** `php:execute` now honours `dry_run` (never evaluates) and per-key `require_approval`, with the approval bound to the SHA-256 of the exact code. MCP tool `bridgistic_execute_php` gained `dry_run` / `approval_id`.
 - **Unsigned query-string parameters rejected.** The HMAC does not cover the query string, so `dry_run`, `force`, `approval_id`, `__ctx` and `__internal_token` are refused there, and POST/DELETE requests accept no query parameters (`rest_route` excepted). Official clients already send these in the signed body.
@@ -116,19 +120,19 @@ Security release addressing the October 2026 baseline audit (S1–S5), plus the 
 ### Added
 
 - Dashboard routes on the `bridgistic/v1` namespace: `GET audit` (new scope `audit:read`) and `GET approvals` (the calling key's own approvals; decisions stay in WP Admin).
-- License link to the WPistic license server (`api.wpistic.com/api/v1/licenses`): `GET license`, `POST license/activate|validate|deactivate` (new scope `license:manage`). Responses are HMAC-verified; the raw license key is never stored and the activation token / verification key are never returned over REST. No plugin capability is gated on a license — the free feature policy is unchanged.
+- License link to the WPistic license server (`api.wpistic.com/api/v1/licenses`): `GET license`, `POST license/activate|validate|deactivate` (new scope `license:manage`). Responses are HMAC-verified; the raw license key is never stored and the activation token / verification key are never returned over REST. No plugin capability is gated on a license â€” the free feature policy is unchanged.
 - `rest_allowed_cors_headers` includes the `X-Bridgistic-*` headers so a browser dashboard can call the bridge.
 
 ### Fixed
 
-- License link: `validate` now sends the domain and environment the license server bound at activation. The server re-classifies the environment from the domain (`.test`/`.local`/`localhost`/private IPs → local; `staging.*`, `dev.*`, `*.wpengine.com`, `*.kinsta.cloud`, `*.pantheonsite.io` → staging) and hard-rejects a mismatch, so licenses on those sites failed every re-check with 403.
+- License link: `validate` now sends the domain and environment the license server bound at activation. The server re-classifies the environment from the domain (`.test`/`.local`/`localhost`/private IPs â†’ local; `staging.*`, `dev.*`, `*.wpengine.com`, `*.kinsta.cloud`, `*.pantheonsite.io` â†’ staging) and hard-rejects a mismatch, so licenses on those sites failed every re-check with 403.
 - License link: activation uses a fresh idempotency key per attempt. A fixed key made the server replay the cached response after a deactivate, handing back a revoked token (validate then failed with 401).
 - Browser live mode from the hosted dashboard: the plugin now sends `Access-Control-Allow-Origin` itself for `https://dashboard.bridgistic.app` (main address) and `https://app.bridgistic.app` (legacy, redirects) on the `bridgistic/v1` namespace only, without credentials. Some sites strip the header WordPress core normally echoes, which broke the dashboard (seen on dev-test.wordpressistic.com). Filter: `bridgistic_dashboard_origins`.
 - `GET /bridgistic/v1/approvals/status?approval_id=...` was rejected with `bridgistic_unsigned_param` by the new unsigned-parameter check (S5), so approval polling (dashboard and the `bridgistic_approval_status` MCP tool) could not work. `approval_id` is now allowed in the query string for that read-only route only; every other signed-only param stays blocked. `POST /approvals/status` with `approval_id` in the signed body is also accepted.
 
 ### Dependencies
 
-- `@modelcontextprotocol/sdk` 1.30 → 1.32.1 (GHSA-6qxp-vccf-f47h) in `mcp-server` and `cloud`; `agents` 0.22 → 0.28.1 and `wrangler` → 4.151 in `cloud` (required to move off the vulnerable SDK pin). `npm audit`: 0 vulnerabilities in both lockfiles.
+- `@modelcontextprotocol/sdk` 1.30 â†’ 1.32.1 (GHSA-6qxp-vccf-f47h) in `mcp-server` and `cloud`; `agents` 0.22 â†’ 0.28.1 and `wrangler` â†’ 4.151 in `cloud` (required to move off the vulnerable SDK pin). `npm audit`: 0 vulnerabilities in both lockfiles.
 
 ### Changed
 
@@ -137,7 +141,7 @@ Security release addressing the October 2026 baseline audit (S1–S5), plus the 
 - Release workflow ignores `-site` tags and only publishes from the canonical repo. Every GitHub Actions workflow (CI, Release, Pages, cloud deploy) is now manual-only (`workflow_dispatch`); releases and deploys are run by hand.
 - Root `SECURITY.md`, `glama.json`; fixed broken README links into `docs/`.
 
-## [1.5.2] — 2026-10-05
+## [1.5.2] â€” 2026-10-05
 
 Maintenance release for the hosted OAuth connection flow and public product page.
 
@@ -151,7 +155,7 @@ Maintenance release for the hosted OAuth connection flow and public product page
 - Simplified the public pricing section to the Free and Pro plans only.
 - Removed the Agency card and internal Paddle/product identifiers from visible pricing copy.
 
-## [1.5.1] — 2026-10-05
+## [1.5.1] â€” 2026-10-05
 
 Corrective patch release for organization-owned MCP publishing.
 
@@ -160,7 +164,7 @@ Corrective patch release for organization-owned MCP publishing.
 - Aligned the npm package MCP name with the exact WordPressistic-owned registry namespace `io.github.Wordpressistic/bridgistic`.
 - Kept the free-only distribution and premium feature locks unchanged from 1.5.0.
 
-## [1.5.0] — 2026-10-05
+## [1.5.0] â€” 2026-10-05
 
 The free-only public release: the local bridge remains fully functional while
 paid WPistic/SaaS behavior is locked and no longer has an activation path.
@@ -179,17 +183,17 @@ paid WPistic/SaaS behavior is locked and no longer has an activation path.
   package manifest for the official directory submission flow.
 - Synchronized all release manifests and the public landing page to 1.5.0.
 
-## [1.3.2] — 2026-09-11
+## [1.3.2] â€” 2026-09-11
 
 ### Fixed
 
 - HMAC authentication on LiteSpeed/Hostinger hosting: incoming `X-Bridgistic-*` headers are
   rewritten to underscored (`X_Bridgistic_*`) variants, so signature verification saw no
   credentials and every API call failed with `401 bridgistic_auth_missing`. Header names are
-  now normalized (`_` → `-`, lowercased) before verification. Affects Hostinger, LiteSpeed
+  now normalized (`_` â†’ `-`, lowercased) before verification. Affects Hostinger, LiteSpeed
   Enterprise and any stack that underscores custom header names.
 
-## [1.3.1] — 2026-09-03
+## [1.3.1] â€” 2026-09-03
 
 ### Fixed
 
@@ -197,24 +201,24 @@ paid WPistic/SaaS behavior is locked and no longer has an activation path.
 - Prevented a fatal PHP class redeclaration when Bridgistic and another WPistic-licensed plugin are active together; the first compatible shared SDK copy is reused.
 - Made the exact shipped-bundle smoke test invoke npm portably on Windows as well as Linux/macOS.
 
-## [1.3.0] — 2026-09-03
+## [1.3.0] â€” 2026-09-03
 
 WPistic licensing, free/paid tiers, and the WordPressistic org move.
 
 ### Added
 
-- **Official WPistic licensing integration** — the plugin now vendors the WPistic WordPress SDK
+- **Official WPistic licensing integration** â€” the plugin now vendors the WPistic WordPress SDK
   (`wordpress-plugin/bridgistic/includes/sdk/`): license activation with encrypted at-rest state
   (AES-256-GCM), HMAC-signed validation responses, activation-token rotation, a 7-day offline
   grace window, entitlement-driven feature gating, and secure in-dashboard updates served from
-  the WPistic platform (`api.wpistic.com`). Activate under **Bridgistic → License** or via the
+  the WPistic platform (`api.wpistic.com`). Activate under **Bridgistic â†’ License** or via the
   Connect-to-WPistic onboarding wizard.
 - **Free vs paid plan tiers, clearly drawn.** Connecting any AI client (Claude, Claude Desktop,
   ChatGPT remote MCP, OpenAI Codex CLI, Gemini CLI, Cursor, any MCP client), HMAC keys, scopes,
   approvals, audit, snapshots, and manual playbooks are free forever. Starter/Pro/Agency plans
   unlock unlimited scheduled playbooks, advanced snapshots, audit export, the AI skills
   marketplace, the agency dashboard, team permissions, and white-label.
-- **License admin screen** — activate/deactivate/re-validate, plan display, feature matrix, and
+- **License admin screen** â€” activate/deactivate/re-validate, plan display, feature matrix, and
   grace-window status.
 
 ### Changed
@@ -224,7 +228,7 @@ WPistic licensing, free/paid tiers, and the WordPressistic org move.
 - **Repository moved to the WordPressistic GitHub org** (`github.com/wordpressistic/bridgistic`);
   all plugin/docs/package URLs updated.
 
-## [1.2.0] — 2026-08-12
+## [1.2.0] â€” 2026-08-12
 
 Multi-client connections, first-class WooCommerce operations, and a hardened cloud connector.
 
@@ -232,115 +236,115 @@ Multi-client connections, first-class WooCommerce operations, and a hardened clo
 
 - **Codex CLI and Gemini CLI as first-class connection types** in the Claude Setup wizard (step 1
   choices + step 4 config tabs), generating `~/.codex/config.toml` and `~/.gemini/settings.json`
-  snippets that launch the published `bridgistic-mcp-server` npm package via `npx` — no clone or
+  snippets that launch the published `bridgistic-mcp-server` npm package via `npx` â€” no clone or
   build step. `ConfigGenerator::codex()` / `ConfigGenerator::gemini_cli()`.
 - **Docs for connecting other AI clients**: `docs/CODEX_SETUP.md`, `docs/GEMINI_SETUP.md`,
   `docs/CHATGPT_SETUP.md` (public beta, remote-only), and `docs/CONNECT_OTHER_AI.md` (a hub
   covering both multi-client and multi-WordPress-site setups). Linked from the README and the
   Claude Setup wizard.
-- **`cloud/` test suite** — 73 tests (`node --test`, zero new test-framework dependency besides
+- **`cloud/` test suite** â€” 73 tests (`node --test`, zero new test-framework dependency besides
   `tsx` for running TypeScript directly) covering tenant credential encryption, PKCE, the tenant
   registry, D1 tenant storage, HMAC request signing, and the WordPress OAuth client. Wired into CI.
-- **`docs/CLOUD_CONNECTOR.md`** — live-status tracking for the `mcp.wpistic.cloud` deployment
+- **`docs/CLOUD_CONNECTOR.md`** â€” live-status tracking for the `mcp.wpistic.cloud` deployment
   (what's actually provisioned vs. what still needs manual confirmation) and the checklist before
   it moves from public beta to generally available.
-- **`.github/workflows/deploy-cloud.yml`** — manual-dispatch CI workflow to redeploy the `cloud/`
+- **`.github/workflows/deploy-cloud.yml`** â€” manual-dispatch CI workflow to redeploy the `cloud/`
   Worker via `wrangler deploy`, gated on `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` repo
   secrets (safe no-op until a repo admin adds them). Independent of `ci.yml`/`release.yml`.
 
-- **Per-IP rate limiting on the cloud Worker** (`cloud/src/rate-limit.ts`, wired in `index.ts`) —
+- **Per-IP rate limiting on the cloud Worker** (`cloud/src/rate-limit.ts`, wired in `index.ts`) â€”
   120 req/min/IP on `/mcp`, 20 req/min/IP on the OAuth handshake routes, backed by a KV
   fixed-window counter. Closes the "no rate limiting at the Worker level" gap tracked in
   `docs/CLOUD_CONNECTOR.md`. 4 new tests (`cloud/test/rate-limit.test.ts`, suite now 77 tests).
-- **"Bridgistic Cloud" page** (WP Admin, tagged Beta in the nav) — the cloud connector's OAuth flow
+- **"Bridgistic Cloud" page** (WP Admin, tagged Beta in the nav) â€” the cloud connector's OAuth flow
   was previously live in code but reachable only via a deep link initiated from the Worker; this
   page makes it discoverable, shows the connector URL to paste into an AI client, and states its
   beta/no-security-review-yet status plainly. The OAuth consent screen itself carries the same
   warning directly on the Allow/Deny screen.
-- **First-activation redirect** — activating the plugin now sends the admin straight to Claude
+- **First-activation redirect** â€” activating the plugin now sends the admin straight to Claude
   Setup on their next page load (`Plugin::activate()` sets a short-lived transient,
   `Admin\Controller::maybe_redirect_after_activation()` consumes it), skipped for bulk activations.
-- **Live "client connected" check in Claude Setup step 5** — previously "Run test" only confirmed
+- **Live "client connected" check in Claude Setup step 5** â€” previously "Run test" only confirmed
   the server-side pipeline; step 5 now also polls (`bridgistic_poll_client_connected`) until the
   AI client makes its first real request with the new key, and flips to a connected state
   automatically instead of requiring a manual trip to the Logs page.
-- **Per-field copy buttons for the Desktop Extension panel** — Site URL, Key ID, and Secret each
+- **Per-field copy buttons for the Desktop Extension panel** â€” Site URL, Key ID, and Secret each
   get their own one-click copy button instead of one plain-text block to select from by hand.
-- **`docs/CONNECT_BRIDGISTIC.md`** — a single non-technical, step-by-step connect guide
-  (install → key → connect → verify → troubleshoot → FAQ) consolidating what was previously spread
+- **`docs/CONNECT_BRIDGISTIC.md`** â€” a single non-technical, step-by-step connect guide
+  (install â†’ key â†’ connect â†’ verify â†’ troubleshoot â†’ FAQ) consolidating what was previously spread
   across `INSTALL.md`, `WORDPRESS_SETUP.md`, `CLAUDE_DESKTOP.md`, `CONNECT_OTHER_AI.md`, and
   `CLOUD_CONNECTOR.md`. Linked from the README.
-- **Live dashboard connection status** — the "Connected" badge, activity count, and latest-log line
+- **Live dashboard connection status** â€” the "Connected" badge, activity count, and latest-log line
   now poll every 15s (`bridgistic_dashboard_status`) instead of only reflecting the state at page
   load, and toast when a request lands while the tab is open (`DashboardPage::live_stats()`).
-- **Categorized AJAX error messages** — the shared `post()` JS helper now distinguishes a network
+- **Categorized AJAX error messages** â€” the shared `post()` JS helper now distinguishes a network
   failure, a non-JSON response (the common signature of a WAF/security plugin/proxy blocking
   `admin-ajax.php`), and an HTTP error status, instead of surfacing whatever the browser's JSON
   parser happened to throw. Every AJAX call across the dashboard benefits automatically.
-- **Claude Setup step 5 split into "1. Server check" / "2. Client check"** — the client check is new:
+- **Claude Setup step 5 split into "1. Server check" / "2. Client check"** â€” the client check is new:
   it polls until the AI client makes its first real request, instead of a static wall of text.
-- **Multi-client naming clarity** — the nav now tags "Claude Setup" with a small "all clients" hint,
+- **Multi-client naming clarity** â€” the nav now tags "Claude Setup" with a small "all clients" hint,
   and the wizard's own header explains it also configures Codex/Gemini/other MCP clients and points
   at Bridgistic Cloud for remote-only clients.
-- **`cloud/src/tenant-session.ts`** — `resolveTenantRegistry()`, extracted from `agent.ts`'s
+- **`cloud/src/tenant-session.ts`** â€” `resolveTenantRegistry()`, extracted from `agent.ts`'s
   `init()` purely so it's unit-testable (`agent.ts` imports `agents/mcp`, which pulls in
   Cloudflare-Workers-only globals that make it unimportable under plain `node:test`). Same
   behavior, same error messages.
-- **`cloud/test/oauth-flow.test.ts`** and **`cloud/test/tenant-session.test.ts`** — end-to-end
-  coverage for the full `/authorize` → `POST /authorize` → `/wp-callback` → tenant upserted in D1 →
-  `completeAuthorization()` handshake, and for tenantId → registry → registered, callable tools
+- **`cloud/test/oauth-flow.test.ts`** and **`cloud/test/tenant-session.test.ts`** â€” end-to-end
+  coverage for the full `/authorize` â†’ `POST /authorize` â†’ `/wp-callback` â†’ tenant upserted in D1 â†’
+  `completeAuthorization()` handshake, and for tenantId â†’ registry â†’ registered, callable tools
   (16 new tests; suite is now 93). Previously only pure/isolable pieces were tested (PKCE, crypto,
-  `cleanSiteUrl()`) — this is the first coverage of the actual request flow end to end.
-- **`scripts/check-cloud-tools-drift.js`** (`npm run check:cloud-drift`, wired into CI) — fails the
+  `cleanSiteUrl()`) â€” this is the first coverage of the actual request flow end to end.
+- **`scripts/check-cloud-tools-drift.js`** (`npm run check:cloud-drift`, wired into CI) â€” fails the
   build if `cloud/src/tools/*.ts` and `mcp-server/src/tools/*.ts` (hand-synced copies, since the
   Worker can't import from `mcp-server` directly) diverge, instead of relying on a maintainer to
   remember to keep them in sync.
-- **Multi-Site page** (WP Admin) — a guided `connections.json` builder: pre-fills this site's alias/
+- **Multi-Site page** (WP Admin) â€” a guided `connections.json` builder: pre-fills this site's alias/
   URL/key, lets you add other sites' alias/URL/key ID/secret with a live JSON preview, and downloads
   the finished file. Structural fields (not secrets) persist in the browser's `localStorage` between
   visits. Replaces the fully-hand-edited-file-only workflow docs previously pointed to.
 
-- **First-class WooCommerce tools** — eleven structured tools (`bridgistic_woo_*`) covering
+- **First-class WooCommerce tools** â€” eleven structured tools (`bridgistic_woo_*`) covering
   products, orders, customers, inventory, and sales summaries, behind six new least-privilege
   scopes (`woo:products:read|write`, `woo:orders:read|write`, `woo:customers:read`,
   `woo:analytics:read`) and a **WooCommerce Manager** preset. Everything goes through
   WooCommerce's own API (`wc_get_products`, `wc_get_orders`, `WC_Order`, `WC_Customer`), so it
-  behaves identically with or without High-Performance Order Storage — previously a store
+  behaves identically with or without High-Performance Order Storage â€” previously a store
   question needed `db:read` or `php:execute`. Order status changes are treated as destructive
   (they fire customer emails, stock movements, and gateway actions that reverting the field does
   not undo), so they snapshot first and honour the approval queue. Customer and order shapes are
   built from an allowlist, so payment tokens, password hashes, and street addresses cannot leak
   by omission. With WooCommerce inactive, the routes answer with a structured
   "WooCommerce unavailable" error and nothing fatals.
-- **ChatGPT / remote MCP as a first-class connection type** — a dedicated panel showing the hosted
+- **ChatGPT / remote MCP as a first-class connection type** â€” a dedicated panel showing the hosted
   endpoint, why a local server is not an option for that client, links to the cloud page and
   diagnostics, and capability-based wording about plan availability rather than a fixed set of
   clicks upstream keeps moving.
-- **SSRF protection in the cloud relay** (`cloud/src/url-guard.ts`) — `/authorize` previously
+- **SSRF protection in the cloud relay** (`cloud/src/url-guard.ts`) â€” `/authorize` previously
   accepted any `https://` URL and then made server-side requests to it, so `https://127.0.0.1`,
   `https://169.254.169.254`, and `https://10.0.0.1` were each accepted and fetched. Now refused:
   non-HTTPS, embedded credentials, non-default ports, IP literals in every notation, loopback /
   RFC1918 / CGNAT / link-local / multicast, IPv6 loopback and unique-local plus IPv4-mapped
   forms, cloud metadata hostnames, and single-label intranet names. Re-checked at use time, not
   only at connect time. 59 tests.
-- **Layered rate limiting** — per-IP, per-tenant, and global-per-route-class, short-circuiting so
+- **Layered rate limiting** â€” per-IP, per-tenant, and global-per-route-class, short-circuiting so
   a refused request cannot drain the ceilings protecting everyone else, with a JSON `429`
   carrying `Retry-After` and a correlation id. KV's read-then-write inexactness is documented in
   the module rather than left to be discovered.
-- **Privacy-safe cloud observability** (`cloud/src/observability.ts`) — fixed-shape JSON request
+- **Privacy-safe cloud observability** (`cloud/src/observability.ts`) â€” fixed-shape JSON request
   logs with one-way tenant handles, stable error categories, and an `X-Bridgistic-Request-Id`
   header on every response.
-- **Versioned tenant-secret envelope** — `v2.aes256gcm.` prefix with pre-v2 rows still
+- **Versioned tenant-secret envelope** â€” `v2.aes256gcm.` prefix with pre-v2 rows still
   decrypting, and a wrong-length IV rejected before it reaches WebCrypto.
-- **WordPress behavioural test suite** — 430 checks across six suites (HMAC, OAuth/PKCE, SQL
+- **WordPress behavioural test suite** â€” 430 checks across six suites (HMAC, OAuth/PKCE, SQL
   classification, filesystem containment, scopes/presets, config generation) running against an
   SQLite-backed `$wpdb`, wired into CI on PHP 8.0 and 8.3. Previously the one existing PHP test
   was never executed by CI.
-- **Shipped-bundle smoke test** (`npm run test:bundle`) — spawns the exact artifact users receive,
+- **Shipped-bundle smoke test** (`npm run test:bundle`) â€” spawns the exact artifact users receive,
   completes a real MCP handshake, and fails if the committed bundle differs from a clean rebuild.
 - **Package structure verification** (`scripts/verify-packages.js`) and a **staged release
   builder** (`npm run release`) producing `dist/release-v1.2.0/` with SHA256 checksums.
-- **WordPress activation CI job** — installs the built ZIP via WP-CLI on two WordPress versions
+- **WordPress activation CI job** â€” installs the built ZIP via WP-CLI on two WordPress versions
   and asserts activation creates its tables, registers its REST routes, reports the right
   version, and emits no PHP errors.
 - **Health Check** grew from 16 to 23 diagnostics: `admin-ajax.php` reachability, PHP zip
@@ -348,19 +352,19 @@ Multi-client connections, first-class WooCommerce operations, and a hardened clo
   transients, so an object cache that drops them is a security signal), WP-Cron, outbound HTTPS,
   cloud OAuth prerequisites, WooCommerce tool availability, and the key/snapshot tables. The
   downloadable diagnostic report gains environment detail and a redaction pass on the way out.
-- **`docs/TESTING.md`** — what is covered, what runs where, and what is not covered. Replaces
+- **`docs/TESTING.md`** â€” what is covered, what runs where, and what is not covered. Replaces
   `TEST_COVERAGE_ANALYSIS.md`, which described a state that no longer exists.
 
 ### Changed
 
-- **"Claude Setup" is now "AI / MCP Connections"** — labels, headings, and cross-links only. The
+- **"Claude Setup" is now "AI / MCP Connections"** â€” labels, headings, and cross-links only. The
   `bridgistic-setup` slug, view name, and class name are unchanged, so bookmarks, the
   first-activation redirect, and shipped documentation links keep working.
-- **AJAX failures are classified** — network, timeout (via `AbortController`, so a proxy holding
+- **AJAX failures are classified** â€” network, timeout (via `AbortController`, so a proxy holding
   a connection is distinguishable from an unreachable site), 401/403, 404, 429, 5xx, and
   non-JSON, each naming its likely causes with the HTTP status shown. No response body ever
   reaches the DOM.
-- **Polling is production-friendly** — the dashboard poll self-reschedules instead of using
+- **Polling is production-friendly** â€” the dashboard poll self-reschedules instead of using
   `setInterval` (so slow responses cannot stack overlapping requests), pauses while the tab is
   hidden, backs off exponentially to a two-minute cap on failure, resets on recovery, and stops
   entirely on a terminal failure instead of emitting an identical error every 15 seconds. Both
@@ -369,7 +373,7 @@ Multi-client connections, first-class WooCommerce operations, and a hardened clo
   wizard and the OAuth consent screen without either surface hard-coding which that is.
   `Presets::get_or_safest()` makes downgrade-on-unknown-id the only way request-supplied preset
   ids resolve, and the consent screen now names the destructive scopes a preset would grant.
-- **Version drift is a hard CI failure** — `validate-marketplace.js` now reads all 13
+- **Version drift is a hard CI failure** â€” `validate-marketplace.js` now reads all 13
   version-bearing sources, including the ones no JSON parser reaches (the plugin header comment,
   `BRIDGISTIC_VERSION`, `readme.txt`'s Stable tag, both `SERVER_VERSION` constants), and requires
   matching CHANGELOG and `readme.txt` entries.
@@ -379,8 +383,8 @@ Multi-client connections, first-class WooCommerce operations, and a hardened clo
 
 ### Security
 
-- **SQL write classification no longer relies on prefix matching.** `WITH t AS (…) DELETE FROM
-  wp_posts …` classified as a read, so a `db:read` key could execute it — skipping the approval
+- **SQL write classification no longer relies on prefix matching.** `WITH t AS (â€¦) DELETE FROM
+  wp_posts â€¦` classified as a read, so a `db:read` key could execute it â€” skipping the approval
   queue and the pre-write snapshot. Stacked statements and leading comments moved the real
   keyword off position zero the same way. New `Security\SqlClassifier` strips comments and
   literal contents first, rejects multi-statement input and file-access SQL outright, resolves
@@ -389,8 +393,8 @@ Multi-client connections, first-class WooCommerce operations, and a hardened clo
   sibling directory sharing the prefix (`/var/www/html-backup` for a `/var/www/html` install).
   Both `confine()` and `in_sandbox()` now compare whole path segments.
 - **Credential files are protected at any scope.** `fs:read` could read `wp-config.php`, which
-  carries `AUTH_KEY` and `SECURE_AUTH_KEY` — two of the three inputs to `Security\Crypto`'s key
-  derivation — so `fs:read` plus `db:read` was enough to decrypt every stored key secret.
+  carries `AUTH_KEY` and `SECURE_AUTH_KEY` â€” two of the three inputs to `Security\Crypto`'s key
+  derivation â€” so `fs:read` plus `db:read` was enough to decrypt every stored key secret.
   `wp-config.php`, `.env`, private keys, and similar are now refused for read, write, and delete.
 - **`php:execute` is bounded.** Captured output, error entries, and the serialised return value
   are capped at 256 KB with a truncation flag, and the call takes a best-effort 30s wall-clock
@@ -401,11 +405,11 @@ Multi-client connections, first-class WooCommerce operations, and a hardened clo
   verifiers are checked against RFC 7636 before a single-use code is consumed; codes carry an
   issue timestamp so a TTL-ignoring object cache cannot extend their life; and the token endpoint
   is rate-limited per IP.
-- **The cloud connector is free, public beta** — `docs/FREE_VS_PAID.md`'s "Remote MCP connector"
+- **The cloud connector is free, public beta** â€” `docs/FREE_VS_PAID.md`'s "Remote MCP connector"
   row changed from "No" (free) to "Public beta"; the in-plugin Premium Features page no longer
   lists it as an SaaS-exclusive locked feature.
 - `cloud/wrangler.toml` now has real Cloudflare resource IDs (D1 database, KV namespace) instead
-  of placeholders — the Worker, database, and KV namespace were already provisioned outside of
+  of placeholders â€” the Worker, database, and KV namespace were already provisioned outside of
   this repo's history; the committed config now matches the live deployment.
 - Fixed a stale `Plugin URI` in `bridgistic.php` that still pointed at the deprecated `bridgistic`
   repo instead of `bridgistic-claude-marketplace`.
@@ -414,35 +418,35 @@ Multi-client connections, first-class WooCommerce operations, and a hardened clo
 
 - The `mcp.wpistic.cloud` cloud connector is now a **public beta**, linked from WP Admin
   (Bridgistic Cloud) and free to use. It has **not** had an independent third-party security
-  review yet — this is stated explicitly on the Bridgistic Cloud page and the OAuth consent screen
+  review yet â€” this is stated explicitly on the Bridgistic Cloud page and the OAuth consent screen
   so users can make an informed call. See `docs/CLOUD_CONNECTOR.md` for full status and the
   remaining checklist (end-to-end test against a live client, the security review).
 - Multi-site support (`BRIDGISTIC_CONNECTIONS`) is unchanged in behavior; it's now documented in
   one place (`docs/CONNECT_OTHER_AI.md`) instead of being scattered across per-client docs.
 
-## [1.1.1] — 2026-07-04
+## [1.1.1] â€” 2026-07-04
 
 Patch: corrected MCP Registry namespace casing (io.github.Shubochandrosarker) in the npm package metadata so registry ownership validation passes. No functional changes.
 
-## [1.1.0] — 2026-07-03
+## [1.1.0] â€” 2026-07-03
 
 One-click connection and publishing release.
 
 ### Added
 
-- **Claude Desktop Extension (`bridgistic.mcpb`)** — real MCPB bundle validated against the official schema (`@anthropic-ai/mcpb`). Double-click to install; Claude Desktop prompts for site URL, key ID, and secret via `user_config` (the secret is stored by the app, marked `sensitive`). Built by `npm run desktop:package`; branded 512px icon included.
-- **npm publishing** — `bridgistic-mcp-server` is publish-ready (`files` allowlist, `prepublishOnly` build+typecheck, `mcpName` field, npm-facing README with the registry ownership marker).
-- **MCP Registry listing** — `server.json` (`io.github.wordpressistic/bridgistic`, 2025-09-29 schema) so the server appears in the official registry Claude clients can browse.
-- **Release automation** (`.github/workflows/release.yml`) — pushing a `v*` tag: verifies all manifests match the tag, builds, tests, validates, creates the GitHub release with `bridgistic.mcpb` + both zips, publishes to npm (when `NPM_TOKEN` is configured) and then to the MCP Registry via GitHub OIDC (no secret needed).
-- **CI** (`.github/workflows/ci.yml`) — build, MCP tests, marketplace validation + secret scan, package builds, PHP lint on every PR.
-- Claude Setup wizard: **Desktop Extension** connection type is now live — download button for the latest `.mcpb` plus paste-ready values panel.
+- **Claude Desktop Extension (`bridgistic.mcpb`)** â€” real MCPB bundle validated against the official schema (`@anthropic-ai/mcpb`). Double-click to install; Claude Desktop prompts for site URL, key ID, and secret via `user_config` (the secret is stored by the app, marked `sensitive`). Built by `npm run desktop:package`; branded 512px icon included.
+- **npm publishing** â€” `bridgistic-mcp-server` is publish-ready (`files` allowlist, `prepublishOnly` build+typecheck, `mcpName` field, npm-facing README with the registry ownership marker).
+- **MCP Registry listing** â€” `server.json` (`io.github.wordpressistic/bridgistic`, 2025-09-29 schema) so the server appears in the official registry Claude clients can browse.
+- **Release automation** (`.github/workflows/release.yml`) â€” pushing a `v*` tag: verifies all manifests match the tag, builds, tests, validates, creates the GitHub release with `bridgistic.mcpb` + both zips, publishes to npm (when `NPM_TOKEN` is configured) and then to the MCP Registry via GitHub OIDC (no secret needed).
+- **CI** (`.github/workflows/ci.yml`) â€” build, MCP tests, marketplace validation + secret scan, package builds, PHP lint on every PR.
+- Claude Setup wizard: **Desktop Extension** connection type is now live â€” download button for the latest `.mcpb` plus paste-ready values panel.
 - Validator: checks `mcpb/manifest.json` (user_config wiring, sensitive secret), `server.json` (name format, npm identifier match, README `mcp-name` marker), and version consistency across all six manifests.
 
 ### Changed
 
 - Version 1.1.0 across marketplace, plugin, server, extension, and registry manifests; `docs/CLAUDE_DESKTOP.md` now leads with the one-click path; roadmap updated.
 
-## [1.0.0] — 2026-07-03
+## [1.0.0] â€” 2026-07-03
 
 First public release of the free Bridgistic distribution.
 
@@ -461,7 +465,7 @@ First public release of the free Bridgistic distribution.
 
 **WordPress plugin** (`wordpress-plugin/bridgistic/`)
 - New WordPressistic-branded admin dashboard (modular `admin/` layer, scoped assets, dark/light themes, reduced-motion support)
-- Claude Setup: 5-step wizard (client → permission preset → key → config → live pipeline test)
+- Claude Setup: 5-step wizard (client â†’ permission preset â†’ key â†’ config â†’ live pipeline test)
 - Keys & Scopes: scope badges, rotate-secret-in-place, soft revoke + re-enable, per-scope advanced creation
 - Health Check: 16 diagnostics (REST, namespace, WAF, HMAC self-test, SSL, permalinks, versions, sandbox, tables, scopes, config, time drift) with score and secret-free debug report
 - Logs: filterable audit trail (read/write/approval/failed/security/developer)
