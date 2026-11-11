@@ -365,6 +365,20 @@ final class LicenseLink {
 		return is_string( $v ) && '' !== $v ? $v : $fallback;
 	}
 
+	/**
+	 * The last signed license response with secrets removed (plan, expiry and,
+	 * when the server sends it, the billing block). Empty with no activation.
+	 *
+	 * @return array<string,mixed>
+	 */
+	public static function raw_response(): array {
+		$s = self::state();
+		if ( empty( $s['activation_token'] ) ) {
+			return array();
+		}
+		return self::strip( (array) ( $s['response'] ?? array() ) );
+	}
+
 	private static function strip( array $resp ): array {
 		unset( $resp['activation_token'], $resp['verification_key'] );
 		return $resp;

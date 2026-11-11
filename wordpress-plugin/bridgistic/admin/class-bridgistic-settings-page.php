@@ -24,6 +24,7 @@ final class SettingsPage extends Page {
 			'allowlist'  => (array) get_option( 'bridgistic_options_allowlist', array() ),
 			'action_url' => admin_url( 'admin-post.php' ),
 			'saved'      => isset( $_GET['saved'] ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display-only flag.
+			'usage'      => \Bridgistic\PlanLimits::snapshot(),
 		);
 	}
 }

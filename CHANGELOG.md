@@ -5,6 +5,16 @@ Format: [Keep a Changelog](https://keepachangelog.com/) · Versioning: [SemVer](
 
 ## [Unreleased]
 
+## [1.5.11] — 2026-11-11
+
+### Added
+
+- **Free plan monthly allowance.** `Bridgistic\PlanLimits` caps a site without a live license at 5,000 AI requests per calendar month (UTC), the `free` quota already defined in `Usage::tiers()` (filter: `bridgistic_free_monthly_requests`). One site-wide counter (`_site` in `bridgistic_usage`) is shared by every key and by scheduled runs. The auto-paired dashboard key and `GET /usage` do not count. Over the limit, requests get HTTP 402 `bridgistic_free_limit_reached` with a message that names the reset date and Bridgistic Pro ($12/month or $99/year, https://pay.bridgistic.app/). Blocked requests are not counted. Pro (license status active, trialing or grace) has no monthly cap.
+- **Plan & usage panel** on Settings: Free shows total, used, remaining and reset date; Pro shows plan, price paid from the license (`plan` monthly/yearly/lifetime, or a `billing` block if the server sends one), renewal date and Pro limits.
+- **Upgrade notice** for administrators at 80% and 100% of the free allowance; dismiss snoozes it for one day per user.
+- `GET /usage` returns a `plan` block (name, limit, used, remaining, reset date, schedule and snapshot caps).
+- `LicenseLink::raw_response()`: the stored signed response without the activation token or verification key.
+
 ## [1.5.10] — 2026-10-26
 
 ### Added

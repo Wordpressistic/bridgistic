@@ -40,7 +40,7 @@ define( 'DAY_IN_SECONDS', 86400 );
 define( 'MB_IN_BYTES', 1048576 );
 define( 'AUTH_KEY', 'unit-test-auth-key-000000000000000000' );
 define( 'SECURE_AUTH_KEY', 'unit-test-secure-auth-key-00000000000' );
-define( 'BRIDGISTIC_VERSION', '1.5.10' );
+define( 'BRIDGISTIC_VERSION', '1.5.11' );
 define( 'BRIDGISTIC_DIR', dirname( __DIR__ ) . '/' );
 define( 'BRIDGISTIC_URL', 'https://example.test/wp-content/plugins/bridgistic/' );
 define( 'BRIDGISTIC_REST_NAMESPACE', 'bridgistic/v1' );
@@ -530,6 +530,18 @@ class TestWpdb {
 				last_used_at TEXT NULL
 			)'
 		);
+		// Usage counters (Usage::install() schema), for the plan-limit suite.
+		$this->pdo->exec(
+			'CREATE TABLE wp_bridgistic_usage (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				key_id TEXT NOT NULL,
+				bucket TEXT NOT NULL,
+				metric TEXT NOT NULL DEFAULT "req",
+				count INTEGER NOT NULL DEFAULT 0,
+				updated_at TEXT NOT NULL,
+				UNIQUE (key_id, bucket, metric)
+			)'
+		);
 	}
 
 	public function get_charset_collate(): string {
@@ -612,6 +624,12 @@ class TestWpdb {
 	}
 
 	public function query( string $sql ) {
+		// MySQL upsert → SQLite upsert (Usage::incr()).
+		$sql = preg_replace(
+			'/ON DUPLICATE KEY UPDATE count = count \+ VALUES\(count\), updated_at = VALUES\(updated_at\)/',
+			'ON CONFLICT(key_id, bucket, metric) DO UPDATE SET count = count + excluded.count, updated_at = excluded.updated_at',
+			$sql
+		);
 		return $this->pdo->exec( $sql );
 	}
 }

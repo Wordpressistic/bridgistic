@@ -254,6 +254,11 @@ final class Scheduler {
 		if ( is_wp_error( $metered ) ) {
 			return self::record( $row['schedule_id'], 'quota_exceeded', array( 'error' => $metered->get_error_message() ) );
 		}
+		// Scheduled runs spend the same free monthly allowance as live requests.
+		$allowed = PlanLimits::check_and_count( $ctx, 'scheduled' );
+		if ( is_wp_error( $allowed ) ) {
+			return self::record( $row['schedule_id'], 'quota_exceeded', array( 'error' => $allowed->get_error_message() ) );
+		}
 
 		$vars = json_decode( (string) $row['vars'], true ) ?: array();
 		$opts = json_decode( (string) $row['options'], true ) ?: array();
