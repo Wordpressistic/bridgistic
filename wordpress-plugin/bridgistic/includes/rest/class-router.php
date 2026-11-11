@@ -31,6 +31,7 @@ final class Router {
 		( new MediaController() )->register( $ns );
 		( new UsersController() )->register( $ns );
 		( new OptionsController() )->register( $ns );
+		( new PermalinkController() )->register( $ns );
 		( new PluginsController() )->register( $ns );
 		( new FsController() )->register( $ns );
 
@@ -39,6 +40,9 @@ final class Router {
 		// non-store site gets a structured "WooCommerce unavailable" answer
 		// instead of a bare 404 the agent has to guess at.
 		( new WooController() )->register( $ns );
+
+		// Site maintenance (dashboard actions).
+		( new CacheController() )->register( $ns );
 
 		// Safety layer.
 		( new SnapshotController() )->register( $ns );
