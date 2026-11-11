@@ -1,10 +1,10 @@
-=== Bridgistic ===
+﻿=== Bridgistic ===
 Contributors: shuvoskr
 Tags: mcp, ai, claude, chatgpt, automation
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.5.11
+Stable tag: 1.5.12
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,7 +25,7 @@ Every request is HMAC-signed and tied to a least-privilege key. Destructive acti
 * Dry-run + human approval queue for destructive operations.
 * Automatic snapshot before every destructive write, with one-call rollback.
 * Full audit log of every request.
-* Per-key rate limiting and usage metering, with a Plan & usage panel under Bridgistic → Settings.
+* Per-key rate limiting and usage metering, with a Plan & usage panel under Bridgistic â†’ Settings.
 * Per-site memory and reusable, parameterised playbooks.
 * Scheduled playbooks that run unattended via cron (up to 3 active schedules without a live license; unlimited with one).
 * A server-side PHP sandbox: executable PHP can only be written to one quarantined directory.
@@ -47,9 +47,9 @@ Bridgistic is one of the WordPressistic ecosystem products. It works standalone 
 
 == Installation ==
 
-1. Upload the `bridgistic` folder to `/wp-content/plugins/`, or install the zip via Plugins → Add New → Upload.
+1. Upload the `bridgistic` folder to `/wp-content/plugins/`, or install the zip via Plugins â†’ Add New â†’ Upload.
 2. Activate the plugin.
-3. Go to **Bridgistic → AI / MCP Connections** and follow the 5-step wizard to create a scoped key. Copy the secret, because it is shown only once.
+3. Go to **Bridgistic â†’ AI / MCP Connections** and follow the 5-step wizard to create a scoped key. Copy the secret, because it is shown only once.
 4. Connect an MCP client to the key. Two paths, pick one:
    * **Claude Desktop, no install needed:** download the `bridgistic.mcpb` extension from the wizard, double-click it, and paste in the site URL, key id, and secret when prompted. No terminal, no Node.js.
    * **Claude Code, or a manual setup:** requires Node.js 20+ to build/run the MCP server, plus editing your client's MCP config with the site URL, key id, and secret. The wizard generates the exact config and commands for you.
@@ -75,7 +75,7 @@ Only inside a single quarantined sandbox directory under uploads, with direct we
 The plugin makes no outbound requests on its own. It contacts the external services below only when a site administrator or a connected key uses the related feature.
 
 * **Bridgistic license server** (`https://admin.bridgistic.app/api/v1/licenses`). This is used when a license is activated or deactivated (from WP Admin, or by a key with the `license:manage` scope), once a day while a license is active (a background validate that also sends this site's dashboard pairing key so the account dashboard can reach the site), and once when the plugin is deleted (to release the license seat). Nothing is sent while no license is activated. The request contains the license key (on activation only; it is never stored), the site domain, site and home URLs, the WordPress environment type, an installation ID, and the plugin, WordPress and PHP versions; validate requests also carry the activation token and the dashboard pairing key. A deployment can be aliased to the WPistic ecosystem server (`https://api.wpistic.com/api/v1/licenses`) with the `BRIDGISTIC_LICENSE_API` constant or the `bridgistic_license_api` filter. Terms: https://bridgistic.app/terms. Privacy: https://bridgistic.app/privacy.
-* **Bridgistic Cloud** (`https://mcp.bridgistic.app`). This is used only when an administrator connects a remote MCP client through **Bridgistic → Bridgistic Cloud** and approves the consent screen. The relay then calls this site's Bridgistic REST API with a scoped key, and every call goes through the same scopes, approvals and audit log as a local connection. Terms: https://bridgistic.app/terms. Privacy: https://bridgistic.app/privacy.
+* **Bridgistic Cloud** (`https://mcp.bridgistic.app`). This is used only when an administrator connects a remote MCP client through **Bridgistic â†’ Bridgistic Cloud** and approves the consent screen. The relay then calls this site's Bridgistic REST API with a scoped key, and every call goes through the same scopes, approvals and audit log as a local connection. Terms: https://bridgistic.app/terms. Privacy: https://bridgistic.app/privacy.
 * **Bridgistic dashboard** (`https://dashboard.bridgistic.app`). The plugin sends no data to the dashboard. It only allows that origin to call the `bridgistic/v1` REST namespace from a browser with a signed key (CORS). The origin list can be changed with the `bridgistic_dashboard_origins` filter.
 
 The local MCP server and the Claude Desktop extension run on your own computer and talk directly to your site.
@@ -84,7 +84,7 @@ The local MCP server and the Claude Desktop extension run on your own computer a
 
 = 1.5.11 =
 * New: Free plan monthly allowance of 5,000 AI requests per site, enforced at the REST choke point and for scheduled runs. Pro (a live license) has no monthly cap. Blocked requests return HTTP 402 `bridgistic_free_limit_reached` with the reset date and the Pro upgrade link, so the AI client can tell the user what to do.
-* New: Plan & usage panel on Bridgistic → Settings. Free: total, used, remaining and reset date, plus the Free vs Pro limits table. Pro: plan, price paid (from the license: $12/month, $99/year, or AppSumo lifetime), renewal date and Pro limits.
+* New: Plan & usage panel on Bridgistic â†’ Settings. Free: total, used, remaining and reset date, plus the Free vs Pro limits table. Pro: plan, price paid (from the license: $12/month, $99/year, or AppSumo lifetime), renewal date and Pro limits.
 * New: an upgrade notice for administrators at 80% and 100% of the free allowance. Closing it hides it for a day; it returns while the condition holds.
 * New: the `/usage` endpoint reports the site plan and allowance.
 
@@ -156,9 +156,9 @@ The local MCP server and the Claude Desktop extension run on your own computer a
 * Made the packaged MCP bundle smoke test portable across Windows, Linux, and macOS.
 
 = 1.3.0 =
-* WPistic licensing system: the plugin now ships with the official WPistic WordPress SDK — activate your license key (Bridgistic → License) to unlock paid plans, with encrypted at-rest state, HMAC-signed validation, token rotation, a 7-day offline grace window, and secure in-dashboard updates from the WPistic platform.
+* WPistic licensing system: the plugin now ships with the official WPistic WordPress SDK â€” activate your license key (Bridgistic â†’ License) to unlock paid plans, with encrypted at-rest state, HMAC-signed validation, token rotation, a 7-day offline grace window, and secure in-dashboard updates from the WPistic platform.
 * Free vs paid, clearly drawn: connecting any AI (Claude, ChatGPT, Codex, Gemini, Cursor, any MCP client), HMAC keys, scopes, approvals, audit, snapshots and manual playbooks stay free forever; unlimited scheduled playbooks, advanced snapshots, audit export, the AI skills marketplace, agency dashboard, team permissions and white-label unlock with Starter / Pro / Agency plans.
-* Repositioned: "AI / MCP Connections" is the headline — one bridge, any AI model.
+* Repositioned: "AI / MCP Connections" is the headline â€” one bridge, any AI model.
 * Moved to the WordPressistic GitHub org.
 
 = 1.2.0 =
@@ -175,7 +175,7 @@ The local MCP server and the Claude Desktop extension run on your own computer a
 * Patch: corrected MCP Registry namespace casing. No functional changes.
 
 = 1.1.0 =
-* Claude Desktop Extension (`bridgistic.mcpb`) — one-click install, no Node.js required.
+* Claude Desktop Extension (`bridgistic.mcpb`) â€” one-click install, no Node.js required.
 * npm publishing and an MCP Registry listing so Claude clients can discover the server.
 * Claude Setup wizard: Desktop Extension is now a live connection option.
 
@@ -200,10 +200,10 @@ Update the plugin before activating a new license. Without a live license, the f
 Security release that fixes five audit findings. Update the plugin and your MCP client together. Custom integrations must now send `dry_run`, `force` and `approval_id` in the signed request body, not in the query string.
 
 = 1.2.0 =
-Safe in-place upgrade. Existing keys, scopes, logs, snapshots, playbooks, and schedules are preserved; no credential reset is required. New WooCommerce scopes are opt-in — existing keys keep exactly the scopes they already had. Bridgistic Cloud remains a clearly-labelled public beta.
+Safe in-place upgrade. Existing keys, scopes, logs, snapshots, playbooks, and schedules are preserved; no credential reset is required. New WooCommerce scopes are opt-in â€” existing keys keep exactly the scopes they already had. Bridgistic Cloud remains a clearly-labelled public beta.
 
 = 1.1.1 =
-Namespace casing patch only — safe to update any time.
+Namespace casing patch only â€” safe to update any time.
 
 = 1.0.0 =
 First public release.

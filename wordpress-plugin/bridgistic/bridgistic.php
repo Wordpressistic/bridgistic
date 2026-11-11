@@ -1,9 +1,9 @@
-<?php
+﻿<?php
 /**
  * Plugin Name:       Bridgistic
  * Plugin URI:        https://github.com/wordpressistic/bridgistic
- * Description:        Connect your WordPress site to any AI model — Claude, ChatGPT, Codex, Gemini, Cursor or any MCP client — with production-safe, scoped control — HMAC-signed requests, least-privilege keys, dry-run and human approval on destructive ops, one-call rollback, full audit, usage metering, and scheduled playbooks.
- * Version:           1.5.11
+ * Description:        Connect your WordPress site to any AI model â€” Claude, ChatGPT, Codex, Gemini, Cursor or any MCP client â€” with production-safe, scoped control â€” HMAC-signed requests, least-privilege keys, dry-run and human approval on destructive ops, one-call rollback, full audit, usage metering, and scheduled playbooks.
+ * Version:           1.5.12
  * Requires at least: 6.4
  * Requires PHP:      8.0
  * Author:            Shuvo Sarker (WordPressistic)
@@ -13,7 +13,7 @@
  * Text Domain:       bridgistic
  * Domain Path:       /languages
  *
- * Bridgistic — part of the WordPressistic Galaxy.
+ * Bridgistic â€” part of the WordPressistic Galaxy.
  *
  * @package Bridgistic
  */
@@ -35,7 +35,7 @@ define( 'BRIDGISTIC_REST_NAMESPACE', 'bridgistic/v1' );
 /**
  * Directory where the agent is allowed to write executable PHP.
  * Anywhere WordPress autoloads from (plugins, mu-plugins, themes) is OFF-LIMITS
- * for PHP writes, exactly like Novamira's sandbox model — but enforced server-side.
+ * for PHP writes, exactly like Novamira's sandbox model â€” but enforced server-side.
  */
 define( 'BRIDGISTIC_SANDBOX', 'bridgistic-sandbox' );
 
