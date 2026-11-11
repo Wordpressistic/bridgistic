@@ -27,6 +27,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 <?php endif; ?>
 
+<?php require __DIR__ . '/partials-usage.php'; ?>
+
 <section class="bridgistic-card bridgistic-fade-in">
 	<h2 class="bridgistic-section-title"><?php esc_html_e( 'Options allowlist', 'bridgistic' ); ?></h2>
 	<p class="bridgistic-help">

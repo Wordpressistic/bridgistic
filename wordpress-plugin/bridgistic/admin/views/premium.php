@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <header class="bridgistic-page-head bridgistic-fade-in">
 	<h1><?php esc_html_e( 'Premium Features', 'bridgistic' ); ?></h1>
-	<p><?php esc_html_e( 'The free version is the complete local bridge: connect any AI, keys, scopes, approvals, logs, snapshots, playbooks and limited scheduling. A live WPistic license opens unlimited schedules, advanced snapshots and audit export on this site.', 'bridgistic' ); ?></p>
+	<p><?php esc_html_e( 'The free version is the complete local bridge: connect any AI, keys, scopes, approvals, logs, snapshots, playbooks and limited scheduling, with 5,000 AI requests per month. A live Bridgistic Pro license ($12/month or $99/year) removes the monthly cap and opens unlimited schedules, snapshots past 50 and audit export on this site.', 'bridgistic' ); ?></p>
 </header>
 
 <?php if ( 'activated' === $data['notice'] ) : ?>

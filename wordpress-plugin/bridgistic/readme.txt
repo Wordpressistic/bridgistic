@@ -4,7 +4,7 @@ Tags: mcp, ai, claude, chatgpt, automation
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.5.10
+Stable tag: 1.5.11
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,10 +25,21 @@ Every request is HMAC-signed and tied to a least-privilege key. Destructive acti
 * Dry-run + human approval queue for destructive operations.
 * Automatic snapshot before every destructive write, with one-call rollback.
 * Full audit log of every request.
-* Per-key rate limiting and basic usage metering.
+* Per-key rate limiting and usage metering, with a Plan & usage panel under Bridgistic → Settings.
 * Per-site memory and reusable, parameterised playbooks.
 * Scheduled playbooks that run unattended via cron (up to 3 active schedules without a live license; unlimited with one).
 * A server-side PHP sandbox: executable PHP can only be written to one quarantined directory.
+
+= Free and Pro =
+
+The free plugin is the full local bridge with these limits:
+
+* 5,000 AI requests per month for the whole site (every signed request from an AI client, plus scheduled runs). The allowance resets on the 1st of each month (UTC). The Bridgistic dashboard and the usage lookup do not count.
+* Up to 3 active scheduled playbooks.
+* Up to 50 manual snapshots kept from WP Admin.
+* On-screen audit log (90 days); no audit log export.
+
+Bridgistic Pro ($12/month or $99/year, https://pay.bridgistic.app) removes the monthly request cap and the schedule and snapshot caps, and adds audit log export. When the free allowance is used up, AI clients receive a clear message with the upgrade link and the reset date, and administrators see a notice in WP Admin.
 
 = Part of the WordPressistic Galaxy =
 
@@ -70,6 +81,12 @@ The plugin makes no outbound requests on its own. It contacts the external servi
 The local MCP server and the Claude Desktop extension run on your own computer and talk directly to your site.
 
 == Changelog ==
+
+= 1.5.11 =
+* New: Free plan monthly allowance of 5,000 AI requests per site, enforced at the REST choke point and for scheduled runs. Pro (a live license) has no monthly cap. Blocked requests return HTTP 402 `bridgistic_free_limit_reached` with the reset date and the Pro upgrade link, so the AI client can tell the user what to do.
+* New: Plan & usage panel on Bridgistic → Settings. Free: total, used, remaining and reset date, plus the Free vs Pro limits table. Pro: plan, price paid (from the license: $12/month, $99/year, or AppSumo lifetime), renewal date and Pro limits.
+* New: an upgrade notice for administrators at 80% and 100% of the free allowance. Closing it hides it for a day; it returns while the condition holds.
+* New: the `/usage` endpoint reports the site plan and allowance.
 
 = 1.5.10 =
 * New: a daily background check re-validates the license and re-sends this site's dashboard pairing key, so the account dashboard shows the current status of every site without anyone clicking Check now. If the license server says this site's activation was removed or its token revoked, paid features close until the license is activated again.
@@ -166,6 +183,9 @@ The local MCP server and the Claude Desktop extension run on your own computer a
 * Initial public release.
 
 == Upgrade Notice ==
+
+= 1.5.11 =
+Adds the Free plan monthly allowance (5,000 AI requests per site), a Plan & usage panel in Settings and an upgrade notice. Pro sites are not capped.
 
 = 1.5.10 =
 Keeps the account dashboard in sync: the license is re-validated daily and the dashboard pairing is refreshed. Deleting the plugin now frees its license seat.

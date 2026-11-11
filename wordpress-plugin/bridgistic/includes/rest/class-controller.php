@@ -70,6 +70,11 @@ abstract class Controller {
 		if ( is_wp_error( $metered ) ) {
 			return $metered;
 		}
+		// Free plan: site-wide monthly AI-request allowance (Pro has no cap).
+		$allowed = \Bridgistic\PlanLimits::check_and_count( $ctx, (string) $request->get_route() );
+		if ( is_wp_error( $allowed ) ) {
+			return $allowed;
+		}
 		\Bridgistic\Usage::meter_action( (string) $ctx['key_id'], $this->action_name( $request ) );
 
 		// Stash for the handler.

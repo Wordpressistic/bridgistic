@@ -38,6 +38,7 @@ require_once __DIR__ . '/class-bridgistic-export-page.php';
 require_once __DIR__ . '/class-bridgistic-premium-page.php';
 require_once __DIR__ . '/class-bridgistic-settings-page.php';
 require_once __DIR__ . '/class-bridgistic-oauth-page.php';
+require_once __DIR__ . '/class-bridgistic-upgrade-notice.php';
 
 final class Controller {
 
@@ -75,6 +76,7 @@ final class Controller {
 		add_action( 'admin_init', array( $this, 'maybe_redirect_after_activation' ) );
 		( new Assets() )->hooks();
 		( new Actions() )->hooks();
+		( new UpgradeNotice() )->hooks();
 	}
 
 	/**

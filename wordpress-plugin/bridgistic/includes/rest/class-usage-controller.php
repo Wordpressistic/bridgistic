@@ -44,7 +44,32 @@ final class UsageController extends Controller {
 				'monthly_quota' => $quota,
 				'usage'        => $summary,
 				'quota_remaining' => $quota > 0 ? max( 0, $quota - (int) $summary['this_month'] ) : null,
+				'plan'         => self::plan_block(),
 			)
 		);
+	}
+
+	/**
+	 * Site plan and the free monthly allowance, safe to show an AI client.
+	 *
+	 * @return array<string,mixed>
+	 */
+	public static function plan_block(): array {
+		$snap = \Bridgistic\PlanLimits::snapshot();
+		$out  = array(
+			'name'                    => $snap['is_pro'] ? (string) ( $snap['billing']['label'] ?? 'Pro' ) : 'Free',
+			'monthly_requests_limit'  => $snap['is_pro'] ? null : (int) $snap['limit'],
+			'monthly_requests_used'   => (int) $snap['used'],
+			'monthly_requests_remaining' => $snap['remaining'],
+			'resets_at'               => gmdate( 'c', (int) $snap['resets_at'] ),
+			'active_schedules_limit'  => $snap['is_pro'] ? null : (int) $snap['schedules_limit'],
+			'snapshots_limit'         => $snap['is_pro'] ? null : (int) $snap['snapshots_limit'],
+			'audit_export'            => (bool) $snap['audit_export'],
+		);
+		if ( ! $snap['is_pro'] ) {
+			$out['upgrade_url'] = \Bridgistic\PlanLimits::UPGRADE_URL;
+			$out['pro_price']   = sprintf( '$%d/month or $%d/year', \Bridgistic\PlanLimits::PRO_MONTHLY_USD, \Bridgistic\PlanLimits::PRO_YEARLY_USD );
+		}
+		return $out;
 	}
 }
