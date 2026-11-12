@@ -47,7 +47,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			?>
 		</p>
 		<?php if ( ! empty( $bridgistic_license['member'] ) ) : ?>
-			<p class="bridgistic-help"><?php /* translators: 1: console URL, 2: masked account email */ printf( esc_html__( 'Marketplace membership: sign in to %1$s with %2$s — the Pro skills collection unlocks there.', 'bridgistic' ), '<a href="https://admin.bridgistic.app/" target="_blank" rel="noopener noreferrer">admin.bridgistic.app</a>', '<strong>' . esc_html( (string) $bridgistic_license['member'] ) . '</strong>' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></p>
+			<p class="bridgistic-help"><?php /* translators: 1: customer dashboard URL, 2: masked account email */ printf( esc_html__( 'Marketplace membership: sign in to %1$s with %2$s — the Pro skills collection unlocks there.', 'bridgistic' ), '<a href="https://dashboard.bridgistic.app/sign-in" target="_blank" rel="noopener noreferrer">dashboard.bridgistic.app</a>', '<strong>' . esc_html( (string) $bridgistic_license['member'] ) . '</strong>' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></p>
 		<?php endif; ?>
 	<?php else : ?>
 		<p class="bridgistic-help"><?php esc_html_e( 'Paste your Bridgistic license key (BRG-…, from your purchase email or the Bridgistic console) to unlock unlimited scheduled playbooks, advanced snapshots and audit export on this site.', 'bridgistic' ); ?></p>

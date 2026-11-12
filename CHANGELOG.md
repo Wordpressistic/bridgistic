@@ -9,6 +9,16 @@ Format: [Keep a Changelog](https://keepachangelog.com/) Â· Versioning: [SemVer
 
 ## [Unreleased]
 
+## [1.5.13] — 2026-11-12
+
+### Fixed
+
+- Customer-facing Premium Features membership links now point to the public dashboard at `https://dashboard.bridgistic.app/sign-in` instead of the owner-only admin host.
+
+### Changed
+
+- Synchronized the plugin header, Stable tag, Composer metadata and test bootstrap version to 1.5.13.
+
 ## [1.5.11] â€” 2026-11-11
 
 ### Added

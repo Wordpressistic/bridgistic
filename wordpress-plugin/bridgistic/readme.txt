@@ -4,7 +4,7 @@ Tags: mcp, ai, claude, chatgpt, automation
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.5.12
+Stable tag: 1.5.13
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -81,6 +81,10 @@ The plugin makes no outbound requests on its own. It contacts the external servi
 The local MCP server and the Claude Desktop extension run on your own computer and talk directly to your site.
 
 == Changelog ==
+
+= 1.5.13 =
+* Fixed: the Premium Features membership link now sends customers to `https://dashboard.bridgistic.app/sign-in`. The owner-only `admin.bridgistic.app` license service remains the plugin's backend authority.
+* Changed: plugin release metadata and the release package now report version 1.5.13 consistently.
 
 = 1.5.11 =
 * New: Free plan monthly allowance of 5,000 AI requests per site, enforced at the REST choke point and for scheduled runs. Pro (a live license) has no monthly cap. Blocked requests return HTTP 402 `bridgistic_free_limit_reached` with the reset date and the Pro upgrade link, so the AI client can tell the user what to do.
