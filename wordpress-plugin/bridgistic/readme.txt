@@ -4,7 +4,7 @@ Tags: mcp, ai, claude, chatgpt, automation
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.5.13
+Stable tag: 1.5.14
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -81,6 +81,10 @@ The plugin makes no outbound requests on its own. It contacts the external servi
 The local MCP server and the Claude Desktop extension run on your own computer and talk directly to your site.
 
 == Changelog ==
+
+= 1.5.14 =
+* Fixed: removed the UTF-8 BOM from the plugin bootstrap so `declare(strict_types=1)` is the first PHP statement and activation works on PHP 8.x.
+* Fixed: the Premium Features membership link continues to send customers to `https://dashboard.bridgistic.app/sign-in`; the owner-only license API remains on `admin.bridgistic.app`.
 
 = 1.5.13 =
 * Fixed: the Premium Features membership link now sends customers to `https://dashboard.bridgistic.app/sign-in`. The owner-only `admin.bridgistic.app` license service remains the plugin's backend authority.

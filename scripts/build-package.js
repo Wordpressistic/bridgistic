@@ -16,7 +16,7 @@
  * still produced without it, with a warning).
  */
 
-import { existsSync, mkdirSync, readdirSync, statSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ZipWriter } from "./lib/zip.js";
@@ -33,6 +33,22 @@ function addTree(zip, dir, prefix, skip = new Set()) {
       addTree(zip, path, `${prefix}${name}/`, skip);
     } else {
       zip.addFile(`${prefix}${name}`, path);
+    }
+  }
+}
+
+function assertNoPhpBom(dir) {
+  for (const name of readdirSync(dir)) {
+    if (name.startsWith(".")) continue;
+    const path = join(dir, name);
+    if (statSync(path).isDirectory()) {
+      assertNoPhpBom(path);
+      continue;
+    }
+    if (!name.endsWith(".php")) continue;
+    const bytes = readFileSync(path);
+    if (bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
+      throw new Error(`PHP file contains a UTF-8 BOM: ${relative(ROOT, path)}`);
     }
   }
 }
@@ -74,9 +90,11 @@ function addTree(zip, dir, prefix, skip = new Set()) {
   // The public ZIP is the free edition. Keep the premium showcase out of the
   // executable package: it must not carry the WPistic licensing SDK or an
   // activation screen that could be mistaken for a supported unlock path.
+  const pluginDir = join(ROOT, "wordpress-plugin/bridgistic");
+  assertNoPhpBom(pluginDir);
   addTree(
     zip,
-    join(ROOT, "wordpress-plugin/bridgistic"),
+    pluginDir,
     "bridgistic/",
     new Set(["tests", "sdk", "class-bridgistic-license-page.php", "license.php"])
   );

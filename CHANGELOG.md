@@ -9,6 +9,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/) Â· Versioning: [SemVer
 
 ## [Unreleased]
 
+## [1.5.14] — 2026-11-12
+
+### Fixed
+
+- Removed the UTF-8 BOM from the plugin bootstrap so `declare(strict_types=1)` is the first PHP statement and activation works on PHP 8.x.
+- Kept the customer-facing Premium Features membership link on `https://dashboard.bridgistic.app/sign-in`; the owner-only license API remains on `admin.bridgistic.app`.
+
 ## [1.5.13] — 2026-11-12
 
 ### Fixed
