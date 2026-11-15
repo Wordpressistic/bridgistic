@@ -4,7 +4,7 @@ Tags: mcp, ai, claude, chatgpt, automation
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.5.14
+Stable tag: 1.5.15
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -81,6 +81,11 @@ The plugin makes no outbound requests on its own. It contacts the external servi
 The local MCP server and the Claude Desktop extension run on your own computer and talk directly to your site.
 
 == Changelog ==
+
+= 1.5.15 =
+* Fixed: the hosted dashboard memory scan and URL import actions now have matching authenticated REST routes on the WordPress site.
+* Fixed: memory scans persist available `llms.txt`, `llms-full.txt`, sitemap and WordPress context without failing when an optional public source is absent.
+* Security: imported URLs are restricted to public HTTP(S) resources and bounded by timeout, redirects and response size.
 
 = 1.5.14 =
 * Fixed: removed the UTF-8 BOM from the plugin bootstrap so `declare(strict_types=1)` is the first PHP statement and activation works on PHP 8.x.
